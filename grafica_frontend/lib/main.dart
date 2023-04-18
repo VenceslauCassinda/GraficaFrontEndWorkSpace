@@ -7,3 +7,4 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(Aplicacao());
 }
+
