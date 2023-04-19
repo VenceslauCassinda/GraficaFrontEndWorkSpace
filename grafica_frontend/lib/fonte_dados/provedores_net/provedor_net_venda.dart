@@ -1,0 +1,269 @@
+import 'dart:convert';
+
+import 'package:get/get.dart';
+import 'package:grafica_frontend/contratos/provedores/provedor_venda_i.dart';
+import 'package:grafica_frontend/dominio/entidades/venda.dart';
+import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
+import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
+import 'package:grafica_frontend/solucoes_uteis/utils.dart';
+import 'package:http/http.dart' as h;
+import '../../recursos/constantes.dart';
+import '../erros.dart';
+
+class ProvedorNetVenda implements ProvedorVendaI {
+  @override
+  Future<bool> actualizarVenda(Venda venda)  async {
+    var res = await h.post(Uri.parse("$URL_ATUALIZAR_PEDIDO/${venda.id}/"), 
+      headers: {
+        "Accept": "aplication/json",
+        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+      }, 
+      body: {
+        "id_funcionario": "${venda.idFuncionario??-1}",
+        "id_cliente": "${venda.idCliente??-1}",
+        "parcela": "${venda.parcela}",
+        "total": "${venda.total}",
+        "data_levantamento": "${venda.dataLevantamentoCompra}",
+        "estado": "${venda.estado??0}",
+      }
+    );
+    // mostrar(res.body);
+    switch (res.statusCode) {
+      case 200: 
+        var dado = jsonDecode(res.body);
+        return true;
+      case 422:
+        var dado = jsonDecode(res.body);
+        throw Erro("Erro de Servidor!\n ${dado["message"]}");
+      case 404:
+        throw Erro("Rota Web Não Encontrada!");
+      case 403:
+        var dado = jsonDecode(res.body);
+        throw Erro("${dado["message"]}");
+      case 401:
+        var dado = jsonDecode(res.body);
+        throw Erro("${dado["message"]}");
+      default:
+        throw Erro("Falha de Servidor!");
+    }
+  }
+
+  @override
+  Future<int> adicionarVenda(Venda venda) async {
+    int id = -1;
+    var res = await h.post(Uri.parse(URL_ADD_PEDIDO), 
+      headers: {
+        "Accept": "aplication/json",
+        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+      }, 
+      body: {
+        "id_funcionario": "${venda.idFuncionario??-1}",
+        "id_cliente": "${venda.idCliente??-1}",
+        "parcela": "${venda.parcela}",
+        "total": "${venda.total}",
+        "data_levantamento": "${venda.dataLevantamentoCompra}",
+        "estado": "${venda.estado??0}",
+      }
+    );
+    
+    // mostrar(res.statusCode);
+    // mostrar(res.body);
+    switch (res.statusCode) {
+      case 200:
+        var dado = jsonDecode(res.body);
+        id = dado["dado"]["id"];
+        break;
+      case 422:
+        var dado = jsonDecode(res.body);
+        throw Erro("Erro de Servidor!\n ${dado["message"]}");
+      case 404:
+        throw Erro("Rota Web Não Encontrada!");
+      case 403:
+        var dado = jsonDecode(res.body);
+        throw Erro("${dado["message"]}");
+      case 401:
+        var dado = jsonDecode(res.body);
+        throw Erro("${dado["message"]}");
+      default:
+        throw Erro("Falha de Servidor!");
+    }
+    return id;
+  }
+
+  @override
+  Future<List<Venda>> pegarLista(Funcionario? funcionario, DateTime data) async{
+    var lista = await todas();
+    var dados = <Venda>[];
+    for (var element in lista) {
+      if((element.idFuncionario == funcionario?.id) && comapararDatas(element.data!, data)){
+        dados.add(element);
+      }
+    }
+    return dados;
+  }
+
+  @override
+  Future<List<Venda>> pegarListaTodasDividas(Funcionario funcionario) async{
+    var lista = await todas();
+    var dados = <Venda>[];
+    for (var element in lista) {
+      if((element.idFuncionario == funcionario.id) && (element.divida == true)){
+        dados.add(element);
+      }
+    }
+    return dados;
+  }
+
+  @override
+  Future<List<Venda>> pegarListaTodasEncomendas(Funcionario funcionario)  async{
+    var lista = await todas();
+    var dados = <Venda>[];
+    for (var element in lista) {
+      if((element.idFuncionario == funcionario.id) && (element.encomenda == true)){
+        dados.add(element);
+      }
+    }
+    return dados;
+  }
+
+  @override
+  Future<List<Pagamento>> pegarListaTodasPagamentoDividas(DateTime data) {
+    // TODO: implement pegarListaTodasPagamentoDividas
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Pagamento>> pegarListaTodasPagamentoDividasFuncionario(Funcionario funcionario, DateTime data) {
+    // TODO: implement pegarListaTodasPagamentoDividasFuncionario
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Venda>> pegarListaTodasVendas()async{
+    var lista = await todas();
+    var dados = <Venda>[];
+    for (var element in lista) {
+      if((element.venda == true)){
+        dados.add(element);
+      }
+    }
+    return dados;
+  }
+
+  @override
+  Future<List<Venda>> pegarListaVendas() async{
+    var lista = await todas();
+    var dados = <Venda>[];
+    for (var element in lista) {
+      if((element.venda == true)){
+        dados.add(element);
+      }
+    }
+    return dados;
+  }
+
+  @override
+  Future<List<Venda>> pegarListaVendasFuncionario(Funcionario funcionario)async{
+    var lista = await todas();
+    var dados = <Venda>[];
+    for (var element in lista) {
+      if((element.venda == true)&&(element.idFuncionario == funcionario.id)){
+        dados.add(element);
+      }
+    }
+    return dados;
+  }
+
+  @override
+  Future<Venda?> pegarVendaDeId(int id) async{
+    var lista = await todas();
+    return lista.firstWhereOrNull((element) => element.id == id);
+  }
+
+  @override
+  Future<int> removerTodas() async{
+    var res  = await todas();
+    for (var cada in res) {
+      await removerVendaDeId(cada.id!);
+    }
+    return 1;
+  }
+
+  @override
+  Future<int> removerVendaDeId(int id)async{
+    var res = await h.post(Uri.parse("$URL_REMOVER_PEDIDO/$id/"), 
+      headers: {
+        "Accept": "aplication/json",
+        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+      },
+    );
+    // mostrar(res.body);
+    switch (res.statusCode) {
+      case 200: 
+        var dado = jsonDecode(res.body);
+        break;
+      case 422:
+        var dado = jsonDecode(res.body);
+        throw Erro("Erro de Servidor!\n ${dado["message"]}");
+      case 404:
+        throw Erro("Rota Web Não Encontrada!");
+      case 403:
+        var dado = jsonDecode(res.body);
+        throw Erro("${dado["message"]}");
+      case 401:
+        var dado = jsonDecode(res.body);
+        throw Erro("${dado["message"]}");
+      default:
+        throw Erro("Falha de Servidor!");
+    }
+    return id;
+  }
+
+  @override
+  Future<List<Venda>> todas() async{
+    var lista = <Venda>[];
+    var res = await h.get(
+      Uri.parse(URL_TODOS_PEDIDO),
+      headers: {
+        "Accept": "aplication/json",
+        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+      },
+    );
+    // mostrar(res.statusCode);
+    // mostrar(res.body);
+    switch (res.statusCode) {
+      case 200:
+        var dado = jsonDecode(res.body);
+        List todos = dado["todos"];
+        for (Map cada in todos) {
+          try {
+            lista.add(Venda.fromJson(cada));
+          } on Exception catch (e) {
+            throw Erro("Erro na conversão dos dados baixados do servidor!");
+          }
+        }
+        break;
+      case 422:
+        var dado = jsonDecode(res.body);
+        throw Erro("Erro de Servidor!\n ${dado["message"]}");
+      case 404:
+        throw Erro("Rota Web Não Encontrada!");
+      case 403:
+        var dado = jsonDecode(res.body);
+        throw Erro("${dado["message"]}");
+      case 401:
+        var dado = jsonDecode(res.body);
+        throw Erro("${dado["message"]}");
+      default:
+        throw Erro("Falha de Servidor!");
+    }
+    return lista;
+  }
+
+  @override
+  Future<List<Venda>> todasDividas() {
+    // TODO: implement todasDividas
+    throw UnimplementedError();
+  }
+  
+}

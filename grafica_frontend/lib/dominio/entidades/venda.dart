@@ -48,4 +48,28 @@ class Venda {
       this.dataLevantamentoCompra,
       required this.total,
       required this.parcela});
+
+      Venda.fromJson(Map json) {
+    idFuncionario = json['id_funcionario'];
+    idCliente = json['id_cliente'];
+    total = json['total'];
+    parcela = json['parcela'];
+    estado = json['estado'];
+    dataLevantamentoCompra = json['data_levantamento'];
+    data = json['created_at'];
+    id = json['id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id_funcionario'] = this.idFuncionario;
+    data['id_cliente'] = this.idCliente;
+    data['total'] = this.total;
+    data['parcela'] = this.parcela;
+    data['estado'] = this.estado;
+    data['data_levantamento'] = this.dataLevantamentoCompra;
+    data['created_at'] = this.data;
+    data['id'] = this.id;
+    return data;
+  }
   }

@@ -121,8 +121,7 @@ class ManipularVenda implements ManipularVendaI {
     var vendaFeita = await _provedorVendaI.pegarVendaDeId(idVenda);
     if (vendaFeita != null) {
       await _manipularPagamentoI.registarListaPagamentos(pagamentos, idVenda);
-      await _manipularSaidaI.registarListaSaidas(
-          itensVenda, idVenda, vendaFeita.data!);
+      await _manipularSaidaI.registarListaSaidas(itensVenda, idVenda, vendaFeita.data!);
       for (var cada in itensVenda) {
         cada.idVenda = idVenda;
         await _manipularItemVendaI.registarItemVenda(cada);

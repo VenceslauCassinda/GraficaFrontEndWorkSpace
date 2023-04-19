@@ -54,6 +54,16 @@ const URL_ATUALIZAR_CLIENTE = "${URL_BASE}atualizarCliente";
 const URL_TODOS_CLIENTE = "${URL_BASE}clientes";
 const URL_REMOVER_CLIENTE = "${URL_BASE}eliminarCliente";
 
+const URL_ADD_PEDIDO = "${URL_BASE}registarPedido";
+const URL_ATUALIZAR_PEDIDO = "${URL_BASE}atualizarPedido";
+const URL_TODOS_PEDIDO = "${URL_BASE}itemsPedido";
+const URL_REMOVER_PEDIDO = "${URL_BASE}eliminarPedido";
+
+const URL_ADD_ITEM_PEDIDO = "${URL_BASE}registarItemPedido";
+const URL_ATUALIZAR_ITEM_PEDIDO = "${URL_BASE}atualizarItemPedido";
+const URL_TODOS_ITEM_PEDIDO = "${URL_BASE}itemsPedido";
+const URL_REMOVER_ITEM_PEDIDO = "${URL_BASE}eliminarItemPedido";
+
 
 class TipoNegocio {
   static const int GROSSO = 1, RETALHO = 2;
