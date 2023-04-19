@@ -56,7 +56,7 @@ const URL_REMOVER_CLIENTE = "${URL_BASE}eliminarCliente";
 
 const URL_ADD_PEDIDO = "${URL_BASE}registarPedido";
 const URL_ATUALIZAR_PEDIDO = "${URL_BASE}atualizarPedido";
-const URL_TODOS_PEDIDO = "${URL_BASE}itemsPedido";
+const URL_TODOS_PEDIDO = "${URL_BASE}pedidos";
 const URL_REMOVER_PEDIDO = "${URL_BASE}eliminarPedido";
 
 const URL_ADD_ITEM_PEDIDO = "${URL_BASE}registarItemPedido";

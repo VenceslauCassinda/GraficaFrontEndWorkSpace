@@ -6,17 +6,19 @@ import 'package:grafica_frontend/dominio/casos_uso/manipular_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/forma_pagamento.dart';
 import 'package:grafica_frontend/fonte_dados/provedores/provedor_pagamento.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_campo.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_forma_pagamento.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/painel_gerente_c.dart';
 
 import '../../../../../../dominio/entidades/estado.dart';
+import '../../../../../../fonte_dados/provedores_net/povedor_net_pagamento.dart';
 
 class PagamentosC extends GetxController {
   RxList<FormaPagamento> lista = RxList<FormaPagamento>();
   late ManipularPagamentoI _manipularPagamentoI;
   PagamentosC() {
-    _manipularPagamentoI = ManipularPagamento(ProvedorPagamento());
+    _manipularPagamentoI = ManipularPagamento(ProvedorNetPagamento());
   }
   @override
   void onInit() async {
@@ -33,7 +35,7 @@ class PagamentosC extends GetxController {
     mostrarDialogoDeLayou(LayoutCampo(
         accaoAoFinalizar: (valor) async {
           var nova =
-              FormaPagamento(estado: Estado.ATIVADO, tipo: 0, descricao: valor);
+              FormaPagamento(estado: Estado.ATIVADO, tipo: "0", descricao: valor);
 
           lista.add(nova);
           voltar();

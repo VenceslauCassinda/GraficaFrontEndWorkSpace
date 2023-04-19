@@ -8,6 +8,7 @@ import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
 import 'package:grafica_frontend/solucoes_uteis/utils.dart';
 import 'package:http/http.dart' as h;
 import '../../recursos/constantes.dart';
+import '../../solucoes_uteis/console.dart';
 import '../erros.dart';
 
 class ProvedorNetVenda implements ProvedorVendaI {
@@ -127,15 +128,13 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Pagamento>> pegarListaTodasPagamentoDividas(DateTime data) {
-    // TODO: implement pegarListaTodasPagamentoDividas
-    throw UnimplementedError();
+  Future<List<Pagamento>> pegarListaTodasPagamentoDividas(DateTime data) async{
+    return <Pagamento>[];
   }
 
   @override
-  Future<List<Pagamento>> pegarListaTodasPagamentoDividasFuncionario(Funcionario funcionario, DateTime data) {
-    // TODO: implement pegarListaTodasPagamentoDividasFuncionario
-    throw UnimplementedError();
+  Future<List<Pagamento>> pegarListaTodasPagamentoDividasFuncionario(Funcionario funcionario, DateTime data)  async{
+    return <Pagamento>[];
   }
 
   @override
@@ -261,9 +260,15 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> todasDividas() {
-    // TODO: implement todasDividas
-    throw UnimplementedError();
+  Future<List<Venda>> todasDividas()  async{
+    var lista = await todas();
+    var dados = <Venda>[];
+    for (var element in lista) {
+      if((element.divida == true)){
+        dados.add(element);
+      }
+    }
+    return dados;
   }
   
 }

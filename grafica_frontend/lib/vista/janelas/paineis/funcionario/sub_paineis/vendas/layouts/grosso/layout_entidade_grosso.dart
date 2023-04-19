@@ -40,7 +40,9 @@ class LayoutEntidadeGrosso extends StatelessWidget {
             ],
           ),
         ),
-        LayoutVendas(visaoGeral: true),
+        Container(
+          height: MediaQuery.of(context).size.height*.50,
+          child: LayoutVendas(visaoGeral: true)),
       ],
     );
   }

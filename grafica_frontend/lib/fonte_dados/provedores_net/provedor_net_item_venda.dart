@@ -53,7 +53,7 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
   @override
   Future<int> registarItemVenda(ItemVenda dado)  async {
     int id = -1;
-    var res = await h.post(Uri.parse("$URL_ADD_ITEM_PEDIDO/${dado.id}/"), 
+    var res = await h.post(Uri.parse("$URL_ADD_ITEM_PEDIDO/"), 
       headers: {
         "Accept": "aplication/json",
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"

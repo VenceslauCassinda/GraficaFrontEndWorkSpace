@@ -49,7 +49,7 @@ class ItemModeloVenda extends StatelessWidget {
                             child: Text(
                                 "Tipo de Item: ${venda.venda ? "Venda" : (venda.encomenda ? "Encomenda" : "Dívida")}"),
                           ),
-                          Text(mostrarCadaProduto(venda.itensVenda ?? [])),
+                          // Text(mostrarCadaProduto(venda.itensVenda ?? [])),
                           Text("Total: ${formatar(venda.total!)} KZ"),
                           Visibility(
                             visible: c.indiceTabActual != 1,

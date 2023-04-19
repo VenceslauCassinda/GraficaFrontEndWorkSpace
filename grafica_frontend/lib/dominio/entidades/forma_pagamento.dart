@@ -1,8 +1,10 @@
 
+import 'dart:convert';
+
 class FormaPagamento{
   int? id;
   int? estado;
-  int? tipo;
+  String? tipo;
   String? descricao;
   FormaPagamento(
       {this.id,

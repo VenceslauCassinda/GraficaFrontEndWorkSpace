@@ -62,13 +62,13 @@ class GavetaNavegacao extends StatelessWidget {
                     metodoQuandoItemClicado: () async {
                       c.irParaPainel(PainelActual.VENDAS);
                     }),
-                // ItemDaGaveta(
-                //     cor: branca,
-                //     icone: Icons.monetization_on,
-                //     titulo: "Caixa",
-                //     metodoQuandoItemClicado: () async {
-                //       c.irParaPainel(PainelActual.SAIDA_CAIXA);
-                //     }),
+                ItemDaGaveta(
+                    cor: branca,
+                    icone: Icons.monetization_on,
+                    titulo: "Forma de Pagamento",
+                    metodoQuandoItemClicado: () async {
+                      c.irParaPainel(PainelActual.PAGAMENTOS);
+                    }),
                 ItemDaGaveta(
                     cor: branca,
                     icone: Icons.people,
@@ -97,13 +97,13 @@ class GavetaNavegacao extends StatelessWidget {
                     metodoQuandoItemClicado: () async {
                       c.irParaPainel(PainelActual.DIVIDAS_GERAIS);
                     }),
-                // ItemDaGaveta(
-                //     cor: branca,
-                //     icone: Icons.people,
-                //     titulo: "Clientes",
-                //     metodoQuandoItemClicado: () async {
-                //       c.irParaPainel(PainelActual.CLIENTES);
-                //     }),
+                ItemDaGaveta(
+                    cor: branca,
+                    icone: Icons.people,
+                    titulo: "Clientes",
+                    metodoQuandoItemClicado: () async {
+                      c.irParaPainel(PainelActual.CLIENTES);
+                    }),
                 ItemDaGaveta(
                     cor: branca,
                     icone: Icons.arrow_circle_down,

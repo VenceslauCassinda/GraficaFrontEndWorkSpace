@@ -68,12 +68,16 @@ class CorpoGerente extends StatelessWidget {
         replacement: Scaffold(
           body: Row(
             children: [
-              Expanded(
-                  flex: 1,
-                  child: GavetaNavegacao(
-                    linkImagem: "",
-                    c: _c,
-                  )),
+              Obx(
+                () {
+                  return Expanded(
+                      flex: _c.painelActual.value.indicadorPainel == PainelActual.PRODUTOS ? 1:2,
+                      child: GavetaNavegacao(
+                        linkImagem: "",
+                        c: _c,
+                      ));
+                }
+              ),
               Expanded(
                 flex: 5,
                 child: pegarLayoutPainel(),

@@ -17,6 +17,7 @@ import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/provedores/provedor_pagamento.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/formato_dado.dart';
 import 'package:grafica_frontend/solucoes_uteis/utils.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/recepcoes/layouts/layouts_produtos_completo.dart';
@@ -51,12 +52,15 @@ import '../../../../../../../fonte_dados/provedores/provedor_receccao.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_saida.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_stock.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_venda.dart';
+import '../../../../../../../fonte_dados/provedores_net/povedor_net_pagamento.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_entrada.dart';
+import '../../../../../../../fonte_dados/provedores_net/provedor_net_item_venda.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_preco.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_produto.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_saida.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_stock.dart';
+import '../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../../solucoes_uteis/geradores.dart';
 import '../../../../gerente/layouts/layout_forma_pagamento.dart';
 import 'detalhes_venda.dart';
@@ -80,24 +84,26 @@ class VendasC extends GetxController {
   late ManipularRececcaoI _manipularRececcaoI;
   late ManipularDividaI _manipularDividaI;
   late ManipularPreco manipularPreco;
+  late ManipularCliente manipularCliente;
 
   VendasC(this.data, this.funcionario) {
+    manipularCliente = ManipularCliente(ProvedorNetCliente());
     var provedorNetProduto = ProvedorNetProduto();
     _manipularStockI = ManipularStock(ProvedorNetStock());
     var maniSaida = ManipularSaida(ProvedorNetSaida(), _manipularStockI);
     manipularPreco = ManipularPreco(ProvedorNetPreco());
     _manipularProdutoI =
         ManipularProduto(provedorNetProduto, _manipularStockI, manipularPreco);
-    _manipularPagamentoI = ManipularPagamento(ProvedorPagamento());
+    _manipularPagamentoI = ManipularPagamento(ProvedorNetPagamento());
     _manipularItemVendaI = ManipularItemVenda(
-        ProvedorItemVenda(),
+        ProvedorNetItemVenda(),
         ManipularProduto(provedorNetProduto, _manipularStockI, manipularPreco),
         _manipularStockI);
     _manipularVendaI = ManipularVenda(
-        ProvedorVenda(),
+        ProvedorNetVenda(),
         maniSaida,
-        ManipularPagamento(ProvedorPagamento()),
-        ManipularCliente(ProvedorNetCliente()),
+        ManipularPagamento(ProvedorNetPagamento()),
+        manipularCliente,
         _manipularStockI,
         _manipularItemVendaI);
     _manipularRececcaoI = ManipularRececcao(
@@ -110,7 +116,7 @@ class VendasC extends GetxController {
 
   @override
   void onInit() async {
-    // await pegarLista();
+    await pegarLista();
     // await calcularRececcoesPagas();
     // await calcularDividasPagasHoje();
     super.onInit();
@@ -257,9 +263,10 @@ class VendasC extends GetxController {
   }
 
   Future pegarLista() async {
-    lista.clear();
     var res = await _manipularVendaI.pegarLista(funcionario, data);
+    var clientes = await manipularCliente.todos();
     for (var cada in res) {
+      cada.cliente = clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
       totalCaixa.value += cada.total ?? 0;
     }
@@ -271,7 +278,9 @@ class VendasC extends GetxController {
   Future pegarListaVendas() async {
     lista.clear();
     var res = await _manipularVendaI.pegarListaVendas(funcionario, data);
+    var clientes = await manipularCliente.todos();
     for (var cada in res) {
+      cada.cliente = clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
     }
   }
@@ -279,7 +288,9 @@ class VendasC extends GetxController {
   Future pegarListaEncomendas() async {
     lista.clear();
     var res = await _manipularVendaI.pegarListaEncomendas(funcionario, data);
+    var clientes = await manipularCliente.todos();
     for (var cada in res) {
+      cada.cliente = clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
     }
   }
@@ -287,7 +298,9 @@ class VendasC extends GetxController {
   Future pegarListaDividas() async {
     lista.clear();
     var res = await _manipularVendaI.pegarListaDividas(funcionario, data);
+    var clientes = await manipularCliente.todos();
     for (var cada in res) {
+      cada.cliente = clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
     }
   }

@@ -73,6 +73,7 @@ class ProvedorVenda implements ProvedorVendaI {
     return await _dao.pegarListaPagamentoDaData(data);
   }
 
+
   @override
   Future<List<Venda>> todasDividas() async {
     return await _dao.todasDividas();

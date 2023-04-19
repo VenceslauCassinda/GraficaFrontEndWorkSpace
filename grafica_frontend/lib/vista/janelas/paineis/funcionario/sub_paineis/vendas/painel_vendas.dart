@@ -68,7 +68,7 @@ class PainelVendas extends StatelessWidget {
               child: Obx(() {
                 return Text(
                   "CAIXA: ${formatar(_c.totalCaixa.value)} KZ",
-                  style: const TextStyle(color: primaryColor, fontSize: 30),
+                  style: const TextStyle(color: primaryColor, fontSize: 15),
                 );
               }),
             ),
@@ -77,7 +77,7 @@ class PainelVendas extends StatelessWidget {
               child: Obx(
                 () => Text(
                   "DÍVIDAS PAGAS: ${formatar(_c.totalDividaPagas.value)} KZ",
-                  style: const TextStyle(color: primaryColor, fontSize: 30),
+                  style: const TextStyle(color: primaryColor, fontSize: 15),
                 ),
               ),
             ),
@@ -100,7 +100,7 @@ class PainelVendas extends StatelessWidget {
                       }
                       return antigoP;
                     }) + antigoV)))} KZ",
-                style: const TextStyle(color: primaryColor, fontSize: 30),
+                style: const TextStyle(color: primaryColor, fontSize: 15),
               ),
             ),
             Container(
@@ -120,7 +120,7 @@ class PainelVendas extends StatelessWidget {
                       }
                       return antigoP;
                     }) + antigoV)))} KZ",
-                style: const TextStyle(color: primaryColor, fontSize: 30),
+                style: const TextStyle(color: primaryColor, fontSize: 15),
               ),
             ),
           ],
@@ -138,9 +138,8 @@ class PainelVendas extends StatelessWidget {
           child: LayoutAccoes(
               permissao: permissao, funcionarioC: funcionarioC, c: _c),
         ),
-        const Spacer(),
         Container(
-          margin: const EdgeInsets.all(20),
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: ModeloButao(
             corButao: primaryColor,
             corTitulo: Colors.white,

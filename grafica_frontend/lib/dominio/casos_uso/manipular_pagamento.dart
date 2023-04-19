@@ -11,7 +11,7 @@ class ManipularPagamento implements ManipularPagamentoI {
   ManipularPagamento(this._provedorPagamentoI);
   @override
   Future<List<Pagamento>> pegarLista() async {
-    return await _provedorPagamentoI.pegarLista();
+    return await _provedorPagamentoI.pegarListaPagamento();
   }
 
   @override

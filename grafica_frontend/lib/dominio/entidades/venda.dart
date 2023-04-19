@@ -1,6 +1,7 @@
 import 'package:get/get.dart' as g;
 import 'package:grafica_frontend/dominio/entidades/item_venda.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
+import 'package:grafica_frontend/solucoes_uteis/utils.dart';
 import 'cliente.dart';
 import 'funcionario.dart';
 import 'pagamento.dart';
@@ -27,8 +28,8 @@ class Venda {
   double? total;
   double? parcela;
   bool get divida => (total != parcela);
-  bool get encomenda => (data != dataLevantamentoCompra);
-  bool get venda => !divida;
+  bool get encomenda => comapararDatas(data!, dataLevantamentoCompra!) == false;
+  bool get venda => comapararDatas(data!, dataLevantamentoCompra!) == true;
 
   var linhaPintada = false.obs;
   var linhaDestacada = false.obs;
@@ -55,8 +56,8 @@ class Venda {
     total = json['total'];
     parcela = json['parcela'];
     estado = json['estado'];
-    dataLevantamentoCompra = json['data_levantamento'];
-    data = json['created_at'];
+    dataLevantamentoCompra = DateTime.parse(json['data_levantamento']);
+    data = DateTime.parse(json['created_at']);
     id = json['id'];
   }
 

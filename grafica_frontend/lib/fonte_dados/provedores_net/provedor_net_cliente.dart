@@ -11,13 +11,14 @@ import '../erros.dart';
 class ProvedorNetCliente implements ProvedorClienteI {
   @override
   Future<bool> actualizaCliente(Cliente dado) async {
-    var res = await h.post(Uri.parse("$URL_ATUALIZAR_SAIDA/${dado.id}/"), 
+    var res = await h.post(Uri.parse("$URL_ATUALIZAR_CLIENTE/${dado.id}/"), 
       headers: {
         "Accept": "aplication/json",
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
       }, 
       body: {
         "nome_completo": dado.idUsuario??"Sem Nome",
+        "numero": dado.numero??"Sem Númro",
         "id_usuario": "${dado.idUsuario??-1}",
         "estado": "${dado.estado}",
       }
@@ -53,7 +54,8 @@ class ProvedorNetCliente implements ProvedorClienteI {
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
       }, 
       body: {
-        "nome_completo": dado.idUsuario??"Sem Nome",
+        "nome_completo": dado.nome??"Sem Nome",
+        "numero": dado.numero??"Sem Númro",
         "id_usuario": "${dado.idUsuario??-1}",
         "estado": "${dado.estado}",
       }

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_cliente_I.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_funcionario_i.dart';
@@ -24,8 +23,6 @@ import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
-import 'package:grafica_frontend/fonte_dados/provedores/provedor_item_venda.dart';
-import 'package:grafica_frontend/fonte_dados/provedores/provedor_venda.dart';
 import 'package:grafica_frontend/solucoes_uteis/geradores.dart';
 
 import '../../../../../../../../../contratos/casos_uso/manipular_pagamento_i.dart';
@@ -33,14 +30,16 @@ import '../../../../../../../../../dominio/casos_uso/manipular_cliente.dart';
 import '../../../../../../../../../dominio/casos_uso/manipular_pagamento.dart';
 import '../../../../../../../../../dominio/casos_uso/manipular_venda.dart';
 import '../../../../../../../../../dominio/entidades/forma_pagamento.dart';
-import '../../../../../../../../../fonte_dados/provedores/provedor_pagamento.dart';
+import '../../../../../../../../../fonte_dados/provedores_net/povedor_net_pagamento.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_funcionario.dart';
+import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_item_venda.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_preco.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_produto.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_saida.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_stock.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_usuario.dart';
+import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../gerente/layouts/layout_forma_pagamento.dart';
 import '../../vendas_c.dart';
 
@@ -64,14 +63,14 @@ class MesaVendaC extends GetxController {
   MesaVendaC(this.data, this.funcionario) {
     _manipularClienteI = ManipularCliente(ProvedorNetCliente());
     _manipularStockI = ManipularStock(ProvedorNetStock());
-    _manipularPagamentoI = ManipularPagamento(ProvedorPagamento());
+    _manipularPagamentoI = ManipularPagamento(ProvedorNetPagamento());
     _manipularItemVendaI = ManipularItemVenda(
-        ProvedorItemVenda(),
+        ProvedorNetItemVenda(),
         ManipularProduto(ProvedorNetProduto(), _manipularStockI,
             ManipularPreco(ProvedorNetPreco())),
         ManipularStock(ProvedorNetStock()));
     _manipularVendaI = ManipularVenda(
-        ProvedorVenda(),
+        ProvedorNetVenda(),
         ManipularSaida(ProvedorNetSaida(), _manipularStockI),
         _manipularPagamentoI,
         _manipularClienteI,
@@ -300,10 +299,11 @@ class MesaVendaC extends GetxController {
     dataLevantamento.value ??= data;
     try {
       var cliente = Cliente(
+        idUsuario: -1,
           estado: Estado.ATIVADO,
           nome: nomeCliente.value,
           numero: telefoneCliente.value);
-      vendasC.lista.add(Venda(produto: null,
+      var venda = Venda(produto: null,
       idProduto: null,
           itensVenda: listaItensVenda,quantidadeVendida: null,
           pagamentos: listaPagamentos,
@@ -314,11 +314,13 @@ class MesaVendaC extends GetxController {
           dataLevantamentoCompra: dataLevantamento.value,
           total: aPagar,
           cliente: cliente,
-          parcela: pago));
-      voltar();
+          parcela: pago);
       var id = await _manipularVendaI.vender(listaItensVenda, listaPagamentos,
           aPagar, funcionario, cliente, data, dataLevantamento.value!, pago,-1, 0);
-      vendasC.navegar(vendasC.indiceTabActual);
+          venda.id = id;
+      vendasC.lista.insert(0,venda);
+      voltar();
+      // vendasC.navegar(vendasC.indiceTabActual);
     } on Erro catch (e) {
       mostrarDialogoDeInformacao(e.sms);
     }

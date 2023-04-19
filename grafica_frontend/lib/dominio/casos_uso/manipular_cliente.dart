@@ -15,7 +15,7 @@ class ManipularCliente implements ManipularClienteI {
   @override
   Future<int> registarCliente(Cliente dado) async {
     var teste = await existeCliente(dado.nome!, dado.numero!);
-    if (teste == -1) {
+    if (teste <=0) {
       teste = await _provedorClienteI.adicionarCliente(dado);
     }
     return teste;

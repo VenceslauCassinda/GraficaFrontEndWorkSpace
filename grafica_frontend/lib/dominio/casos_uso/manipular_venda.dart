@@ -48,7 +48,6 @@ class ManipularVenda implements ManipularVendaI {
       int idProduto,
       int quantidadeVendida) async {
     var idCliente = await _manipularClienteI.registarCliente(cliente);
-
     var novaVenda = Venda(
         estado: Estado.ATIVADO,
         idFuncionario: funcionario.id,
