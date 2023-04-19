@@ -64,6 +64,16 @@ const URL_ATUALIZAR_ITEM_PEDIDO = "${URL_BASE}atualizarItemPedido";
 const URL_TODOS_ITEM_PEDIDO = "${URL_BASE}itemsPedido";
 const URL_REMOVER_ITEM_PEDIDO = "${URL_BASE}eliminarItemPedido";
 
+const URL_ADD_PAGAMENTO = "${URL_BASE}registarPagamento";
+const URL_ATUALIZAR_PAGAMENTO = "${URL_BASE}atualizarPagamento";
+const URL_TODOS_PAGAMENTO = "${URL_BASE}pagamentos";
+const URL_REMOVER_PAGAMENTO = "${URL_BASE}eliminarPagamento";
+
+const URL_ADD_FORMA_PAGAMENTO = "${URL_BASE}registarFormaPagamento";
+const URL_ATUALIZAR_FORMA_PAGAMENTO = "${URL_BASE}atualizarFormaPagamento";
+const URL_TODOS_FORMA_PAGAMENTO = "${URL_BASE}formasPagamento";
+const URL_REMOVER_FORMA_PAGAMENTO = "${URL_BASE}eliminarFormaPagamento";
+
 
 class TipoNegocio {
   static const int GROSSO = 1, RETALHO = 2;

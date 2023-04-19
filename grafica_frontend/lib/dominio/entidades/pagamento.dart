@@ -22,4 +22,21 @@ class Pagamento {
       this.idVenda,
       required this.valor});
   
+  Pagamento.fromJson(Map json) {
+    idFormaPagamento = json['id_forma_pagamento'];
+    idVenda = json['id_venda'];
+    estado = json['estado'];
+    valor = json['valor'];
+    id = json['id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id_forma_pagamento'] = this.idFormaPagamento;
+    data['id_venda'] = this.idVenda;
+    data['estado'] = this.estado;
+    data['valor'] = this.valor;
+    data['id'] = this.id;
+    return data;
+  }
 }

@@ -57,4 +57,16 @@ class ProvedorPagamento implements ProvedorPagamentoI {
   Future<int> registarPagamentoFinal(PagamentoFinal pagamentoFinal) async {
     return await _dao.adicionarPagamentoFinal(pagamentoFinal);
   }
+  
+  @override
+  Future<int> removerPagamentoDeId(int idForma) {
+    // TODO: implement removerPagamentoDeId
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<List<Pagamento>> pegarListaPagamento() {
+    // TODO: implement pegarListaPagamento
+    throw UnimplementedError();
+  }
 }
