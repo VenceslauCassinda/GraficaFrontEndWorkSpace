@@ -1,5 +1,6 @@
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:responsive_layout_builder/responsive_layout_builder.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_funcionario_i.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_fincionario.dart';
@@ -19,7 +20,7 @@ import '../gerente/sub_paineis/clientes/painel_c.dart';
 class PainelFuncionarioC extends GetxController {
   var painelActual = PainelActual(indicadorPainel: PainelActual.NENHUM, valor: null).obs;
   late DateTime data;
-  late Funcionario funcionarioActual;
+  Funcionario? funcionarioActual;
   late ManipularFuncionarioI _manipularFuncionarioI;
   PainelFuncionarioC() {
     data = DateTime.now();
@@ -34,9 +35,10 @@ class PainelFuncionarioC extends GetxController {
   }
 
   Future<Funcionario> inicializarFuncionario() async {
-    return funcionarioActual =
+    funcionarioActual =
         await _manipularFuncionarioI.pegarFuncionarioDoUsuarioDeId(
             (pegarAplicacaoC().pegarUsuarioActual())!.id!);
+            return funcionarioActual!;
   }
 
   void terminarSessao() {
@@ -73,9 +75,10 @@ class PainelFuncionarioC extends GetxController {
     }
     painelActual.value = PainelActual(indicadorPainel: indice, valor: valor);
 
-    ScreenSize tela = Get.find();
-    if (tela.tablet != null||tela.mobile != null) {
-      voltar();
-    }
+      voltar(); 
+    // ScreenSize tela = Get.find();
+    // if (tela.tablet != null||tela.mobile != null) {
+    //   voltar();
+    // }
   }
 }

@@ -36,8 +36,10 @@ class JanelaCadastroC extends GetxController {
     }
 
     try {
+      mostrarCarregandoDialogoDeInformacao("");
       var novoUsuario = await _manipularFuncionarioI.adicionarFuncionario(
           Funcionario(nomeCompelto: nome, palavraPasse: palavraPasse));
+          voltar();
       mostrarDialogoDeInformacao("""
       Cadastro realizado!\n
       Seu nome de Usuario é: ${novoUsuario.nomeUsuario}
@@ -45,11 +47,12 @@ class JanelaCadastroC extends GetxController {
         AplicacaoC.logar(novoUsuario);
       });
     } catch (e) {
-      mostrar(e);
+      voltar();
       if (e is Erro) {
         mostrarSnack(e.sms);
-      } else {
-        mostrarDialogoDeInformacao("Erro Desconhecido no Cadastro");
+      }if (e.toString().contains("XMLHttpRequest")){
+        mostrarSnack("${e.toString()}\nServidor Indisponível!");
+
       }
     }
   }

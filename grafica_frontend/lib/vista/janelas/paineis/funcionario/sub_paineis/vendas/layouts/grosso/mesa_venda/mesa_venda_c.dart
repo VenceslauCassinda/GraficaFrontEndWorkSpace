@@ -296,6 +296,7 @@ class MesaVendaC extends GetxController {
           "Venda alguma quantidade dos produtos adicionados!");
       return;
     }
+    mostrarCarregandoDialogoDeInformacao("Finalizando a Venda");
     dataLevantamento.value ??= data;
     try {
       var cliente = Cliente(

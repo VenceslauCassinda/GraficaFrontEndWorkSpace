@@ -37,12 +37,12 @@ class PainelFuncionario extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(context);
     return ResponsiveLayoutBuilder(builder: (context, size) {
-    Get.put(size);
+      Get.put(size);
       return Scaffold(
         drawer: !Responsidade.isDesktop(context)
             ? Container(
                 color: branca,
-                width: MediaQuery.of(context).size.width * .5,
+                width: MediaQuery.of(context).size.width * .2,
                 child: GavetaNavegacao(
                   linkImagem: "",
                   c: _c,
@@ -59,7 +59,7 @@ class PainelFuncionario extends StatelessWidget {
             : Row(
                 children: [
                   Expanded(
-                      flex: 2,
+                      flex: 1,
                       child: GavetaNavegacao(
                         linkImagem: "",
                         c: _c,
@@ -74,66 +74,73 @@ class PainelFuncionario extends StatelessWidget {
     });
   }
 
-  Obx pegarLayoutPainelAtual() {
-    return Obx(() {
-      if (_c.painelActual.value.indicadorPainel ==
-          PainelActual.VENDAS_FUNCIONARIOS) {
-        return PainelVendas(
-          funcionarioC: _c,
-          permissao: (_c.funcionarioActual).nivelAcesso ==
-                  NivelAcesso.FUNCIONARIO &&
-              comapararDatas(
-                  DateTime.now(), _c.painelActual.value.valor![1] as DateTime),
-          data: _c.painelActual.value.valor![1] as DateTime,
-          funcionario: _c.painelActual.value.valor![0] as Funcionario,
-          accaoAoVoltar: () {
-            _c.irParaPainel(PainelActual.INICIO);
-          },
-        );
+  pegarLayoutPainelAtual() {
+    return Obx( () {
+      _c.painelActual.value.indicadorPainel;
+        return FutureBuilder<Funcionario>(
+            future: _c.inicializarFuncionario(),
+            builder: (c, s) {
+              if (_c.painelActual.value.indicadorPainel ==
+                  PainelActual.VENDAS_FUNCIONARIOS) {
+                return PainelVendas(
+                  funcionarioC: _c,
+                  permissao: (_c.funcionarioActual!).nivelAcesso ==
+                          NivelAcesso.FUNCIONARIO &&
+                      comapararDatas(DateTime.now(),
+                          _c.painelActual.value.valor![1] as DateTime),
+                  data: _c.painelActual.value.valor![1] as DateTime,
+                  funcionario: _c.painelActual.value.valor![0] as Funcionario,
+                  accaoAoVoltar: () {
+                    _c.irParaPainel(PainelActual.INICIO);
+                  },
+                );
+              }
+              if (_c.painelActual.value.indicadorPainel ==
+                      PainelActual.DIVIDAS_GERAIS ||
+                  _c.painelActual.value.indicadorPainel ==
+                      PainelActual.ENCOMENDAS_GERAIS) {
+                return PainelDividas(
+                  funcionario: _c.funcionarioActual!,
+                  accaoAoVoltar: () {
+                    _c.irParaPainel(PainelActual.INICIO);
+                  },
+                );
+              }
+              if (_c.painelActual.value.indicadorPainel ==
+                  PainelActual.DINHEIRO_SOBRA) {
+                return PainelDinheiroSobra(
+                  funcionario: _c.funcionarioActual!,
+                  c: _c,
+                );
+              }
+              if (_c.painelActual.value.indicadorPainel ==
+                  PainelActual.SAIDA_CAIXA) {
+                return PainelSaidaCaixa(
+                  _c,
+                  _c.funcionarioActual!,
+                );
+              }
+              if (_c.painelActual.value.indicadorPainel == PainelActual.CLIENTES) {
+                return PainelClientes(
+                  _c,
+                  _c.funcionarioActual!,
+                  accaoAoVoltar: () {
+                    _c.irParaPainel(PainelActual.FUNCIONARIOS);
+                  },
+                );
+              }
+              return PainelVendas(
+                data: DateTime.now(),
+                funcionario: _c.funcionarioActual!,
+                funcionarioC: _c,
+                permissao:
+                    (_c.funcionarioActual!).nivelAcesso == NivelAcesso.FUNCIONARIO,
+                aoTerminarSessao: () {
+                  _c.terminarSessao();
+                },
+              );
+            });
       }
-      if (_c.painelActual.value.indicadorPainel ==
-              PainelActual.DIVIDAS_GERAIS ||
-          _c.painelActual.value.indicadorPainel ==
-              PainelActual.ENCOMENDAS_GERAIS) {
-        return PainelDividas(
-          funcionario: _c.funcionarioActual,
-          accaoAoVoltar: () {
-            _c.irParaPainel(PainelActual.INICIO);
-          },
-        );
-      }
-      if (_c.painelActual.value.indicadorPainel ==
-          PainelActual.DINHEIRO_SOBRA) {
-        return PainelDinheiroSobra(
-          funcionario: _c.funcionarioActual,
-          c: _c,
-        );
-      }
-      if (_c.painelActual.value.indicadorPainel == PainelActual.SAIDA_CAIXA) {
-        return PainelSaidaCaixa(
-          _c,
-          _c.funcionarioActual,
-        );
-      }
-      if (_c.painelActual.value.indicadorPainel == PainelActual.CLIENTES) {
-        return PainelClientes(
-          _c,
-          _c.funcionarioActual,
-          accaoAoVoltar: () {
-            _c.irParaPainel(PainelActual.FUNCIONARIOS);
-          },
-        );
-      }
-      return PainelVendas(
-        data: DateTime.now(),
-        funcionario: _c.funcionarioActual,
-        funcionarioC: _c,
-        permissao:
-            (_c.funcionarioActual).nivelAcesso == NivelAcesso.FUNCIONARIO,
-        aoTerminarSessao: () {
-          _c.terminarSessao();
-        },
-      );
-    });
+    );
   }
 }

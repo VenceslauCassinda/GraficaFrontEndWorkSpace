@@ -29,7 +29,7 @@ class Venda {
   double? parcela;
   bool get divida => (total != parcela);
   bool get encomenda => comapararDatas(data!, dataLevantamentoCompra!) == false;
-  bool get venda => comapararDatas(data!, dataLevantamentoCompra!) == true;
+  bool get venda => encomenda == true && divida == false;
 
   var linhaPintada = false.obs;
   var linhaDestacada = false.obs;

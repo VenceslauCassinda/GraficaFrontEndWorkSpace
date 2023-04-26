@@ -11,24 +11,22 @@ import 'package:http/http.dart' as h;
 
 class ProvedorNetUsuario implements ProvedorUsuarioI {
   @override
-  Future<void> actualizarUsuario(Usuario usuario)async {
+  Future<void> actualizarUsuario(Usuario usuario) async {
     var url = (usuario.palavraPasse == null || usuario.palavraPasse!.isEmpty)
-     ? URL_ATUALIZAR_USUARIO : URL_ATUALIZAR_USUARIO_COM_PASS;
-    var res = await h.post(Uri.parse("$url/${usuario.id}/"), 
-      headers: {
-        "Accept": "aplication/json",
-        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
-      }, 
-      body: {
-        "name": usuario.nomeUsuario??"",
-        "estado": "${usuario.estado}",
-        "nivel_acesso": "${usuario.nivelAcesso}",
-        "logado": "${usuario.logado == true ? 1 : 2}",
-        "password": usuario.palavraPasse??"",
-      }
-    );
+        ? URL_ATUALIZAR_USUARIO
+        : URL_ATUALIZAR_USUARIO_COM_PASS;
+    var res = await h.post(Uri.parse("$url/${usuario.id}/"), headers: {
+      "Accept": "aplication/json",
+      "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+    }, body: {
+      "name": usuario.nomeUsuario ?? "",
+      "estado": "${usuario.estado}",
+      "nivel_acesso": "${usuario.nivelAcesso}",
+      "logado": "${usuario.logado == true ? 1 : 2}",
+      "password": usuario.palavraPasse ?? "",
+    });
     switch (res.statusCode) {
-      case 200: 
+      case 200:
         break;
       case 422:
         var dado = jsonDecode(res.body);
@@ -41,6 +39,8 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -51,20 +51,17 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
     if (await existeUsuarioComNomeUsuario(usuario.nomeUsuario!)) {
       throw ErroUsuarioJaExiste("NOME DE USUARIO JA EXISTENTE!");
     }
-    
+
     int id = -1;
-    var res = await h.post(Uri.parse(URL_CADASTRO_USUARIO), 
-      headers: {
-        "Accept": "aplication/json"
-      }, 
-      body: {
-        "name": usuario.nomeUsuario??"",
-        "estado": "1",
-        "nivel_acesso": "0",
-        "logado": "0",
-        "password": usuario.palavraPasse??"",
-      }
-    );
+    var res = await h.post(Uri.parse(URL_CADASTRO_USUARIO), headers: {
+      "Accept": "aplication/json"
+    }, body: {
+      "name": usuario.nomeUsuario ?? "",
+      "estado": "1",
+      "nivel_acesso": "0",
+      "logado": "0",
+      "password": usuario.palavraPasse ?? "",
+    });
     switch (res.statusCode) {
       case 200:
         var dado = jsonDecode(res.body);
@@ -76,6 +73,8 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
         throw Erro("Erro de Servidor!\n${dado["message"]}");
       case 404:
         throw Erro("Rota Web Não Encontrada!");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -91,17 +90,16 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
   }
 
   @override
-  Future<Usuario?> fazerLogin(String nomeUsuario, String palavraPasse) async{
+  Future<Usuario?> fazerLogin(String nomeUsuario, String palavraPasse) async {
     int id = -1;
-    var res = await h.post(Uri.parse(URL_LOGIN), 
-      headers: {
-        "Accept": "aplication/json"
-      }, 
-      body: {
-        "name": "$nomeUsuario",
-        "password": "$palavraPasse",
-      }
-    );
+    var res = await h.post(Uri.parse(URL_LOGIN), headers: {
+      "Accept": "aplication/json"
+    }, body: {
+      "name": "$nomeUsuario",
+      "password": "$palavraPasse",
+    });
+    mostrar(res.statusCode);
+    mostrar(res.body);
     switch (res.statusCode) {
       case 200:
         var dado = jsonDecode(res.body);
@@ -116,6 +114,8 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
       case 403:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -124,7 +124,7 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
   }
 
   @override
-  Future<Usuario?> pegarUsuario(int id)async{
+  Future<Usuario?> pegarUsuario(int id) async {
     var lista = await pegarLista();
     return lista.firstWhereOrNull((element) => element.id == id);
   }
@@ -150,6 +150,8 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
         break;
       case 404:
         throw Erro("Rota Web Não Encontrada!");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -163,20 +165,18 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
   }
 
   @override
-  Future<void> removerUsuario(Usuario usuario) async{
-    var res = await h.post(Uri.parse("$URL_REMOVER_USUARIO/${usuario.id}/"), 
-      headers: {
-        "Accept": "aplication/json",
-        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
-      }, 
-      body: {
-        "id": "${pegarAplicacaoC().pegarUsuarioActual()?.id??-1}",
-        "nivel_acesso": "${usuario.nivelAcesso}",
-      }
-    );
+  Future<void> removerUsuario(Usuario usuario) async {
+    var res = await h
+        .post(Uri.parse("$URL_REMOVER_USUARIO/${usuario.id}/"), headers: {
+      "Accept": "aplication/json",
+      "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+    }, body: {
+      "id": "${pegarAplicacaoC().pegarUsuarioActual()?.id ?? -1}",
+      "nivel_acesso": "${usuario.nivelAcesso}",
+    });
     // mostrar(res.body);
     switch (res.statusCode) {
-      case 200: 
+      case 200:
         var dado = jsonDecode(res.body);
         mostrar(dado);
         break;
@@ -191,22 +191,25 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
   }
 
   @override
-  Future<void> terminarSessao(Usuario usuario) async{
-    var res = await h.post(Uri.parse(URL_TERMINAR_SESSAO), 
+  Future<void> terminarSessao(Usuario usuario) async {
+    var res = await h.post(
+      Uri.parse(URL_TERMINAR_SESSAO),
       headers: {
         "Accept": "aplication/json",
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
       },
     );
     switch (res.statusCode) {
-      case 200: 
-      TOKEN_USUARIO_ATUAL = "SemToken";
+      case 200:
+        TOKEN_USUARIO_ATUAL = "SemToken";
         break;
       case 422:
         var dado = jsonDecode(res.body);
@@ -219,6 +222,8 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }

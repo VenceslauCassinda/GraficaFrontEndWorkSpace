@@ -40,6 +40,8 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+        case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -84,6 +86,8 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+        case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -114,6 +118,8 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+        case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -124,7 +130,7 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
   Future<List<ItemVenda>> todos()async{
     var lista = <ItemVenda>[];
     var res = await h.get(
-      Uri.parse(URL_TODOS_CLIENTE),
+      Uri.parse(URL_TODOS_ITEM_PEDIDO),
       headers: {
         "Accept": "aplication/json",
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
@@ -155,6 +161,8 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+        case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }

@@ -39,6 +39,8 @@ class ProvedorNetProduto implements ProvedorProdutoI{
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+        case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -75,6 +77,8 @@ class ProvedorNetProduto implements ProvedorProdutoI{
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+        case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -130,6 +134,8 @@ class ProvedorNetProduto implements ProvedorProdutoI{
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+        case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -167,6 +173,8 @@ class ProvedorNetProduto implements ProvedorProdutoI{
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+        case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }

@@ -40,6 +40,7 @@ import '../../../../../../../dominio/casos_uso/manipular_saida.dart';
 import '../../../../../../../dominio/casos_uso/manipular_venda.dart';
 import '../../../../../../../dominio/entidades/estado.dart';
 import '../../../../../../../dominio/entidades/forma_pagamento.dart';
+import '../../../../../../../dominio/entidades/item_venda.dart';
 import '../../../../../../../dominio/entidades/pagamento.dart';
 import '../../../../../../../dominio/entidades/preco.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_cliente.dart';
@@ -156,6 +157,7 @@ class VendasC extends GetxController {
   }
 
   void navegar(int indice) async {
+    reiniciarValores();
     indiceTabActual = indice;
     if (indice == 0) {
       await pegarLista();
@@ -170,6 +172,13 @@ class VendasC extends GetxController {
       await pegarListaDividas();
     }
     await pegarTotalDividas();
+  }
+
+  void reiniciarValores() {
+    lista.clear();
+    totalCaixa.value = 0;
+    totalDividaPagas.value = 0;
+    receccoesPagas.value = 0;
   }
 
   void aoPesquisarVenda(String f) async {
@@ -266,7 +275,8 @@ class VendasC extends GetxController {
     var res = await _manipularVendaI.pegarLista(funcionario, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
-      cada.cliente = clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
+      cada.cliente =
+          clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
       totalCaixa.value += cada.total ?? 0;
     }
@@ -276,32 +286,37 @@ class VendasC extends GetxController {
   }
 
   Future pegarListaVendas() async {
-    lista.clear();
     var res = await _manipularVendaI.pegarListaVendas(funcionario, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
-      cada.cliente = clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
-      lista.add(cada);
+      if (cada.venda == true) {
+        cada.cliente = clientes
+            .firstWhereOrNull((element) => element.id == cada.idCliente);
+        lista.add(cada);
+        totalCaixa.value += cada.total ?? 0;
+      }
     }
   }
 
   Future pegarListaEncomendas() async {
-    lista.clear();
     var res = await _manipularVendaI.pegarListaEncomendas(funcionario, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
-      cada.cliente = clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
+      cada.cliente =
+          clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
+      totalCaixa.value += cada.total ?? 0;
     }
   }
 
   Future pegarListaDividas() async {
-    lista.clear();
     var res = await _manipularVendaI.pegarListaDividas(funcionario, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
-      cada.cliente = clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
+      cada.cliente =
+          clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
+      totalCaixa.value += cada.total ?? 0;
     }
   }
 
@@ -528,14 +543,24 @@ class VendasC extends GetxController {
     for (var cada in list) {
       cada.stock = await _manipularStockI.pegarStockDoProdutoDeId(cada.id!);
       var precos = (await manipularPreco.pegarPrecoProdutoDeId(cada.id!));
-      if(precos.isEmpty) {
-        mostrarSnack("Produto ${cada.nome??"Sem Nome"} sem Preço de Venda");
-      }else{
-        cada.precoGeral =
-            precos[0].preco!;
-
+      if (precos.isEmpty) {
+        mostrarSnack("Produto ${cada.nome ?? "Sem Nome"} sem Preço de Venda");
+      } else {
+        cada.precoGeral = precos[0].preco!;
       }
     }
     return list;
+  }
+
+  Future<List<ItemVenda>> pegarItensVenda(Venda venda) async{
+    var itens = <ItemVenda>[];
+    var todos = await _manipularItemVendaI.todos();
+    for (var cada in todos) {
+      if (cada.idVenda == venda.id) {
+        cada.produto =  await _manipularProdutoI.pegarProdutoDeId(cada.idProduto!);
+        itens.add(cada);
+      }
+    }
+    return todos;
   }
 }

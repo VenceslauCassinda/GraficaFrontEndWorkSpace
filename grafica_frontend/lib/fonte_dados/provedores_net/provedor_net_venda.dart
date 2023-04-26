@@ -13,24 +13,22 @@ import '../erros.dart';
 
 class ProvedorNetVenda implements ProvedorVendaI {
   @override
-  Future<bool> actualizarVenda(Venda venda)  async {
-    var res = await h.post(Uri.parse("$URL_ATUALIZAR_PEDIDO/${venda.id}/"), 
-      headers: {
-        "Accept": "aplication/json",
-        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
-      }, 
-      body: {
-        "id_funcionario": "${venda.idFuncionario??-1}",
-        "id_cliente": "${venda.idCliente??-1}",
-        "parcela": "${venda.parcela}",
-        "total": "${venda.total}",
-        "data_levantamento": "${venda.dataLevantamentoCompra}",
-        "estado": "${venda.estado??0}",
-      }
-    );
+  Future<bool> actualizarVenda(Venda venda) async {
+    var res =
+        await h.post(Uri.parse("$URL_ATUALIZAR_PEDIDO/${venda.id}/"), headers: {
+      "Accept": "aplication/json",
+      "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+    }, body: {
+      "id_funcionario": "${venda.idFuncionario ?? -1}",
+      "id_cliente": "${venda.idCliente ?? -1}",
+      "parcela": "${venda.parcela}",
+      "total": "${venda.total}",
+      "data_levantamento": "${venda.dataLevantamentoCompra}",
+      "estado": "${venda.estado ?? 0}",
+    });
     // mostrar(res.body);
     switch (res.statusCode) {
-      case 200: 
+      case 200:
         var dado = jsonDecode(res.body);
         return true;
       case 422:
@@ -44,6 +42,8 @@ class ProvedorNetVenda implements ProvedorVendaI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -52,23 +52,20 @@ class ProvedorNetVenda implements ProvedorVendaI {
   @override
   Future<int> adicionarVenda(Venda venda) async {
     int id = -1;
-    var res = await h.post(Uri.parse(URL_ADD_PEDIDO), 
-      headers: {
-        "Accept": "aplication/json",
-        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
-      }, 
-      body: {
-        "id_funcionario": "${venda.idFuncionario??-1}",
-        "id_cliente": "${venda.idCliente??-1}",
-        "parcela": "${venda.parcela}",
-        "total": "${venda.total}",
-        "data_levantamento": "${venda.dataLevantamentoCompra}",
-        "estado": "${venda.estado??0}",
-      }
-    );
-    
-    // mostrar(res.statusCode);
-    // mostrar(res.body);
+    var res = await h.post(Uri.parse(URL_ADD_PEDIDO), headers: {
+      "Accept": "aplication/json",
+      "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+    }, body: {
+      "id_funcionario": "${venda.idFuncionario ?? -1}",
+      "id_cliente": "${venda.idCliente ?? -1}",
+      "parcela": "${venda.parcela}",
+      "total": "${venda.total}",
+      "data_levantamento": "${venda.dataLevantamentoCompra}",
+      "estado": "${venda.estado ?? 0}",
+    });
+
+    mostrar(res.statusCode);
+    mostrar(res.body);
     switch (res.statusCode) {
       case 200:
         var dado = jsonDecode(res.body);
@@ -85,6 +82,8 @@ class ProvedorNetVenda implements ProvedorVendaI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -92,11 +91,13 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarLista(Funcionario? funcionario, DateTime data) async{
+  Future<List<Venda>> pegarLista(
+      Funcionario? funcionario, DateTime data) async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if((element.idFuncionario == funcionario?.id) && comapararDatas(element.data!, data)){
+      if ((element.idFuncionario == funcionario?.id) &&
+          comapararDatas(element.data!, data)) {
         dados.add(element);
       }
     }
@@ -104,11 +105,12 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarListaTodasDividas(Funcionario funcionario) async{
+  Future<List<Venda>> pegarListaTodasDividas(Funcionario funcionario) async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if((element.idFuncionario == funcionario.id) && (element.divida == true)){
+      if ((element.idFuncionario == funcionario.id) &&
+          (element.divida == true)) {
         dados.add(element);
       }
     }
@@ -116,11 +118,12 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarListaTodasEncomendas(Funcionario funcionario)  async{
+  Future<List<Venda>> pegarListaTodasEncomendas(Funcionario funcionario) async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if((element.idFuncionario == funcionario.id) && (element.encomenda == true)){
+      if ((element.idFuncionario == funcionario.id) &&
+          (element.encomenda == true)) {
         dados.add(element);
       }
     }
@@ -128,21 +131,22 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Pagamento>> pegarListaTodasPagamentoDividas(DateTime data) async{
+  Future<List<Pagamento>> pegarListaTodasPagamentoDividas(DateTime data) async {
     return <Pagamento>[];
   }
 
   @override
-  Future<List<Pagamento>> pegarListaTodasPagamentoDividasFuncionario(Funcionario funcionario, DateTime data)  async{
+  Future<List<Pagamento>> pegarListaTodasPagamentoDividasFuncionario(
+      Funcionario funcionario, DateTime data) async {
     return <Pagamento>[];
   }
 
   @override
-  Future<List<Venda>> pegarListaTodasVendas()async{
+  Future<List<Venda>> pegarListaTodasVendas() async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if((element.venda == true)){
+      if ((element.venda == true)) {
         dados.add(element);
       }
     }
@@ -150,11 +154,11 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarListaVendas() async{
+  Future<List<Venda>> pegarListaVendas() async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if((element.venda == true)){
+      if ((element.venda == true)) {
         dados.add(element);
       }
     }
@@ -162,11 +166,13 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarListaVendasFuncionario(Funcionario funcionario)async{
+  Future<List<Venda>> pegarListaVendasFuncionario(
+      Funcionario funcionario) async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if((element.venda == true)&&(element.idFuncionario == funcionario.id)){
+      if ((element.venda == true) &&
+          (element.idFuncionario == funcionario.id)) {
         dados.add(element);
       }
     }
@@ -174,14 +180,14 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<Venda?> pegarVendaDeId(int id) async{
+  Future<Venda?> pegarVendaDeId(int id) async {
     var lista = await todas();
     return lista.firstWhereOrNull((element) => element.id == id);
   }
 
   @override
-  Future<int> removerTodas() async{
-    var res  = await todas();
+  Future<int> removerTodas() async {
+    var res = await todas();
     for (var cada in res) {
       await removerVendaDeId(cada.id!);
     }
@@ -189,8 +195,9 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<int> removerVendaDeId(int id)async{
-    var res = await h.post(Uri.parse("$URL_REMOVER_PEDIDO/$id/"), 
+  Future<int> removerVendaDeId(int id) async {
+    var res = await h.post(
+      Uri.parse("$URL_REMOVER_PEDIDO/$id/"),
       headers: {
         "Accept": "aplication/json",
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
@@ -198,7 +205,7 @@ class ProvedorNetVenda implements ProvedorVendaI {
     );
     // mostrar(res.body);
     switch (res.statusCode) {
-      case 200: 
+      case 200:
         var dado = jsonDecode(res.body);
         break;
       case 422:
@@ -212,6 +219,8 @@ class ProvedorNetVenda implements ProvedorVendaI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -219,7 +228,7 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> todas() async{
+  Future<List<Venda>> todas() async {
     var lista = <Venda>[];
     var res = await h.get(
       Uri.parse(URL_TODOS_PEDIDO),
@@ -253,6 +262,8 @@ class ProvedorNetVenda implements ProvedorVendaI {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -260,15 +271,14 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> todasDividas()  async{
+  Future<List<Venda>> todasDividas() async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if((element.divida == true)){
+      if ((element.divida == true)) {
         dados.add(element);
       }
     }
     return dados;
   }
-  
 }

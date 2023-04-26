@@ -9,22 +9,20 @@ import '../erros.dart';
 
 class ProvedorNetStock implements ProvedorStock {
   @override
-  Future<void> alterarQuantidadeStock(int idProduto, int quantidade) async{
+  Future<void> alterarQuantidadeStock(int idProduto, int quantidade) async {
     var dado = await pegarStockDoProdutoDeId(idProduto);
-    var res = await h.post(Uri.parse("$URL_ATUALIZAR_STOCK/${dado!.id}/"), 
-      headers: {
-        "Accept": "aplication/json",
-        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
-      }, 
-      body: {
-        "id_produto": "$idProduto",
-        "quantidade": "$quantidade",
-      }
-    );
+    var res =
+        await h.post(Uri.parse("$URL_ATUALIZAR_STOCK/${dado!.id}/"), headers: {
+      "Accept": "aplication/json",
+      "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+    }, body: {
+      "id_produto": "$idProduto",
+      "quantidade": "$quantidade",
+    });
     // mostrar(res.statusCode);
     // mostrar(res.body);
     switch (res.statusCode) {
-      case 200: 
+      case 200:
         var dado = jsonDecode(res.body);
         mostrar(dado);
         break;
@@ -39,24 +37,23 @@ class ProvedorNetStock implements ProvedorStock {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
   }
 
   @override
-  Future<int> inicializarStockProduto(int idProduto) async{
+  Future<int> inicializarStockProduto(int idProduto) async {
     int id = -1;
-    var res = await h.post(Uri.parse(URL_ADD_STOCK), 
-      headers: {
-        "Accept": "aplication/json",
-        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
-      }, 
-      body: {
-        "id_produto": "$idProduto",
-        "quantidade": "0",
-      }
-    );
+    var res = await h.post(Uri.parse(URL_ADD_STOCK), headers: {
+      "Accept": "aplication/json",
+      "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+    }, body: {
+      "id_produto": "$idProduto",
+      "quantidade": "0",
+    });
     switch (res.statusCode) {
       case 200:
         var dado = jsonDecode(res.body);
@@ -73,6 +70,8 @@ class ProvedorNetStock implements ProvedorStock {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -86,14 +85,15 @@ class ProvedorNetStock implements ProvedorStock {
   }
 
   @override
-  Future<Stock?> pegarStockDoProdutoDeId(int id)async {
+  Future<Stock?> pegarStockDoProdutoDeId(int id) async {
     var lista = await pegarLista();
     return lista.firstWhere((element) => element.idProduto == id);
   }
 
   @override
-  Future<void> removerProdutoStock(int id)async {
-    var res = await h.post(Uri.parse("$URL_REMOVER_STOCK/$id/"), 
+  Future<void> removerProdutoStock(int id) async {
+    var res = await h.post(
+      Uri.parse("$URL_REMOVER_STOCK/$id/"),
       headers: {
         "Accept": "aplication/json",
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
@@ -101,7 +101,7 @@ class ProvedorNetStock implements ProvedorStock {
     );
     // mostrar(res.body);
     switch (res.statusCode) {
-      case 200: 
+      case 200:
         var dado = jsonDecode(res.body);
         mostrar(dado);
         break;
@@ -116,14 +116,17 @@ class ProvedorNetStock implements ProvedorStock {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
   }
 
   @override
-  Future<void> removerStock(int id) async{
-    var res = await h.post(Uri.parse("$URL_REMOVER_STOCK/$id/"), 
+  Future<void> removerStock(int id) async {
+    var res = await h.post(
+      Uri.parse("$URL_REMOVER_STOCK/$id/"),
       headers: {
         "Accept": "aplication/json",
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
@@ -131,7 +134,7 @@ class ProvedorNetStock implements ProvedorStock {
     );
     // mostrar(res.body);
     switch (res.statusCode) {
-      case 200: 
+      case 200:
         var dado = jsonDecode(res.body);
         mostrar(dado);
         break;
@@ -146,12 +149,14 @@ class ProvedorNetStock implements ProvedorStock {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
   }
 
-  Future<List<Stock>> pegarLista() async{
+  Future<List<Stock>> pegarLista() async {
     var lista = <Stock>[];
     var res = await h.get(
       Uri.parse(URL_TODOS_STOCKS),
@@ -185,10 +190,11 @@ class ProvedorNetStock implements ProvedorStock {
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
     return lista;
   }
-  
 }

@@ -132,8 +132,11 @@ class ItemProduto extends StatelessWidget {
               child: LayoutGerirProduto(c: c, produto: produto),
             ),
           ),
-          SizedBox(
-            width: 20,
+          Visibility(
+            visible: c != null,
+            child: SizedBox(
+              width: 20,
+            ),
           )
         ],
       ),

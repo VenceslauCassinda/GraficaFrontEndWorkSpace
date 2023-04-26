@@ -41,7 +41,7 @@ class GavetaNavegacao extends StatelessWidget {
               child: Column(
                 children: [
                   FutureBuilder<Funcionario>(
-                      future: c.inicializarFuncionario(),
+                       future: c.inicializarFuncionario(),
                       builder: (c, s) {
                         if (s.data == null) {
                           return CircularProgressIndicator();

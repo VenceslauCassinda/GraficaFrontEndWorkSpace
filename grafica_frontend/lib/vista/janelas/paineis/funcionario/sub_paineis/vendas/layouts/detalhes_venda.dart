@@ -1,16 +1,22 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../../../../../dominio/entidades/item_venda.dart';
 import '../../../../../../../dominio/entidades/venda.dart';
 import '../../../../../../../solucoes_uteis/formato_dado.dart';
 import '../../../../../../componentes/item_item_venda.dart';
+import 'vendas_c.dart';
 
 class LayoutDetalhesVenda extends StatelessWidget {
-  const LayoutDetalhesVenda({
+  LayoutDetalhesVenda({
     Key? key,
     required this.venda,
-  }) : super(key: key);
+  }) : super(key: key){
+    vendasC = Get.find();
+  }
   final Venda venda;
+  late VendasC vendasC;
 
   @override
   Widget build(BuildContext context) {
@@ -91,14 +97,33 @@ class LayoutDetalhesVenda extends StatelessWidget {
                 ],
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: venda.itensVenda!
-                  .map((element) => ItemItemVenda(
-                        element: element,
-                      ))
-                  .toList(),
+            Visibility(
+              visible: venda.itensVenda != null,
+              replacement: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: venda.itensVenda!
+                    .map((element) => ItemItemVenda(
+                          element: element,
+                        ))
+                    .toList(),
+              ),
+              child: FutureBuilder<List<ItemVenda>>(
+                future: vendasC.pegarItensVenda(venda),
+                builder: (c, s) {
+                if (s.data == null) {
+                  return CircularProgressIndicator();
+                }
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: (s.data??[])
+                      .map((element) => ItemItemVenda(
+                            element: element,
+                          ))
+                      .toList(),
+                );
+              }),
             ),
           ],
         ),

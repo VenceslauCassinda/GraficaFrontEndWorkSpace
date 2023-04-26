@@ -10,7 +10,7 @@ import '../../recursos/constantes.dart';
 import '../../vista/aplicacao_c.dart';
 import '../erros.dart';
 
-class ProvedorNetFuncionario implements ProvedorFuncionarioI{
+class ProvedorNetFuncionario implements ProvedorFuncionarioI {
   @override
   Future<void> activarFuncionario(Funcionario dado) {
     // TODO: implement activarFuncionario
@@ -18,21 +18,19 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI{
   }
 
   @override
-  Future<void> actualizarFuncionario(Funcionario dado)async {
-    var res = await h.post(Uri.parse("$URL_ATUALIZAR_FUNCIONARIO/${dado.id}/"), 
-      headers: {
-        "Accept": "aplication/json",
-        "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
-      }, 
-      body: {
-        "id_usuario": "${dado.idUsuario}",
-        "nome_completo": dado.nomeCompelto??"",
-        "estado": "${dado.estado}",
-      }
-    );
+  Future<void> actualizarFuncionario(Funcionario dado) async {
+    var res = await h
+        .post(Uri.parse("$URL_ATUALIZAR_FUNCIONARIO/${dado.id}/"), headers: {
+      "Accept": "aplication/json",
+      "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
+    }, body: {
+      "id_usuario": "${dado.idUsuario}",
+      "nome_completo": dado.nomeCompelto ?? "",
+      "estado": "${dado.estado}",
+    });
     mostrar(res.body);
     switch (res.statusCode) {
-      case 200: 
+      case 200:
         var dado = jsonDecode(res.body);
         mostrar(dado);
         break;
@@ -47,19 +45,21 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI{
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
   }
 
   @override
-  Future<int> adicionarFuncionario(Funcionario dado) async{
+  Future<int> adicionarFuncionario(Funcionario dado) async {
     int id = -1;
     var res = await h.post(Uri.parse(URL_CADASTRO_FUNCIONARIO), headers: {
       "Accept": "aplication/json"
     }, body: {
-      "nome_completo": dado.nomeCompelto ??"",
-      "id_usuario": "${dado.idUsuario??"-1"}",
+      "nome_completo": dado.nomeCompelto ?? "",
+      "id_usuario": "${dado.idUsuario ?? "-1"}",
       "estado": "1",
     });
     switch (res.statusCode) {
@@ -71,7 +71,10 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI{
         throw Erro("Rota Wen Não Encontrado!");
       case 422:
         var dado = jsonDecode(res.body);
-        throw Erro("Número de Atributos para requisição incompletos!\n${dado["message"]}");
+        throw Erro(
+            "Número de Atributos para requisição incompletos!\n${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -85,7 +88,7 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI{
   }
 
   @override
-  Future<bool> existeFuncionarioComNomeUsuario(String nomeUsuario) async{
+  Future<bool> existeFuncionarioComNomeUsuario(String nomeUsuario) async {
     var lista = await pegarLista();
     var teste =
         lista.firstWhereOrNull((element) => element.nomeUsuario == nomeUsuario);
@@ -93,31 +96,34 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI{
   }
 
   @override
-  Future<Funcionario> pegarFuncionarioDeId(int id)async {
+  Future<Funcionario> pegarFuncionarioDeId(int id) async {
     var lista = await pegarLista();
     return lista.firstWhere((element) => element.id == id);
   }
 
   @override
-  Future<Funcionario> pegarFuncionarioDeNome(String nomeCompleto)async {
+  Future<Funcionario> pegarFuncionarioDeNome(String nomeCompleto) async {
     var lista = await pegarLista();
     return lista.firstWhere((element) => element.nomeCompelto == nomeCompleto);
   }
 
   @override
-  Future<Funcionario> pegarFuncionarioDoUsuarioDeId(int id) async{
+  Future<Funcionario> pegarFuncionarioDoUsuarioDeId(int id) async {
     var lista = await pegarLista();
     return lista.firstWhere((element) => element.idUsuario == id);
   }
 
   @override
-  Future<int> pegarIdFuncionarioDeNome(String nomeCompleto) async{
+  Future<int> pegarIdFuncionarioDeNome(String nomeCompleto) async {
     var lista = await pegarLista();
-    return lista.firstWhere((element) => element.nomeCompelto == nomeCompleto).id??-1;
+    return lista
+            .firstWhere((element) => element.nomeCompelto == nomeCompleto)
+            .id ??
+        -1;
   }
 
   @override
-  Future<List<Funcionario>> pegarLista() async{
+  Future<List<Funcionario>> pegarLista() async {
     var lista = <Funcionario>[];
     var res = await h.get(
       Uri.parse(URL_TODOS_FUNCIONARIOS),
@@ -137,6 +143,8 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI{
         break;
       case 404:
         throw Erro("Rota Wen Não Encontrado!");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -156,8 +164,9 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI{
   }
 
   @override
-  Future<void> removerFuncionario(Funcionario dado) async{
-    var res = await h.post(Uri.parse("$URL_REMOVER_FUNCIONARIO/${dado.id}/"), 
+  Future<void> removerFuncionario(Funcionario dado) async {
+    var res = await h.post(
+      Uri.parse("$URL_REMOVER_FUNCIONARIO/${dado.id}/"),
       headers: {
         "Accept": "aplication/json",
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
@@ -165,7 +174,7 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI{
     );
     // mostrar(res.body);
     switch (res.statusCode) {
-      case 200: 
+      case 200:
         var dado = jsonDecode(res.body);
         mostrar(dado);
         break;
@@ -180,14 +189,15 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI{
       case 401:
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
+      case 500:
+        throw Erro("Bando de Dados Indisponível!");
       default:
         throw Erro("Falha de Servidor!");
     }
   }
 
   @override
-  Future<List<Funcionario>> todos()async {
+  Future<List<Funcionario>> todos() async {
     return await pegarLista();
   }
-  
 }

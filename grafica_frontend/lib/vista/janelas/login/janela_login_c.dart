@@ -56,12 +56,16 @@ class JanelaLoginC extends GetxController {
     }
 
     try {
+      mostrarCarregandoDialogoDeInformacao("");
       var usuario = await _manipularUsuarioI.fazerLogin(nome, palavraPasse);
       AplicacaoC.logar(usuario!);
     } catch (e) {
+      voltar();
       if (e is Erro) {
-        var exception = e as Erro;
-        mostrarSnack(exception.sms);
+        mostrarSnack(e.sms);
+      }if (e.toString().contains("XMLHttpRequest")){
+        mostrarSnack("${e.toString()}\nServidor Indisponível!");
+
       }
     }
   }
