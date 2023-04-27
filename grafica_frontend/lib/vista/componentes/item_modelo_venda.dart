@@ -47,7 +47,7 @@ class ItemModeloVenda extends StatelessWidget {
                           Visibility(
                             visible: c.indiceTabActual == 0,
                             child: Text(
-                                "Tipo de Item: ${venda.venda ? "Venda" : (venda.encomenda ? "Encomenda" : "Dívida")}"),
+                                "Tipo de Item: ${venda.venda == true ? "Venda" : "Dívida"}"),
                           ),
                           // Text(mostrarCadaProduto(venda.itensVenda ?? [])),
                           Text("Total: ${formatar(venda.total!)} KZ"),
@@ -57,7 +57,7 @@ class ItemModeloVenda extends StatelessWidget {
                               () {
                                 c.lista.isEmpty;
                                 return Text(
-                                    "Total Pago: ${formatar((venda.pagamentos ?? []).fold<double>(0, (previousValue, element) => ((element.valor ?? 0) + previousValue)))} KZ");
+                                    "Total Pago: ${venda.parcela} KZ");
                               },
                             ),
                           ),

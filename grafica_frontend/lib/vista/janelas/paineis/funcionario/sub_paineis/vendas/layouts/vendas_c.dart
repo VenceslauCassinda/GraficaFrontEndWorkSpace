@@ -140,7 +140,7 @@ class VendasC extends GetxController {
         if (cada.idFuncionarioPagante == funcionario?.id &&
             cada.paga == true &&
             comapararDatas(data, cada.dataPagamento!)) {
-          totalDividaPagas.value += cada.total ?? 0;
+          totalDividaPagas.value += (cada.total ?? 0);
         }
       }
     }
@@ -278,7 +278,7 @@ class VendasC extends GetxController {
       cada.cliente =
           clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
-      totalCaixa.value += cada.total ?? 0;
+        totalCaixa.value += (cada.parcela ?? 0);
     }
 
     listaCopia.clear();
@@ -293,7 +293,7 @@ class VendasC extends GetxController {
         cada.cliente = clientes
             .firstWhereOrNull((element) => element.id == cada.idCliente);
         lista.add(cada);
-        totalCaixa.value += cada.total ?? 0;
+        totalCaixa.value += (cada.parcela ?? 0);
       }
     }
   }
@@ -305,7 +305,7 @@ class VendasC extends GetxController {
       cada.cliente =
           clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
-      totalCaixa.value += cada.total ?? 0;
+      totalCaixa.value += (cada.parcela ?? 0);
     }
   }
 
@@ -316,7 +316,7 @@ class VendasC extends GetxController {
       cada.cliente =
           clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
-      totalCaixa.value += cada.total ?? 0;
+      totalCaixa.value += (cada.parcela ?? 0);
     }
   }
 
@@ -403,16 +403,10 @@ class VendasC extends GetxController {
     venda.pagamentos!.add(novoPagamento);
     venda.parcela = venda.parcela! + double.parse(valor);
 
-    var hoje = DateTime.now();
     var id = await _manipularPagamentoI.registarPagamento(novoPagamento);
-    var pagamentoFinal =
-        PagamentoFinal(estado: Estado.ATIVADO, idPagamento: id, data: hoje);
-    novoPagamento.pagamentoFinal = pagamentoFinal;
 
-    if (comPagamentoFinal != null) {
-      await _manipularPagamentoI.registarPagamentoFinal(pagamentoFinal);
-    }
     totalDividaPagas.value += double.parse(valor);
+    totalCaixa.value +=double.parse(valor);
 
     for (var i = 0; i < lista.length; i++) {
       if (lista[i].id == venda.id) {
@@ -420,7 +414,7 @@ class VendasC extends GetxController {
         break;
       }
     }
-    // await _manipularVendaI.actualizarVenda(venda);
+    await _manipularVendaI.actualizarVendaSimples(venda);
   }
 
   Future<List<Preco>> pegarPrecoProduto(Produto produto) async {
@@ -540,27 +534,31 @@ class VendasC extends GetxController {
 
   Future<List<Produto>> pegarListaProdutos() async {
     var list = await _manipularProdutoI.pegarLista();
-    for (var cada in list) {
-      cada.stock = await _manipularStockI.pegarStockDoProdutoDeId(cada.id!);
-      var precos = (await manipularPreco.pegarPrecoProdutoDeId(cada.id!));
-      if (precos.isEmpty) {
-        mostrarSnack("Produto ${cada.nome ?? "Sem Nome"} sem Preço de Venda");
-      } else {
-        cada.precoGeral = precos[0].preco!;
-      }
-    }
     return list;
   }
 
-  Future<List<ItemVenda>> pegarItensVenda(Venda venda) async{
+  Future<List<ItemVenda>> pegarItensVenda(Venda venda) async {
     var itens = <ItemVenda>[];
     var todos = await _manipularItemVendaI.todos();
     for (var cada in todos) {
       if (cada.idVenda == venda.id) {
-        cada.produto =  await _manipularProdutoI.pegarProdutoDeId(cada.idProduto!);
+        cada.produto =
+            await _manipularProdutoI.pegarProdutoDeId(cada.idProduto!);
         itens.add(cada);
       }
     }
-    return todos;
+    return itens;
+  }
+  
+  Future<List<Pagamento>> pegarPagamentosVenda(Venda venda) async {
+    var itens = <Pagamento>[];
+    var todos = await _manipularPagamentoI.pegarLista();
+    for (var cada in todos) {
+      if (cada.idVenda == venda.id) {
+        cada.formaPagamento = (await _manipularPagamentoI.pegarListaFormasPagamento()).firstWhere((element) => element.id == cada.idFormaPagamento);
+        itens.add(cada);
+      }
+    }
+    return itens;
   }
 }

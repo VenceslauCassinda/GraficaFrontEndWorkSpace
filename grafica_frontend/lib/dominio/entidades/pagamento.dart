@@ -24,7 +24,7 @@ class Pagamento {
   
   Pagamento.fromJson(Map json) {
     idFormaPagamento = json['id_forma_pagamento'];
-    idVenda = json['id_venda'];
+    idVenda = json['id_pedido'];
     estado = json['estado'];
     valor = json['valor'];
     id = json['id'];
@@ -33,7 +33,7 @@ class Pagamento {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id_forma_pagamento'] = this.idFormaPagamento;
-    data['id_venda'] = this.idVenda;
+    data['id_pedido'] = this.idVenda;
     data['estado'] = this.estado;
     data['valor'] = this.valor;
     data['id'] = this.id;

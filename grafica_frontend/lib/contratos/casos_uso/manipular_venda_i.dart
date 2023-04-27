@@ -50,6 +50,7 @@ abstract class ManipularVendaI {
   bool vendaOuDivida(Venda venda);
   Future<ItemVenda?> pegarItemComStockInsuficiente(List<ItemVenda> lista);
   Future<bool> actualizarVenda(Venda venda, bool fazerOuDesfazer);
+  Future<bool> actualizarVendaSimples(Venda venda);
   Future<bool> removerVenda(Venda venda);
   Future<bool> removerTodasVendas();
   Future<bool> removerVendasAntesData(DateTime data);

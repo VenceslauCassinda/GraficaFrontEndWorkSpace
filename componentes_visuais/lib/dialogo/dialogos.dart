@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 mostrarCarregandoDialogoDeInformacao(String informacao,
-    {bool? fechavel, Color? cor}) {
-  fecharDialogoCasoAberto();
+    {bool? fechavel, Color? cor, bool? naoFecharJanela}) {
+  if (naoFecharJanela != true) {
+    fecharDialogoCasoAberto();
+  }
   try {
     Get.defaultDialog(
         barrierDismissible: fechavel == null ? false : true,

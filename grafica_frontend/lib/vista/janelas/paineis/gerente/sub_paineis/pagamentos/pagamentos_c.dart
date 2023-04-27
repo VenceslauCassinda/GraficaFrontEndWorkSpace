@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_pagamento_i.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/forma_pagamento.dart';
+import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/fonte_dados/provedores/provedor_pagamento.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
@@ -34,12 +35,16 @@ class PagamentosC extends GetxController {
   void mostrarDialogoAdicionarFormaPagamento() {
     mostrarDialogoDeLayou(LayoutCampo(
         accaoAoFinalizar: (valor) async {
-          var nova =
-              FormaPagamento(estado: Estado.ATIVADO, tipo: "0", descricao: valor);
+          var nova = FormaPagamento(
+              estado: Estado.ATIVADO, tipo: "0", descricao: valor);
 
-          lista.add(nova);
-          voltar();
-          nova.id = await _manipularPagamentoI.adicionarFormaPagamento(nova);
+          try {
+            lista.add(nova);
+            voltar();
+            nova.id = await _manipularPagamentoI.adicionarFormaPagamento(nova);
+          } on Erro catch (e) {
+            mostrarDialogoDeInformacao(e.sms);
+          }
         },
         titulo: "Insira a nova forma de Pagamento"));
   }
@@ -56,9 +61,13 @@ class PagamentosC extends GetxController {
     mostrarDialogoDeLayou(LayoutConfirmacaoAccao(
         pergunta: "Deseja mesmo eliminar esta forma de Pagamento?",
         accaoAoConfirmar: () async {
-          lista.removeWhere((element) => element.id == formaPagamento.id);
-          voltar();
-          await _manipularPagamentoI.removerFormaDeId(formaPagamento.id!);
+          try {
+            lista.removeWhere((element) => element.id == formaPagamento.id);
+            voltar();
+            await _manipularPagamentoI.removerFormaDeId(formaPagamento.id!);
+          } on Erro catch (e) {
+            mostrarDialogoDeInformacao(e.sms);
+          }
         },
         accaoAoCancelar: () {},
         corButaoSim: primaryColor));

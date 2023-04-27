@@ -16,8 +16,6 @@ import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/saida.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
-import 'package:grafica_frontend/fonte_dados/provedores/provedor_entrada.dart';
-import 'package:grafica_frontend/solucoes_uteis/console.dart';
 
 import '../../contratos/casos_uso/manipular_venda_i.dart';
 import '../../contratos/provedores/provedor_venda_i.dart';
@@ -343,5 +341,10 @@ class ManipularVenda implements ManipularVendaI {
   @override
   Future<List<Venda>> pegarListaTodasVendas() async {
     return await _provedorVendaI.pegarListaTodasVendas();
+  }
+  
+  @override
+  Future<bool> actualizarVendaSimples(Venda venda)async {
+    return await _provedorVendaI.actualizarVenda(venda);
   }
 }

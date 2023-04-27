@@ -45,13 +45,6 @@ class LayoutFormaPagamento extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              titulo,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
             CampoTexto(
               textoPadrao: valor,
               context: context,
@@ -81,6 +74,13 @@ class LayoutFormaPagamento extends StatelessWidget {
                       sms: "Valor inválido!",
                     );
             }),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              titulo,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: MenuDropDown(

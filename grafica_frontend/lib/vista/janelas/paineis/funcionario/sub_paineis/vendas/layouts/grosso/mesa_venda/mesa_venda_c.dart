@@ -23,6 +23,8 @@ import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
+import 'package:grafica_frontend/fonte_dados/provedores/provedor_preco.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/geradores.dart';
 
 import '../../../../../../../../../contratos/casos_uso/manipular_pagamento_i.dart';
@@ -30,6 +32,8 @@ import '../../../../../../../../../dominio/casos_uso/manipular_cliente.dart';
 import '../../../../../../../../../dominio/casos_uso/manipular_pagamento.dart';
 import '../../../../../../../../../dominio/casos_uso/manipular_venda.dart';
 import '../../../../../../../../../dominio/entidades/forma_pagamento.dart';
+import '../../../../../../../../../dominio/entidades/preco.dart';
+import '../../../../../../../../../dominio/entidades/stock.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/povedor_net_pagamento.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_funcionario.dart';
@@ -59,7 +63,7 @@ class MesaVendaC extends GetxController {
   final DateTime data;
   var nomeCliente = "".obs;
   var telefoneCliente = "".obs;
-  
+
   MesaVendaC(this.data, this.funcionario) {
     _manipularClienteI = ManipularCliente(ProvedorNetCliente());
     _manipularStockI = ManipularStock(ProvedorNetStock());
@@ -173,7 +177,7 @@ class MesaVendaC extends GetxController {
       valor = quantidadeDisponivel;
     }
     element.quantidade = valor;
-     element.total = valor * element.produto!.precoGeral;
+    element.total = valor * element.produto!.precoGeral;
 
     descontar(
         int.tryParse(campoTextoDescontoC.text), element, campoTextoDescontoC);
@@ -275,18 +279,6 @@ class MesaVendaC extends GetxController {
         0, (previousValue, element) => ((element.total ?? 0) + previousValue));
     var pago = listaPagamentos.fold<double>(
         0, (previousValue, element) => ((element.valor ?? 0) + previousValue));
-    var pagoCach = listaPagamentos.fold<double>(0, (antigoP, cadaP) {
-      if (cadaP.valor == null) {
-        return 0;
-      }
-      if ((cadaP.formaPagamento?.descricao ?? "")
-              .toLowerCase()
-              .contains('CASH'.toLowerCase()) ==
-          true) {
-        return (cadaP.valor ?? 0) + antigoP;
-      }
-      return 0;
-    });
     if (aPagar == 0) {
       if (listaItensVenda.isEmpty) {
         mostrarDialogoDeInformacao("Adicione produtos!");
@@ -300,13 +292,15 @@ class MesaVendaC extends GetxController {
     dataLevantamento.value ??= data;
     try {
       var cliente = Cliente(
-        idUsuario: -1,
+          idUsuario: -1,
           estado: Estado.ATIVADO,
           nome: nomeCliente.value,
           numero: telefoneCliente.value);
-      var venda = Venda(produto: null,
-      idProduto: null,
-          itensVenda: listaItensVenda,quantidadeVendida: null,
+      var venda = Venda(
+          produto: null,
+          idProduto: null,
+          itensVenda: listaItensVenda,
+          quantidadeVendida: null,
           pagamentos: listaPagamentos,
           estado: Estado.ATIVADO,
           idFuncionario: funcionario.id,
@@ -316,14 +310,33 @@ class MesaVendaC extends GetxController {
           total: aPagar,
           cliente: cliente,
           parcela: pago);
-      var id = await _manipularVendaI.vender(listaItensVenda, listaPagamentos,
-          aPagar, funcionario, cliente, data, dataLevantamento.value!, pago,-1, 0);
-          venda.id = id;
-      vendasC.lista.insert(0,venda);
+
+      var id = await _manipularVendaI.vender(
+          listaItensVenda,
+          listaPagamentos,
+          aPagar,
+          funcionario,
+          cliente,
+          data,
+          dataLevantamento.value!,
+          pago,
+          -1,
+          0);
+      venda.id = id;
+      vendasC.lista.insert(0, venda);
+      vendasC.totalCaixa.value += pago;
       voltar();
       // vendasC.navegar(vendasC.indiceTabActual);
     } on Erro catch (e) {
       mostrarDialogoDeInformacao(e.sms);
     }
+  }
+
+  Future<Stock?> pegarStockDoProdutoDeId(int id) async {
+    return await _manipularStockI.pegarStockDoProdutoDeId(id);
+  }
+
+  Future<List<Preco>> pegarPrecoDoProdutoDeId(int id) async {
+    return await ProvedorNetPreco().pegarPrecoProdutoDeId(id);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 
 import '../../../../../../../dominio/entidades/item_venda.dart';
 import '../../../../../../../dominio/entidades/venda.dart';
@@ -12,7 +13,7 @@ class LayoutDetalhesVenda extends StatelessWidget {
   LayoutDetalhesVenda({
     Key? key,
     required this.venda,
-  }) : super(key: key){
+  }) : super(key: key) {
     vendasC = Get.find();
   }
   final Venda venda;
@@ -51,14 +52,32 @@ class LayoutDetalhesVenda extends StatelessWidget {
                           children: [
                             Text("Total: ${venda.total}"),
                             Text(
-                                "Total Pago: ${formatar((venda.pagamentos ?? []).fold<double>(0, (previousValue, element) => ((element.valor ?? 0) + previousValue)))} KZ"),
+                                "Total Pago: ${venda.parcela} KZ"),
                             Container(width: 200, child: Divider()),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: (venda.pagamentos ?? [])
-                                  .map((element) => Text(
-                                      "${formatar(element.valor ?? 0)} KZ - Pago com ${element.formaPagamento?.descricao ?? "[Não Definido]"}"))
-                                  .toList(),
+                            Visibility(
+                              visible: venda.pagamentos != null,
+                              replacement: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: (venda.pagamentos ?? [])
+                                    .map((element) => Text(
+                                        "${formatar(element.valor ?? 0)} KZ - Pagamento: ${element.formaPagamento?.tipo ?? "[Não Definido]"}"))
+                                    .toList(),
+                              ),
+                              child: FutureBuilder<List<Pagamento>>(
+                                  future: vendasC.pegarPagamentosVenda(venda),
+                                  builder: (c, s) {
+                                    if (s.data == null) {
+                                      return CircularProgressIndicator();
+                                    }
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: (s.data ?? [])
+                                          .map((element) => Text(
+                                              "${formatar(element.valor ?? 0)} KZ - Pagamento ${element.formaPagamento?.descricao ?? "[Não Definido]"}"))
+                                          .toList(),
+                                    );
+                                  }),
                             ),
                             Container(width: 200, child: Divider()),
                             Visibility(
@@ -109,21 +128,21 @@ class LayoutDetalhesVenda extends StatelessWidget {
                     .toList(),
               ),
               child: FutureBuilder<List<ItemVenda>>(
-                future: vendasC.pegarItensVenda(venda),
-                builder: (c, s) {
-                if (s.data == null) {
-                  return CircularProgressIndicator();
-                }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: (s.data??[])
-                      .map((element) => ItemItemVenda(
-                            element: element,
-                          ))
-                      .toList(),
-                );
-              }),
+                  future: vendasC.pegarItensVenda(venda),
+                  builder: (c, s) {
+                    if (s.data == null) {
+                      return CircularProgressIndicator();
+                    }
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: (s.data ?? [])
+                          .map((element) => ItemItemVenda(
+                                element: element,
+                              ))
+                          .toList(),
+                    );
+                  }),
             ),
           ],
         ),

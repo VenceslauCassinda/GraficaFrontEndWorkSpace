@@ -76,33 +76,91 @@ class LayoutMesaVenda extends StatelessWidget {
                             if (s.data == null) {
                               return Container(
                                 child: LinearProgressIndicator(),
-                                padding: EdgeInsets.symmetric(horizontal: 30,vertical: 5),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 5),
                               );
                             }
                             return Container(
-                                height: MediaQuery.of(context).size.height * .5,
-                                margin: EdgeInsets.only(top: 20),
-                                child: LayoutProdutos(
-                                  lista: lista,
-                                  permissao: false,
-                                  accaoAoClicarCadaProduto: (produto) {
-                                    if (produto.stock!.quantidade! > 0) {
-                                      if (produto.precoGeral >= 0) {
-                                        _c.adicionarProdutoAmesa(produto);
-                                        controladores["${produto.id}1"] =
-                                            TextEditingController(text: "0");
-                                        controladores["${produto.id}2"] =
-                                            TextEditingController(text: "0");
-                                      } else {
-                                        mostrarDialogoDeInformacao(
-                                            "Produto sem preço!");
-                                      }
-                                    } else {
-                                      mostrarDialogoDeInformacao(
-                                          "Produto com quantidade insuficiente em Stock!");
-                                    }
-                                  },
-                                ));
+                              height: MediaQuery.of(context).size.height * .5,
+                              margin: EdgeInsets.only(top: 20),
+                              child: ListView.builder(
+                                  itemCount: lista.length,
+                                  itemBuilder: (c, i) {
+                                    var produto = lista[i];
+                                    return InkWell(
+                                      onTap: () async {
+                                        mostrarCarregandoDialogoDeInformacao(
+                                            "Verificando Stock e Preços...",
+                                            naoFecharJanela: true);
+                                        produto.stock =
+                                            await _c.pegarStockDoProdutoDeId(
+                                                produto.id!);
+                                        var precos =
+                                            (await _c.pegarPrecoDoProdutoDeId(
+                                                produto.id!));
+                                        voltar();
+                                        if (precos.isEmpty) {
+                                          mostrarDialogoDeInformacao(
+                                              "Produto ${produto.nome ?? "Sem Nome"} sem Preço de Venda");
+                                          return;
+                                        } else {
+                                          produto.precoGeral = precos[0].preco!;
+                                        }
+                                        if (produto.stock != null) {
+                                          if (produto.stock!.quantidade! > 0) {
+                                            if (produto.precoGeral >= 0) {
+                                              _c.adicionarProdutoAmesa(produto);
+                                              controladores["${produto.id}1"] =
+                                                  TextEditingController(
+                                                      text: "0");
+                                              controladores["${produto.id}2"] =
+                                                  TextEditingController(
+                                                      text: "0");
+                                            } else {
+                                              mostrarDialogoDeInformacao(
+                                                  "Produto sem preço!");
+                                            }
+                                          } else {
+                                            mostrarDialogoDeInformacao(
+                                                "Produto com quantidade insuficiente em Stock!");
+                                          }
+                                        } else {
+                                          mostrarDialogoDeInformacao(
+                                              "Produto sem Stock!");
+                                        }
+                                      },
+                                      child: Card(
+                                        elevation: 5,
+                                        child:
+                                            Padding(
+                                              padding: const EdgeInsets.all(20),
+                                              child: Text(lista[i].nome ?? "Sem Nome"),
+                                            ),
+                                      ),
+                                    );
+                                  }),
+                              // child: LayoutProdutos(
+                              //   lista: lista,
+                              //   permissao: false,
+                              //   accaoAoClicarCadaProduto: (produto) {
+                              //     if (produto.stock!.quantidade! > 0) {
+                              //       if (produto.precoGeral >= 0) {
+                              //         _c.adicionarProdutoAmesa(produto);
+                              //         controladores["${produto.id}1"] =
+                              //             TextEditingController(text: "0");
+                              //         controladores["${produto.id}2"] =
+                              //             TextEditingController(text: "0");
+                              //       } else {
+                              //         mostrarDialogoDeInformacao(
+                              //             "Produto sem preço!");
+                              //       }
+                              //     } else {
+                              //       mostrarDialogoDeInformacao(
+                              //           "Produto com quantidade insuficiente em Stock!");
+                              //     }
+                              //   },
+                              // )
+                            );
                           })
                     ],
                   ),
