@@ -222,8 +222,8 @@ class ManipularVenda implements ManipularVendaI {
 
   @override
   Future<void> entregarEncomenda(Venda venda) async {
-    venda.dataLevantamentoCompra = venda.data;
-    await _provedorVendaI.actualizarVenda(venda);
+    venda.dataLevantamentoCompra = DateTime.now();
+    await actualizarVendaSimples(venda);
   }
 
   @override

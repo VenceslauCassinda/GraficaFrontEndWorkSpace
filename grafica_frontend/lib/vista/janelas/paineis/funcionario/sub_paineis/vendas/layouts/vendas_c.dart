@@ -15,6 +15,7 @@ import 'package:grafica_frontend/dominio/entidades/pagamento_final.dart';
 import 'package:grafica_frontend/dominio/entidades/painel_actual.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
+import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/fonte_dados/provedores/provedor_pagamento.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
@@ -202,11 +203,12 @@ class VendasC extends GetxController {
     criterioPesquisa = f;
   }
 
-  void mostrarDialogoNovaVenda(BuildContext context) {
+  void mostrarDialogoNovaVenda(BuildContext context){
     mostrarDialogoDeLayou(
       LayoutMesaVenda(data, funcionario!),
       layoutCru: true,
     );
+    navegar(0);
   }
 
   void mostrarDialogoProdutos(BuildContext context) async {
@@ -278,7 +280,7 @@ class VendasC extends GetxController {
       cada.cliente =
           clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
-        totalCaixa.value += (cada.parcela ?? 0);
+      totalCaixa.value += (cada.parcela ?? 0);
     }
 
     listaCopia.clear();
@@ -345,9 +347,22 @@ class VendasC extends GetxController {
           "Ainda tem ${formatar(venda.total! - venda.parcela!)} KZ por pagar!");
       return;
     }
-    lista.removeWhere((element) => element.id == venda.id);
+
     voltar();
-    await _manipularVendaI.entregarEncomenda(venda);
+    if (indiceTabActual == 2) {
+      lista.removeWhere((element) => element.id == venda.id);
+    }else{
+      for (var i = 0; i < lista.length; i++) {
+        if(lista[i].id == venda.id){
+          lista[i] = venda;
+        }
+      }
+    }
+    try {
+      await _manipularVendaI.entregarEncomenda(venda);
+    } on Erro catch (e) {
+      mostrarDialogoDeInformacao(e.sms);
+    }
   }
 
   void mostrarFormasPagamento(Venda venda, BuildContext context,
@@ -406,7 +421,7 @@ class VendasC extends GetxController {
     var id = await _manipularPagamentoI.registarPagamento(novoPagamento);
 
     totalDividaPagas.value += double.parse(valor);
-    totalCaixa.value +=double.parse(valor);
+    totalCaixa.value += double.parse(valor);
 
     for (var i = 0; i < lista.length; i++) {
       if (lista[i].id == venda.id) {
@@ -549,13 +564,15 @@ class VendasC extends GetxController {
     }
     return itens;
   }
-  
+
   Future<List<Pagamento>> pegarPagamentosVenda(Venda venda) async {
     var itens = <Pagamento>[];
     var todos = await _manipularPagamentoI.pegarLista();
     for (var cada in todos) {
       if (cada.idVenda == venda.id) {
-        cada.formaPagamento = (await _manipularPagamentoI.pegarListaFormasPagamento()).firstWhere((element) => element.id == cada.idFormaPagamento);
+        cada.formaPagamento =
+            (await _manipularPagamentoI.pegarListaFormasPagamento())
+                .firstWhere((element) => element.id == cada.idFormaPagamento);
         itens.add(cada);
       }
     }

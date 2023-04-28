@@ -14,6 +14,7 @@ import '../erros.dart';
 class ProvedorNetVenda implements ProvedorVendaI {
   @override
   Future<bool> actualizarVenda(Venda venda) async {
+    mostrar(venda.dataLevantamentoCompra);
     var res =
         await h.post(Uri.parse("$URL_ATUALIZAR_PEDIDO/${venda.id}/"), headers: {
       "Accept": "aplication/json",
@@ -23,10 +24,11 @@ class ProvedorNetVenda implements ProvedorVendaI {
       "id_cliente": "${venda.idCliente ?? -1}",
       "parcela": "${venda.parcela}",
       "total": "${venda.total}",
-      "data_levantamento": "${venda.dataLevantamentoCompra}",
+      "data_levantamento": "${venda.dataLevantamentoCompra!}",
       "estado": "${venda.estado ?? 0}",
     });
-    // mostrar(res.body);
+    mostrar(res.statusCode);
+    mostrar(res.body);
     switch (res.statusCode) {
       case 200:
         var dado = jsonDecode(res.body);
@@ -43,7 +45,7 @@ class ProvedorNetVenda implements ProvedorVendaI {
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
       case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -83,7 +85,7 @@ class ProvedorNetVenda implements ProvedorVendaI {
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
       case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -220,7 +222,7 @@ class ProvedorNetVenda implements ProvedorVendaI {
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
       case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -263,7 +265,7 @@ class ProvedorNetVenda implements ProvedorVendaI {
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
       case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }

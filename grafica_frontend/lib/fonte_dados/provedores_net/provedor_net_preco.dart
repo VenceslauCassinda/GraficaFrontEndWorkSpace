@@ -40,7 +40,7 @@ class ProvedorNetPreco implements ProvedorPrecoI{
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
         case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -77,7 +77,7 @@ class ProvedorNetPreco implements ProvedorPrecoI{
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
         case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -136,7 +136,7 @@ class ProvedorNetPreco implements ProvedorPrecoI{
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
         case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -177,7 +177,7 @@ class ProvedorNetPreco implements ProvedorPrecoI{
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
         case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }

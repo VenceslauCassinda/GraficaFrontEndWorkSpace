@@ -18,9 +18,9 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
       body: {
         "id_produto": "${dado.idProduto??-1}",
         "id_pedido": "${dado.idVenda??-1}",
-        "quantidade": "${dado.quantidade}",
-        "total": "${dado.total}",
-        "desconto": "${dado.desconto}",
+        "quantidade": "${dado.quantidade??0}",
+        "total": "${dado.total??0}",
+        "desconto": "${dado.desconto??0}",
         "estado": "${dado.estado??0}",
       }
     );
@@ -41,7 +41,7 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
         case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -63,9 +63,9 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
       body: {
         "id_produto": "${dado.idProduto??-1}",
         "id_pedido": "${dado.idVenda??-1}",
-        "quantidade": "${dado.quantidade}",
-        "total": "${dado.total}",
-        "desconto": "${dado.desconto}",
+        "quantidade": "${dado.quantidade??0}",
+        "total": "${dado.total??0}",
+        "desconto": "${dado.desconto??0}",
         "estado": "${dado.estado??0}",
       }
     );
@@ -87,7 +87,7 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
         case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -119,7 +119,7 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
         case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }
@@ -162,7 +162,7 @@ class ProvedorNetItemVenda implements ProvedorItemVendaI {
         var dado = jsonDecode(res.body);
         throw Erro("${dado["message"]}");
         case 500:
-        throw Erro("Bando de Dados Indisponível!");
+        throw Erro("Erro do Banco de Dados");
       default:
         throw Erro("Falha de Servidor!");
     }

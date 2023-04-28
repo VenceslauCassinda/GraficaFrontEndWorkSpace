@@ -75,7 +75,6 @@ class PainelFuncionarioC extends GetxController {
     }
     painelActual.value = PainelActual(indicadorPainel: indice, valor: valor);
 
-      voltar(); 
     // ScreenSize tela = Get.find();
     // if (tela.tablet != null||tela.mobile != null) {
     //   voltar();

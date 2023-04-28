@@ -1,4 +1,5 @@
 import 'package:componentes_visuais/componentes/info_gaveta.dart';
+import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:componentes_visuais/componentes/item_gaveta.dart';
@@ -65,6 +66,7 @@ class GavetaNavegacao extends StatelessWidget {
                       titulo: "Início",
                       metodoQuandoItemClicado: () async {
                         c.irParaPainel(PainelActual.INICIO);
+                        voltar();
                       }),
                   // ItemDaGaveta(
                   //     cor: branca,
@@ -79,6 +81,7 @@ class GavetaNavegacao extends StatelessWidget {
                       titulo: "Dívidas",
                       metodoQuandoItemClicado: () async {
                         c.irParaPainel(PainelActual.DIVIDAS_GERAIS);
+                        voltar();
                       }),
                   ItemDaGaveta(
                       cor: branca,
@@ -86,6 +89,7 @@ class GavetaNavegacao extends StatelessWidget {
                       titulo: "Clientes",
                       metodoQuandoItemClicado: () async {
                         c.irParaPainel(PainelActual.CLIENTES);
+                        voltar();
                       }),
                   // ItemDaGaveta(
                   //     cor: branca,
