@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/cliente/painel_cliente.dart';
 import '../dominio/casos_uso/manipular_definicoes.dart';
 import '../dominio/casos_uso/manipular_usuario.dart';
@@ -56,6 +57,7 @@ class AplicacaoC extends GetxController {
       return;
     }
     definirUsuarioActual(usuario);
+    mostrar(NivelAcesso.paraTexto(usuario.nivelAcesso??0));
     if (usuario.nivelAcesso == NivelAcesso.ADMINISTRADOR) {
       irParaPainelAdministrador();
       return;

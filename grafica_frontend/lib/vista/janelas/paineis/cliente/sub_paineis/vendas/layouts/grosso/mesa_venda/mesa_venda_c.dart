@@ -339,4 +339,6 @@ class MesaVendaC extends GetxController {
   Future<List<Preco>> pegarPrecoDoProdutoDeId(int id) async {
     return await ProvedorNetPreco().pegarPrecoProdutoDeId(id);
   }
+
+  void mostrarDialogoProdutos(BuildContext context) {}
 }

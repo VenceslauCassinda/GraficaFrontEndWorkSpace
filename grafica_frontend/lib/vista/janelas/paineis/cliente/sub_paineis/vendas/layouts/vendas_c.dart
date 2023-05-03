@@ -11,19 +11,15 @@ import 'package:grafica_frontend/contratos/casos_uso/manipular_stock_i.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
-import 'package:grafica_frontend/dominio/entidades/pagamento_final.dart';
 import 'package:grafica_frontend/dominio/entidades/painel_actual.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
-import 'package:grafica_frontend/fonte_dados/provedores/provedor_pagamento.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
-import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/formato_dado.dart';
 import 'package:grafica_frontend/solucoes_uteis/utils.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/recepcoes/layouts/layouts_produtos_completo.dart';
-import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/vendas/layouts/grosso/mesa_venda/mesa_venda.dart';
-import 'package:grafica_frontend/vista/janelas/paineis/funcionario/painel_funcionario_c.dart';
+import 'package:grafica_frontend/vista/janelas/paineis/cliente/sub_paineis/vendas/layouts/grosso/mesa_venda/mesa_venda.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_quantidade.dart';
 import '../../../../../../../contratos/casos_uso/manipular_divida_i.dart';
 import '../../../../../../../contratos/casos_uso/manipular_pagamento_i.dart';
@@ -44,16 +40,8 @@ import '../../../../../../../dominio/entidades/forma_pagamento.dart';
 import '../../../../../../../dominio/entidades/item_venda.dart';
 import '../../../../../../../dominio/entidades/pagamento.dart';
 import '../../../../../../../dominio/entidades/preco.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_cliente.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_divida.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_entrada.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_item_venda.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_preco.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_produto.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_receccao.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_saida.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_stock.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_venda.dart';
 import '../../../../../../../fonte_dados/provedores_net/povedor_net_pagamento.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_entrada.dart';
@@ -205,7 +193,7 @@ class VendasC extends GetxController {
 
   void mostrarDialogoNovaVenda(BuildContext context){
     mostrarDialogoDeLayou(
-      LayoutMesaVenda(data, funcionario!),
+      LayoutMesaVenda(data,),
       layoutCru: true,
     );
     navegar(0);
@@ -527,24 +515,6 @@ class VendasC extends GetxController {
 
     lista[indice].parcela = lista[indice].total;
     await _manipularVendaI.actualizarVenda(lista[indice], fazerOuDesfazer);
-  }
-
-  void escolherData(
-      BuildContext context, PainelFuncionarioC funcionarioC) async {
-    var hoje = DateTime.now();
-    var dataSelecionada = await showDatePicker(
-        context: context,
-        initialDate: hoje.subtract(Duration(days: 1)),
-        firstDate: hoje.subtract(Duration(days: 365 * 3)),
-        lastDate: hoje.subtract(Duration(days: 1)));
-    if (dataSelecionada == null) {
-      return;
-    }
-    Get.delete<VendasC>();
-    totalCaixa.value = 0;
-    totalDividaPagas.value = 0;
-    funcionarioC.irParaPainel(PainelActual.VENDAS_FUNCIONARIOS,
-        valor: [funcionario, dataSelecionada]);
   }
 
   Future<List<Produto>> pegarListaProdutos() async {

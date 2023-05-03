@@ -23,7 +23,7 @@ class LayoutVendas extends StatelessWidget {
                 ))
             .toList();
         if (itens.isEmpty) {
-          return const Center(child: Text("Sem Vendas!"));
+          return const Center(child: Text("Sem Itens!"));
         }
         return Padding(
           padding: const EdgeInsets.all(20),

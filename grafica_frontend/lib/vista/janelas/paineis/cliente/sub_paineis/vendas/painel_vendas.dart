@@ -17,7 +17,6 @@ class PainelVendas extends StatelessWidget {
     Key? key,
     required this.data,
     required this.permissao,
-    required this.funcionario,
     this.accaoAoVoltar,
     this.aoTerminarSessao,
     this.clienteC,
@@ -32,7 +31,7 @@ class PainelVendas extends StatelessWidget {
   Function? aoTerminarSessao;
   late VendasC _c;
   final DateTime data;
-  final Funcionario? funcionario;
+  Funcionario? funcionario;
 
   initiC() {
     try {
@@ -58,70 +57,6 @@ class PainelVendas extends StatelessWidget {
               accaoAoSair: aoTerminarSessao,
               accaoAoVoltar: accaoAoVoltar),
         ),
-        Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Obx(() {
-                return Text(
-                  "CAIXA: ${formatar(_c.totalCaixa.value)} KZ",
-                  style: const TextStyle(color: primaryColor, fontSize: 15),
-                );
-              }),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Obx(
-                () => Text(
-                  "DÍVIDAS PAGAS: ${formatar(_c.totalDividaPagas.value)} KZ",
-                  style: const TextStyle(color: primaryColor, fontSize: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "DINHEIRO FÍSICO: ${formatar(_c.lista.fold<double>(0, (antigoV, cadaV) => ((cadaV.pagamentos ?? []).fold<double>(0, (antigoP, cadaP) {
-                      if (cadaP.valor == null) {
-                        return 0;
-                      }
-                      if ((cadaP.formaPagamento?.descricao ?? "")
-                              .toLowerCase()
-                              .contains('CASH'.toLowerCase()) ==
-                          true) {
-                        return (cadaP.valor ?? 0) + antigoP;
-                      }
-                      return antigoP;
-                    }) + antigoV)))} KZ",
-                style: const TextStyle(color: primaryColor, fontSize: 15),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "DINHEIRO DIGITAL: ${formatar(_c.lista.fold<double>(0, (antigoV, cadaV) => ((cadaV.pagamentos ?? []).fold<double>(0, (antigoP, cadaP) {
-                      if (cadaP.valor == null) {
-                        return 0;
-                      }
-                      if ((cadaP.formaPagamento?.descricao ?? "")
-                              .toLowerCase()
-                              .contains('CASH'.toLowerCase()) ==
-                          false) {
-                        mostrar(cadaP.formaPagamento?.descricao);
-                        mostrar(cadaP.valor);
-                        return (cadaP.valor ?? 0) + antigoP;
-                      }
-                      return antigoP;
-                    }) + antigoV)))} KZ",
-                style: const TextStyle(color: primaryColor, fontSize: 15),
-              ),
-            ),
-          ],
-        ),
         LayoutEntidadeGrosso(
           c: _c,
           data: data,
@@ -132,8 +67,7 @@ class PainelVendas extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: PopupAccoes(clienteC: clienteC, c: _c),
           ),
-          child: LayoutAccoes(
-              permissao: permissao, clienteC: clienteC, c: _c),
+          child: LayoutAccoes(permissao: permissao, clienteC: clienteC, c: _c),
         ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -141,7 +75,7 @@ class PainelVendas extends StatelessWidget {
             corButao: primaryColor,
             corTitulo: Colors.white,
             butaoHabilitado: true,
-            tituloButao: "Adicionar Venda",
+            tituloButao: "Encomendar",
             metodoChamadoNoClique: () {
               _c.mostrarDialogoNovaVenda(context);
             },

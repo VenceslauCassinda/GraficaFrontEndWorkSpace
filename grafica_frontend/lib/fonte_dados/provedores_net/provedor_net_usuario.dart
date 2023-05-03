@@ -58,14 +58,13 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
     }, body: {
       "name": usuario.nomeUsuario ?? "",
       "estado": "1",
-      "nivel_acesso": "0",
-      "logado": "0",
+      "nivel_acesso": "${usuario.nivelAcesso ?? 0}",
+      "logado": "${usuario.logado == true ? 1 : 2}",
       "password": usuario.palavraPasse ?? "",
     });
     switch (res.statusCode) {
       case 200:
         var dado = jsonDecode(res.body);
-        mostrar(dado);
         id = dado["dado"]["id"];
         break;
       case 422:

@@ -3,8 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_layout_builder/responsive_layout_builder.dart';
-import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
-import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:grafica_frontend/solucoes_uteis/responsividade.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/cliente/sub_paineis/vendas/painel_vendas.dart';
 import '../../../../recursos/constantes.dart';
@@ -69,22 +67,15 @@ class PainelCliente extends StatelessWidget {
   }
 
   pegarLayoutPainelAtual() {
-    return Obx( () {
+    return Obx(() {
       _c.painelActual.value.indicadorPainel;
-        return FutureBuilder<Funcionario>(
-            future: _c.inicializarFuncionario(),
-            builder: (c, s) {
-              return PainelVendas(
-                data: DateTime.now(),
-                funcionario: _c.funcionarioActual!,
-                permissao:
-                    (_c.funcionarioActual!).nivelAcesso == NivelAcesso.FUNCIONARIO,
-                aoTerminarSessao: () {
-                  _c.terminarSessao();
-                },
-              );
-            });
-      }
-    );
+      return PainelVendas(
+        data: DateTime.now(),
+        permissao:false,
+        aoTerminarSessao: () {
+          _c.terminarSessao();
+        },
+      );
+    });
   }
 }
