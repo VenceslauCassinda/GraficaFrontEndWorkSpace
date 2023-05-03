@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/provedores/provedor_cliente_i.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
+import 'package:grafica_frontend/dominio/entidades/estado.dart';
 import 'package:http/http.dart' as h;
 import '../../recursos/constantes.dart';
 import '../../solucoes_uteis/console.dart';
@@ -20,7 +21,7 @@ class ProvedorNetCliente implements ProvedorClienteI {
         "nome_completo": dado.idUsuario??"Sem Nome",
         "numero": dado.numero??"Sem Númro",
         "id_usuario": "${dado.idUsuario??-1}",
-        "estado": "${dado.estado}",
+        "estado": "${dado.estado?? Estado.ATIVADO}",
       }
     );
     // mostrar(res.body);
@@ -57,12 +58,12 @@ class ProvedorNetCliente implements ProvedorClienteI {
         "nome_completo": dado.nome??"Sem Nome",
         "numero": dado.numero??"Sem Númro",
         "id_usuario": "${dado.idUsuario??-1}",
-        "estado": "${dado.estado}",
+        "estado": "${dado.estado?? Estado.ATIVADO}",
       }
     );
     
-    // mostrar(res.statusCode);
-    // mostrar(res.body);
+    mostrar(res.statusCode);
+    mostrar(res.body);
     switch (res.statusCode) {
       case 200:
         var dado = jsonDecode(res.body);

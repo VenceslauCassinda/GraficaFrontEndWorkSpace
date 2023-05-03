@@ -1,4 +1,6 @@
 
+import 'package:grafica_frontend/dominio/entidades/usuario.dart';
+
 class Funcionario {
   String? nomeCompelto;
   int? id;
@@ -9,6 +11,7 @@ class Funcionario {
   int? nivelAcesso;
   int? estado;
   bool? logado;
+  Usuario? usuario;
 
   Funcionario(
       {this.nomeCompelto,

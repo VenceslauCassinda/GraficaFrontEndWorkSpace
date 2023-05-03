@@ -6,7 +6,7 @@ abstract class ManipularFuncionarioI {
   Future<List<Funcionario>> pegarLista();
   Future<List<Funcionario>> todos();
   Future<List<Funcionario>> pegarListaEliminados();
-  Future<Usuario> adicionarFuncionario(Funcionario dado);
+  Future<Funcionario> adicionarFuncionario(Funcionario dado);
   Future<int> pegarIdFuncionarioDeNome(String nomeCompleto);
   Future<Funcionario> pegarFuncionarioDeNome(String nomeCompleto);
   Future<Funcionario> pegarFuncionarioDeId(int id);

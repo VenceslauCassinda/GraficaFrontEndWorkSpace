@@ -1,3 +1,4 @@
+import 'package:componentes_visuais/componentes/butoes.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../recursos/constantes.dart';
 import '../../../../../componentes/tab_bar.dart';
@@ -51,7 +52,26 @@ class PainelDireito extends StatelessWidget {
         ),
         Expanded(
           child: LayoutFuncionarios(c: _c),
-        )
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: ModeloButao(
+                corButao: primaryColor,
+                icone: Icons.add,
+                corTitulo: Colors.white,
+                butaoHabilitado: true,
+                tituloButao: "Novo Funcionário",
+                metodoChamadoNoClique: () {
+                  _c.mostrarDialogoAdicionarFuncionario(context);
+                },
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

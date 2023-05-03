@@ -5,6 +5,7 @@ abstract class ManipularClienteI {
   Future<Cliente?> pegarClienteDeId(int id);
   Future<bool> actualizaCliente(Cliente dado);
   Future<int> registarCliente(Cliente dado);
+  Future<Cliente> registarClienteComUsuario(Cliente dado);
   Future<int> existeCliente(String nome, String numero);
   Future<void> removerCliente(Cliente dado);
 

@@ -65,7 +65,7 @@ class GavetaNavegacao extends StatelessWidget {
                 ItemDaGaveta(
                     cor: branca,
                     icone: Icons.monetization_on,
-                    titulo: "Forma de Pagamento",
+                    titulo: "Pagamentos",
                     metodoQuandoItemClicado: () async {
                       c.irParaPainel(PainelActual.PAGAMENTOS);
                     }),

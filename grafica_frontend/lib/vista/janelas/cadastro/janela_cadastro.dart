@@ -6,6 +6,7 @@ import 'package:componentes_visuais/componentes/validadores/validadcao_campos.da
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/responsividade.dart';
 
@@ -75,7 +76,7 @@ class CorpoJanelaCadastro extends StatelessWidget {
 }
 
 class LayoutCadastro extends StatelessWidget {
-  const LayoutCadastro({
+  LayoutCadastro({
     Key? key,
     required this.nome,
     required ObservadorButoes observadorButoes,
@@ -83,10 +84,12 @@ class LayoutCadastro extends StatelessWidget {
     required this.confirmePalavraPasse,
     required ValidacaoCampos validacaoCampos,
     required JanelaCadastroC c,
+    this.aoFinalizar,
   })  : _observadorButoes = observadorButoes,
         _validacaoCampos = validacaoCampos,
         _c = c,
         super(key: key);
+  Function(Funcionario novoFuncionario)? aoFinalizar;
 
   final RxString nome;
   final ObservadorButoes _observadorButoes;
@@ -215,7 +218,8 @@ class LayoutCadastro extends StatelessWidget {
                   tituloButao: "Finalizar",
                   metodoChamadoNoClique: () async {
                     await _c.orientarRealizacaoCadastro(
-                        nome.value, palavraPasse.value);
+                        nome.value, palavraPasse.value,
+                        aoFinalizar: aoFinalizar);
                   },
                 ),
               );

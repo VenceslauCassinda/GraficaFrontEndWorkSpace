@@ -33,6 +33,7 @@ class ItemDaGaveta extends StatelessWidget {
           ),
           Text(
             "$titulo",
+            overflow: TextOverflow.fade,
             style: TextStyle(color: cor),
           ),
           SizedBox(

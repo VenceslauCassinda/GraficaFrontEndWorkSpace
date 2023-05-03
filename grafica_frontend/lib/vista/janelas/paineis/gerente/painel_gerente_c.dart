@@ -1,7 +1,13 @@
 import 'dart:async';
+import 'package:componentes_visuais/componentes/observadores/observador_butoes.dart';
+import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/dominio/casos_uso/manipular_cliente.dart';
+import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_cliente.dart';
+import 'package:grafica_frontend/vista/componentes/item_usuario.dart';
+import 'package:grafica_frontend/vista/janelas/cadastro/janela_cadastro.dart';
 import 'package:responsive_layout_builder/responsive_layout_builder.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_fincionario.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_usuario.dart';
@@ -28,6 +34,8 @@ import '../../../../dominio/entidades/painel_actual.dart';
 import '../../../../fonte_dados/provedores_net/provedor_net_funcionario.dart';
 import '../../../../fonte_dados/provedores_net/provedor_net_usuario.dart';
 import '../../../aplicacao_c.dart';
+import '../../../componentes/item_funcionario.dart';
+import '../../cadastro/janela_cadastro_c.dart';
 import '../funcionario/sub_paineis/dividas_encomendas_gerais/painel_c.dart';
 
 class PainelGerenteC extends GetxController {
@@ -209,6 +217,33 @@ class PainelGerenteC extends GetxController {
         lista.add(cada);
       }
     }
+  }
+
+  void mostrarDialogoAdicionarFuncionario(BuildContext context) async {
+    late ValidacaoCampos validacaoCampos = ValidacaoCampos();
+    late ObservadorButoes observadorButoes = ObservadorButoes();
+
+    var nome = "".obs, palavraPasse = "".obs, confirmePalavraPasse = "".obs;
+    var manipularUsuario = ManipularUsuario(ProvedorNetUsuario());
+    var usuarios = await manipularUsuario.pegarLista();
+
+    var janelaCadastroC = JanelaCadastroC();
+    janelaCadastroC.modoRegitroCliente = false;
+
+    mostrarDialogoDeLayou(Container(
+      width: MediaQuery.of(context).size.width * .6,
+      child: LayoutCadastro(
+        c: janelaCadastroC,
+        confirmePalavraPasse: confirmePalavraPasse,
+        nome: nome,
+        observadorButoes: observadorButoes,
+        palavraPasse: palavraPasse,
+        validacaoCampos: validacaoCampos,
+        aoFinalizar: (novoFuncionario) {
+          lista.add(novoFuncionario);
+        },
+      ),
+    ));
   }
 }
 

@@ -23,8 +23,6 @@ import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
-import 'package:grafica_frontend/fonte_dados/provedores/provedor_preco.dart';
-import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/geradores.dart';
 
 import '../../../../../../../../../contratos/casos_uso/manipular_pagamento_i.dart';

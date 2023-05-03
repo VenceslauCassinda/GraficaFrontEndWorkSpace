@@ -21,7 +21,7 @@ class ManipularFuncionario implements ManipularFuncionarioI {
   }
 
   @override
-  Future<Usuario> adicionarFuncionario(Funcionario dado) async {
+  Future<Funcionario> adicionarFuncionario(Funcionario dado) async {
     String nomeUsuario;
     if (dado.nomeCompelto!.contains(" ")) {
       nomeUsuario = dado.nomeCompelto!.split(" ")[0];
@@ -44,11 +44,15 @@ class ManipularFuncionario implements ManipularFuncionarioI {
     novoUsuario.palavraPasse = dado.palavraPasse;
     var id = await _manipularUsuarioI.registarUsuario(novoUsuario);
     dado.idUsuario = id;
-    await _provedorFuncionarioI.adicionarFuncionario(dado);
+    var idFuncionario = await _provedorFuncionarioI.adicionarFuncionario(dado);
     if (nomeUsuario == "admin") {
       novoUsuario.nivelAcesso = NivelAcesso.ADMINISTRADOR;
     }
-    return novoUsuario;
+    dado.idUsuario = id;
+    dado.id = idFuncionario;
+    novoUsuario.id = id;
+    dado.usuario = novoUsuario;
+    return dado;
   }
 
   @override

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/vista/janelas/paineis/cliente/painel_cliente.dart';
 import '../dominio/casos_uso/manipular_definicoes.dart';
 import '../dominio/casos_uso/manipular_usuario.dart';
 import '../dominio/entidades/nivel_acesso.dart';
@@ -69,6 +70,10 @@ class AplicacaoC extends GetxController {
       irParaPainelFuncionario();
       return;
     }
+    if (usuario.nivelAcesso == NivelAcesso.CLIENTE) {
+      irParaPainelCliente();
+      return;
+    }
   }
 
   static void terminarSessao() {
@@ -125,6 +130,10 @@ class AplicacaoC extends GetxController {
 
   static void irParaPainelFuncionario() {
     Get.off(() => PainelFuncionario());
+  }
+  
+  static void irParaPainelCliente() {
+    Get.off(() => PainelCliente());
   }
 
   static void irParaJanelaPainelUsuario(Usuario usuario) {}

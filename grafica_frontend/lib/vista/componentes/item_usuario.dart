@@ -15,7 +15,7 @@ class ItemUsuario extends StatelessWidget {
     Key? key,
     required this.usuario,
     required this.aoClicar,
-    required this.aoEliminar,
+    this.aoEliminar,
     this.aoEditar,
   }) : super(key: key);
 
