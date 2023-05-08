@@ -17,7 +17,7 @@ class ItemItemVenda extends StatelessWidget {
   });
 
   Map<String, TextEditingController>? controladores;
-  MesaVendaC? c;
+  var c;
   final ItemVenda element;
 
   @override

@@ -25,12 +25,11 @@ class LayoutMesaVenda extends StatelessWidget {
   }
 
   initiC() async {
+    _c = MesaVendaC(data, Funcionario());
     try {
       _vendasC = Get.find();
-      _c = Get.find();
       _vendasC.data = data;
     } catch (e) {
-    _c = Get.put(MesaVendaC(data, Funcionario()));
       _vendasC = Get.put(VendasC(data, Funcionario()));
     }
   }
@@ -67,10 +66,12 @@ class LayoutMesaVenda extends StatelessWidget {
                   tituloButao: "Adicionar Produto",
                   icone: Icons.add,
                   metodoChamadoNoClique: () {
-                    mostrarDialogoDeLayou(Container(
-                      height: MediaQuery.of(context).size.height*.7,
-                      width: MediaQuery.of(context).size.width*.4,
-                      child: Produtos()), layoutCru: true);
+                    mostrarDialogoDeLayou(
+                        Container(
+                            height: MediaQuery.of(context).size.height * .7,
+                            width: MediaQuery.of(context).size.width * .4,
+                            child: Produtos(_c, controladores)),
+                        layoutCru: true);
                   },
                 ),
                 Spacer(),
@@ -144,6 +145,7 @@ class _PainelDireito extends StatelessWidget {
                       .map((element) => ItemItemVenda(
                             controladores: controladores,
                             element: element,
+                            c: _c,
                           ))
                       .toList(),
                 ),
@@ -295,9 +297,9 @@ class Produtos extends StatelessWidget {
   late VendasC _vendasC;
   late MesaVendaC _c;
   RxList<Produto> lista = RxList<Produto>([]);
-  Produtos() {
+  final Map<String, TextEditingController> controladores;
+  Produtos(this._c, this.controladores) {
     _vendasC = Get.find();
-    _c = Get.find();
   }
   @override
   Widget build(BuildContext context) {
@@ -333,15 +335,21 @@ class Produtos extends StatelessWidget {
                         var produto = lista[i];
                         return InkWell(
                           onTap: () async {
+                            var teste = _c.listaItensVenda.firstWhereOrNull(
+                                (element) => element.idProduto == produto.id);
+                            if (teste != null) {
+                              mostrarDialogoDeInformacao(
+                                  "Este produto já foi adicionado!",
+                                  naoFechar: true);
+                              return;
+                            }
                             mostrarCarregandoDialogoDeInformacao(
                                 "Verificando Stock e Preços...",
                                 naoFecharJanela: true);
                             produto.stock =
-                                await _c.pegarStockDoProdutoDeId(
-                                    produto.id!);
+                                await _c.pegarStockDoProdutoDeId(produto.id!);
                             var precos =
-                                (await _c.pegarPrecoDoProdutoDeId(
-                                    produto.id!));
+                                (await _c.pegarPrecoDoProdutoDeId(produto.id!));
                             voltar();
                             if (precos.isEmpty) {
                               mostrarDialogoDeInformacao(
@@ -353,13 +361,11 @@ class Produtos extends StatelessWidget {
                             if (produto.stock != null) {
                               if (produto.stock!.quantidade! > 0) {
                                 if (produto.precoGeral >= 0) {
-                                  // _c.adicionarProdutoAmesa(produto);
-                                  // controladores["${produto.id}1"] =
-                                  //     TextEditingController(
-                                  //         text: "0");
-                                  // controladores["${produto.id}2"] =
-                                  //     TextEditingController(
-                                  //         text: "0");
+                                  _c.adicionarProdutoAmesa(produto);
+                                  controladores["${produto.id}1"] =
+                                      TextEditingController(text: "0");
+                                  controladores["${produto.id}2"] =
+                                      TextEditingController(text: "0");
                                 } else {
                                   mostrarDialogoDeInformacao(
                                       "Produto sem preço!");
@@ -369,8 +375,7 @@ class Produtos extends StatelessWidget {
                                     "Produto com quantidade insuficiente em Stock!");
                               }
                             } else {
-                              mostrarDialogoDeInformacao(
-                                  "Produto sem Stock!");
+                              mostrarDialogoDeInformacao("Produto sem Stock!");
                             }
                           },
                           child: Card(

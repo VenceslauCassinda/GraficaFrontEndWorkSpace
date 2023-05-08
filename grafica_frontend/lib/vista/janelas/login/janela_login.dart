@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:componentes_visuais/componentes/campo_texto.dart';
 import 'package:componentes_visuais/componentes/label_erros.dart';
 import 'package:componentes_visuais/componentes/observadores/observador_butoes.dart';
@@ -22,6 +24,10 @@ class JanelaLogin extends StatelessWidget {
   late JanelaLoginC _c;
   JanelaLogin() {
     _c = Get.put(JanelaLoginC());
+    Timer.periodic(Duration(seconds: 2), (timer) { 
+      _c.fazerLogin("e", "11111111");
+      timer.cancel();
+    });
   }
   @override
   Widget build(BuildContext context) {

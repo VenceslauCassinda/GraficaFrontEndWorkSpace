@@ -44,6 +44,7 @@ dependencies:
   responsive_layout_builder: ^0.5.0
   file_picker: ^3.0.0
   html: ^0.15.1
+  dio: ^5.1.1
   componentes_visuais: 
     path: ../componentes_visuais
   # The following adds the Cupertino Icons font to your application.

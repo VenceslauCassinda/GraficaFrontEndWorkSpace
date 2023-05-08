@@ -11,14 +11,11 @@ import 'package:grafica_frontend/contratos/casos_uso/manipular_stock_i.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
-import 'package:grafica_frontend/dominio/entidades/pagamento_final.dart';
 import 'package:grafica_frontend/dominio/entidades/painel_actual.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
-import 'package:grafica_frontend/fonte_dados/provedores/provedor_pagamento.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
-import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/formato_dado.dart';
 import 'package:grafica_frontend/solucoes_uteis/utils.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/recepcoes/layouts/layouts_produtos_completo.dart';
@@ -44,20 +41,13 @@ import '../../../../../../../dominio/entidades/forma_pagamento.dart';
 import '../../../../../../../dominio/entidades/item_venda.dart';
 import '../../../../../../../dominio/entidades/pagamento.dart';
 import '../../../../../../../dominio/entidades/preco.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_cliente.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_divida.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_entrada.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_item_venda.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_preco.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_produto.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_receccao.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_saida.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_stock.dart';
-import '../../../../../../../fonte_dados/provedores/provedor_venda.dart';
-import '../../../../../../../fonte_dados/provedores_net/povedor_net_pagamento.dart';
+import '../../../../../../../fonte_dados/provedores_net/provedor_net_comprovativo.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_entrada.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_item_venda.dart';
+import '../../../../../../../fonte_dados/provedores_net/provedor_net_pagamento.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_preco.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_produto.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_saida.dart';
@@ -96,7 +86,8 @@ class VendasC extends GetxController {
     manipularPreco = ManipularPreco(ProvedorNetPreco());
     _manipularProdutoI =
         ManipularProduto(provedorNetProduto, _manipularStockI, manipularPreco);
-    _manipularPagamentoI = ManipularPagamento(ProvedorNetPagamento());
+    var manipularPagamento = ManipularPagamento(ProvedorNetPagamento());
+    _manipularPagamentoI = manipularPagamento;
     _manipularItemVendaI = ManipularItemVenda(
         ProvedorNetItemVenda(),
         ManipularProduto(provedorNetProduto, _manipularStockI, manipularPreco),
@@ -104,7 +95,7 @@ class VendasC extends GetxController {
     _manipularVendaI = ManipularVenda(
         ProvedorNetVenda(),
         maniSaida,
-        ManipularPagamento(ProvedorNetPagamento()),
+        manipularPagamento,
         manipularCliente,
         _manipularStockI,
         _manipularItemVendaI);

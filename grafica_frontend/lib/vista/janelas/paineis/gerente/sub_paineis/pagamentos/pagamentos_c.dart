@@ -6,6 +6,7 @@ import 'package:grafica_frontend/dominio/casos_uso/manipular_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/forma_pagamento.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/fonte_dados/provedores/provedor_pagamento.dart';
+import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_comprovativo.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_campo.dart';
@@ -13,7 +14,7 @@ import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_fo
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/painel_gerente_c.dart';
 
 import '../../../../../../dominio/entidades/estado.dart';
-import '../../../../../../fonte_dados/provedores_net/povedor_net_pagamento.dart';
+import '../../../../../../fonte_dados/provedores_net/provedor_net_pagamento.dart';
 
 class PagamentosC extends GetxController {
   RxList<FormaPagamento> lista = RxList<FormaPagamento>();

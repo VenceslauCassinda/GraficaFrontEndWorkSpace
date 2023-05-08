@@ -34,17 +34,18 @@ import '../../../../../../../../../dominio/casos_uso/manipular_venda.dart';
 import '../../../../../../../../../dominio/entidades/forma_pagamento.dart';
 import '../../../../../../../../../dominio/entidades/preco.dart';
 import '../../../../../../../../../dominio/entidades/stock.dart';
-import '../../../../../../../../../fonte_dados/provedores_net/povedor_net_pagamento.dart';
+import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_comprovativo.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_funcionario.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_item_venda.dart';
+import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_pagamento.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_preco.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_produto.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_saida.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_stock.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_usuario.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
-import '../../../../../../gerente/layouts/layout_forma_pagamento.dart';
+import '../../layout_forma_pagamento.dart';
 import '../../vendas_c.dart';
 
 class MesaVendaC extends GetxController {
@@ -111,9 +112,17 @@ class MesaVendaC extends GetxController {
                 );
               }
               var lista = snapshot.data!.map((e) => e.descricao!).toList();
+              lista.removeWhere(
+                  (element) => element.contains("TRANSFERÊNCIA") == false);
               return LayoutFormaPagamento(
-                  accaoAoFinalizar: (valor, opcao) async {
-                    await adicionarValorPagamento(valor, opcao);
+                  accaoAoFinalizar: (valor, opcao, arquivo) async {
+                    try {
+                      await ProvedorNetComprovativo().fazerUploadComprovativo(
+                          arquivo.bytes!, arquivo.name);
+                      await adicionarValorPagamento(valor, opcao);
+                    } on Erro catch (e) {
+                      mostrarDialogoDeInformacao(e.sms);
+                    }
                   },
                   titulo: "Selecione a Forma de Pagamento",
                   listaItens: lista);
@@ -143,13 +152,6 @@ class MesaVendaC extends GetxController {
   }
 
   void adicionarProdutoAmesa(Produto produto) {
-    var teste = listaItensVenda
-        .firstWhereOrNull((element) => element.idProduto == produto.id);
-    if (teste != null) {
-      mostrarDialogoDeInformacao("Este produto já foi adicionado!",
-          naoFechar: true);
-      return;
-    }
     listaItensVenda.add(ItemVenda(
         idVista: gerarIdUnico(),
         estado: Estado.ATIVADO,

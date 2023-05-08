@@ -74,6 +74,11 @@ const URL_ATUALIZAR_FORMA_PAGAMENTO = "${URL_BASE}atualizarFormaPagamento";
 const URL_TODOS_FORMA_PAGAMENTO = "${URL_BASE}formasPagamento";
 const URL_REMOVER_FORMA_PAGAMENTO = "${URL_BASE}eliminarFormaPagamento";
 
+const URL_ADD_COMPROVATIVO = "${URL_BASE}registarComprovativo";
+const URL_ATUALIZAR_COMPROVATIVO = "${URL_BASE}atualizarComprovativo";
+const URL_TODOS_COMPROVATIVO = "${URL_BASE}comprovativos";
+const URL_REMOVER_COMPROVATIVO = "${URL_BASE}eliminarComprovativo";
+const URL_UPLOAD_COMPROVATIVO = "${URL_BASE}fazerUploadComprovativo";
 
 class TipoNegocio {
   static const int GROSSO = 1, RETALHO = 2;

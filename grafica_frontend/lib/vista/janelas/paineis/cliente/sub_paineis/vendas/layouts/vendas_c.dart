@@ -42,10 +42,11 @@ import '../../../../../../../dominio/entidades/pagamento.dart';
 import '../../../../../../../dominio/entidades/preco.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_divida.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_receccao.dart';
-import '../../../../../../../fonte_dados/provedores_net/povedor_net_pagamento.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
+import '../../../../../../../fonte_dados/provedores_net/provedor_net_comprovativo.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_entrada.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_item_venda.dart';
+import '../../../../../../../fonte_dados/provedores_net/provedor_net_pagamento.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_preco.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_produto.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_saida.dart';
@@ -151,16 +152,6 @@ class VendasC extends GetxController {
     if (indice == 0) {
       await pegarLista();
     }
-    if (indice == 1) {
-      await pegarListaVendas();
-    }
-    if (indice == 2) {
-      await pegarListaEncomendas();
-    }
-    if (indice == 3) {
-      await pegarListaDividas();
-    }
-    await pegarTotalDividas();
   }
 
   void reiniciarValores() {
