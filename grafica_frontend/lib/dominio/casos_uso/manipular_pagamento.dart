@@ -1,4 +1,5 @@
 import 'package:grafica_frontend/contratos/casos_uso/manipular_pagamento_i.dart';
+import 'package:grafica_frontend/contratos/provedores/provedor_comprovativo_i.dart';
 import 'package:grafica_frontend/contratos/provedores/provedor_pagamento_i.dart';
 import 'package:grafica_frontend/dominio/entidades/forma_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
@@ -7,8 +8,9 @@ import 'package:grafica_frontend/fonte_dados/erros.dart';
 
 class ManipularPagamento implements ManipularPagamentoI {
   final ProvedorPagamentoI _provedorPagamentoI;
+  ProvedorComprovativoI? provedorComprovativoI;
 
-  ManipularPagamento(this._provedorPagamentoI);
+  ManipularPagamento(this._provedorPagamentoI, {this.provedorComprovativoI});
   @override
   Future<List<Pagamento>> pegarLista() async {
     return await _provedorPagamentoI.pegarListaPagamento();
@@ -25,7 +27,13 @@ class ManipularPagamento implements ManipularPagamentoI {
 
   @override
   Future<int> registarPagamento(Pagamento pagamento) async {
-    return await _provedorPagamentoI.registarPagamento(pagamento);
+    var i = await _provedorPagamentoI.registarPagamento(pagamento);
+    if (pagamento.comprovativo != null) {
+      pagamento.comprovativo!.idPagamento = i;
+      await provedorComprovativoI!
+          .registarComprovativo(pagamento.comprovativo!);
+    }
+    return i;
   }
 
   @override

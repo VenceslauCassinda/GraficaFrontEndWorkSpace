@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:componentes_visuais/componentes/formatos/formatos.dart';
 import 'package:grafica_frontend/dominio/entidades/comprovativo.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
+import 'package:grafica_frontend/vista/aplicacao_c.dart';
 import 'package:http/http.dart' as h;
 import '../../contratos/provedores/provedor_comprovativo_i.dart';
 import '../../recursos/constantes.dart';
@@ -8,32 +11,32 @@ import '../erros.dart';
 import 'package:http_parser/http_parser.dart';
 
 class ProvedorNetComprovativo implements ProvedorComprovativoI {
-  Future<void> fazerUploadComprovativo(
-      List<int> bytesDoArquivo, String nomeArquivo) async {
-    // var res = await h.post(
-    //   Uri.parse(URL_UPLOAD_COMPROVATIVO),
-    //   headers: {
-    //     "Accept": "aplication/json",
-    //   },
-    // );
+  Future<String> fazerUploadComprovativo(List<int> bytesDoArquivo, String extensao) async {
     var requisicao =
         h.MultipartRequest("post", Uri.parse(URL_UPLOAD_COMPROVATIVO));
-    requisicao.files.add(h.MultipartFile.fromBytes("file", bytesDoArquivo,
-        contentType: MediaType(
-          "aplication",
-          "json",
-        ),
-        filename: nomeArquivo));
+      String nomeArquivo =
+          "Comprovativo-${pegarAplicacaoC().pegarUsuarioActual()!.nomeUsuario}-${formatarData(DateTime.now(),).replaceAll(" ", "_")}";
+      requisicao.files.add(await h.MultipartFile.fromBytes("file", bytesDoArquivo,
+          contentType: MediaType(
+            "aplication",
+            "json",
+          ),
+          filename: extensao));
     var res = await requisicao.send();
     if (res.statusCode != 200) {
-    }
       throw Erro(
           "${res.statusCode.toString()} -- ${res.reasonPhrase!.toString()}");
+    }
+    var mapa = jsonDecode(await res.stream.bytesToString());
+    mostrar(mapa);
+    return mapa["url"];
   }
 
   @override
   Future<int> registarComprovativo(Comprovativo dado) async {
     int id = -1;
+    
+    var url = await fazerUploadComprovativo(dado.arquivo!.bytes!, dado.arquivo!.name);
     var res = await h.post(
       Uri.parse(URL_ADD_COMPROVATIVO),
       headers: {
@@ -42,7 +45,7 @@ class ProvedorNetComprovativo implements ProvedorComprovativoI {
       },
       body: {
         "id_pagamento": "${dado.idPagamento}",
-        "link": "${dado.link}",
+        "link": url,
         "descricao": "${dado.descricao}",
       },
     );

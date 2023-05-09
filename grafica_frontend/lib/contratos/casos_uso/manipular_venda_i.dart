@@ -9,7 +9,7 @@ abstract class ManipularVendaI {
   Future<int> registarVenda(
       double total,
       double parcela,
-      Funcionario funcionario,
+      int idUsuario,
       Cliente cliente,
       DateTime data,
       DateTime dataLevantamentoCompra,
@@ -19,8 +19,8 @@ abstract class ManipularVendaI {
       List<ItemVenda> itensVenda,
       List<Pagamento> pagamentos,
       double total,
-      Funcionario funcionario,
-      Cliente cliente,
+      int idUsuario,
+      Cliente? cliente,
       DateTime data,
       DateTime dataLevantamentoCompra,
       double parcela,
@@ -32,18 +32,19 @@ abstract class ManipularVendaI {
   double calcularParcelaApagar(double totalApagar, double parcelaJaPaga);
   double calcularParcelaPaga(List<Pagamento> pagamentos);
   double aplicarDescontoVenda(double totalApagar, int porcentagem);
-  Future<List<Venda>> pegarLista(Funcionario? funcionario, DateTime data);
+  Future<List<Venda>> pegarLista(int idUsuario, DateTime data);
+  Future<List<Venda>> pegarListaCliente(int idUsuario, DateTime data);
   Future<List<Venda>> todasDividas();
-  Future<List<Venda>> pegarListaTodasDividas(Funcionario? funcionario);
+  Future<List<Venda>> pegarListaTodasDividas(int idUsuario);
   Future<List<Pagamento>> pegarListaTodasPagamentoDividas(DateTime data);
   Future<List<Pagamento>> pegarListaTodasPagamentoDividasFuncionario(
-      Funcionario funcionario, DateTime data);
-  Future<List<Venda>> pegarListaTodasEncomendas(Funcionario? funcionario);
-  Future<List<Venda>> pegarListaVendas(Funcionario? funcionario, DateTime data);
+      int idUsuario, DateTime data);
+  Future<List<Venda>> pegarListaTodasEncomendas(int idUsuario);
+  Future<List<Venda>> pegarListaVendas(int idUsuario, DateTime data);
   Future<List<Venda>> pegarListaEncomendas(
-      Funcionario? funcionario, DateTime data);
+      int idUsuario, DateTime data);
   Future<List<Venda>> pegarListaDividas(
-      Funcionario? funcionario, DateTime data);
+      int idUsuario, DateTime data);
   Future<void> entregarEncomenda(Venda venda);
   bool vendaEstaPaga(Venda venda);
   bool vendaOuEncomenda(Venda venda);
@@ -56,7 +57,7 @@ abstract class ManipularVendaI {
   Future<bool> removerVendasAntesData(DateTime data);
 
   Future<List<DateTime>> pegarListaDataVendasFuncionario(
-      Funcionario funcionario);
+      int idUsuario);
 
   Future<List<DateTime>> pegarListaDataVendas();
   Future<List<Venda>> pegarListaTodasVendas();

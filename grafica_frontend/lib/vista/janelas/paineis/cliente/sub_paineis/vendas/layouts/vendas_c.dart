@@ -1,6 +1,7 @@
 import 'package:componentes_visuais/componentes/layout_confirmacao_accao.dart';
 import 'package:componentes_visuais/componentes/modelo_item_lista.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import 'package:grafica_frontend/contratos/casos_uso/manipular_receccao_i.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_stock_i.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
+import 'package:grafica_frontend/dominio/entidades/comprovativo.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
 import 'package:grafica_frontend/dominio/entidades/painel_actual.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
@@ -18,6 +20,7 @@ import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/formato_dado.dart';
 import 'package:grafica_frontend/solucoes_uteis/utils.dart';
+import 'package:grafica_frontend/vista/aplicacao_c.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/recepcoes/layouts/layouts_produtos_completo.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/cliente/sub_paineis/vendas/layouts/grosso/mesa_venda/mesa_venda.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_quantidade.dart';
@@ -53,8 +56,8 @@ import '../../../../../../../fonte_dados/provedores_net/provedor_net_saida.dart'
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_stock.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../../solucoes_uteis/geradores.dart';
-import '../../../../gerente/layouts/layout_forma_pagamento.dart';
 import 'detalhes_venda.dart';
+import 'layout_forma_pagamento.dart';
 
 class VendasC extends GetxController {
   RxList<Venda> lista = RxList<Venda>();
@@ -85,7 +88,8 @@ class VendasC extends GetxController {
     manipularPreco = ManipularPreco(ProvedorNetPreco());
     _manipularProdutoI =
         ManipularProduto(provedorNetProduto, _manipularStockI, manipularPreco);
-    _manipularPagamentoI = ManipularPagamento(ProvedorNetPagamento());
+    _manipularPagamentoI = ManipularPagamento(ProvedorNetPagamento(),
+        provedorComprovativoI: ProvedorNetComprovativo());
     _manipularItemVendaI = ManipularItemVenda(
         ProvedorNetItemVenda(),
         ManipularProduto(provedorNetProduto, _manipularStockI, manipularPreco),
@@ -182,9 +186,11 @@ class VendasC extends GetxController {
     criterioPesquisa = f;
   }
 
-  void mostrarDialogoNovaVenda(BuildContext context){
+  void mostrarDialogoNovaVenda(BuildContext context) {
     mostrarDialogoDeLayou(
-      LayoutMesaVenda(data,),
+      LayoutMesaVenda(
+        data,
+      ),
       layoutCru: true,
     );
     navegar(0);
@@ -228,7 +234,7 @@ class VendasC extends GetxController {
     int id = await _manipularVendaI.registarVenda(
         venda.total ?? 0,
         venda.total ?? 0,
-        funcionario!,
+        pegarAplicacaoC().pegarUsuarioActual()!.id!,
         Cliente(
             estado: Estado.ATIVADO, nome: "Cliente Corrente", numero: "999999"),
         data,
@@ -245,7 +251,7 @@ class VendasC extends GetxController {
 
   Future pegarTotalDividas() async {
     var res = await _manipularVendaI.pegarListaTodasPagamentoDividasFuncionario(
-        funcionario!, data);
+        pegarAplicacaoC().pegarUsuarioActual()!.id!, data);
     totalDividaPagas.value = 0;
     for (var cada in res) {
       totalDividaPagas.value += cada.valor ?? 0;
@@ -253,7 +259,11 @@ class VendasC extends GetxController {
   }
 
   Future pegarLista() async {
-    var res = await _manipularVendaI.pegarLista(funcionario, data);
+    var idCliente = (await manipularCliente.pegarClienteDeUsuarioDeId(
+                pegarAplicacaoC().pegarUsuarioActual()!.id!))
+            ?.id ??
+        -1;
+    var res = await _manipularVendaI.pegarListaCliente(idCliente, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       cada.cliente =
@@ -267,7 +277,8 @@ class VendasC extends GetxController {
   }
 
   Future pegarListaVendas() async {
-    var res = await _manipularVendaI.pegarListaVendas(funcionario, data);
+    var res = await _manipularVendaI.pegarListaVendas(
+        pegarAplicacaoC().pegarUsuarioActual()!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       if (cada.venda == true) {
@@ -280,7 +291,8 @@ class VendasC extends GetxController {
   }
 
   Future pegarListaEncomendas() async {
-    var res = await _manipularVendaI.pegarListaEncomendas(funcionario, data);
+    var res = await _manipularVendaI.pegarListaEncomendas(
+        pegarAplicacaoC().pegarUsuarioActual()!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       cada.cliente =
@@ -291,7 +303,8 @@ class VendasC extends GetxController {
   }
 
   Future pegarListaDividas() async {
-    var res = await _manipularVendaI.pegarListaDividas(funcionario, data);
+    var res = await _manipularVendaI.pegarListaDividas(
+        pegarAplicacaoC().pegarUsuarioActual()!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       cada.cliente =
@@ -330,9 +343,9 @@ class VendasC extends GetxController {
     voltar();
     if (indiceTabActual == 2) {
       lista.removeWhere((element) => element.id == venda.id);
-    }else{
+    } else {
       for (var i = 0; i < lista.length; i++) {
-        if(lista[i].id == venda.id){
+        if (lista[i].id == venda.id) {
           lista[i] = venda;
         }
       }
@@ -364,10 +377,12 @@ class VendasC extends GetxController {
                 );
               }
               var lista = snapshot.data!.map((e) => e.descricao!).toList();
+              lista.removeWhere(
+                  (element) => element.contains("TRANSFERÊNCIA") == false);
               return LayoutFormaPagamento(
-                  accaoAoFinalizar: (valor, opcao) async {
+                  accaoAoFinalizar: (valor, opcao, arquivo) async {
                     await adicionarValorPagamento(venda, valor, opcao,
-                        comPagamentoFinal: comPagamentoFinal);
+                        comPagamentoFinal: comPagamentoFinal, arquivo: arquivo);
                   },
                   titulo: "Selecione a Forma de Pagamento",
                   listaItens: lista);
@@ -376,7 +391,7 @@ class VendasC extends GetxController {
   }
 
   Future<void> adicionarValorPagamento(Venda venda, String valor, String? opcao,
-      {bool? comPagamentoFinal}) async {
+      {bool? comPagamentoFinal, PlatformFile? arquivo}) async {
     var soma = (venda.pagamentos ?? []).fold<double>(
         0, (previousValue, element) => element.valor! + previousValue);
     if ((soma + double.parse(valor)) > venda.total!) {
@@ -387,6 +402,10 @@ class VendasC extends GetxController {
     var forma = (await _manipularPagamentoI.pegarListaFormasPagamento())
         .firstWhere((element) => element.descricao == opcao);
     var novoPagamento = Pagamento(
+        comprovativo: Comprovativo(
+          arquivo: arquivo,
+          descricao: "Pagamento Final de Cliente",
+        ),
         idVenda: venda.id,
         idParaVista: gerarIdUnico(),
         idFormaPagamento: forma.id,
@@ -396,6 +415,10 @@ class VendasC extends GetxController {
     venda.pagamentos ??= [];
     venda.pagamentos!.add(novoPagamento);
     venda.parcela = venda.parcela! + double.parse(valor);
+    venda.idCliente = (await manipularCliente.pegarClienteDeUsuarioDeId(
+                pegarAplicacaoC().pegarUsuarioActual()!.id!))
+            ?.id ??
+        -1;
 
     var id = await _manipularPagamentoI.registarPagamento(novoPagamento);
 

@@ -119,7 +119,7 @@ class ItemModeloVenda extends StatelessWidget {
                       width: 30,
                     ),
                     Visibility(
-                      visible: venda.divida == true && permissao == true,
+                      visible: venda.divida == true,
                       child: IconeItem(
                         metodoQuandoItemClicado: () {
                           c.mostrarFormasPagamento(venda, context,

@@ -39,18 +39,21 @@ class ManipularVenda implements ManipularVendaI {
   Future<int> registarVenda(
       double total,
       double parcela,
-      Funcionario funcionario,
-      Cliente cliente,
+      int idUsuario,
+      Cliente? cliente,
       DateTime data,
       DateTime dataLevantamentoCompra,
       int idProduto,
       int quantidadeVendida) async {
-    var idCliente = await _manipularClienteI.registarCliente(cliente);
+    int? idCliente;
+    if (cliente != null) {
+      idCliente = await _manipularClienteI.registarCliente(cliente);
+    }
     var novaVenda = Venda(
         estado: Estado.ATIVADO,
-        idFuncionario: funcionario.id,
+        idFuncionario: idUsuario,
         dataLevantamentoCompra: dataLevantamentoCompra,
-        idCliente: idCliente,
+        idCliente: idCliente?? (await _manipularClienteI.pegarClienteDeUsuarioDeId(idUsuario))!.id!,
         data: data,
         total: total,
         parcela: parcela,
@@ -86,9 +89,8 @@ class ManipularVenda implements ManipularVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarLista(
-      Funcionario? funcionario, DateTime data) async {
-    return await _provedorVendaI.pegarLista(funcionario, data);
+  Future<List<Venda>> pegarLista(int idUsuario, DateTime data) async {
+    return await _provedorVendaI.pegarLista(idUsuario, data);
   }
 
   @override
@@ -96,8 +98,8 @@ class ManipularVenda implements ManipularVendaI {
       List<ItemVenda> itensVenda,
       List<Pagamento> pagamentos,
       double total,
-      Funcionario funcionario,
-      Cliente cliente,
+      int idUsuario,
+      Cliente? cliente,
       DateTime data,
       DateTime dataLevantamentoCompra,
       double parcela,
@@ -113,12 +115,13 @@ class ManipularVenda implements ManipularVendaI {
           "PAGAMENTOS INCORRECTOS!\nRETIFIQUE O VALOR DOS PAGAMENTOS!");
     }
 
-    int idVenda = await registarVenda(total, parcela, funcionario, cliente,
-        data, dataLevantamentoCompra, idProduto, quantidadeVendida);
+    int idVenda = await registarVenda(total, parcela, idUsuario, cliente, data,
+        dataLevantamentoCompra, idProduto, quantidadeVendida);
     var vendaFeita = await _provedorVendaI.pegarVendaDeId(idVenda);
     if (vendaFeita != null) {
       await _manipularPagamentoI.registarListaPagamentos(pagamentos, idVenda);
-      await _manipularSaidaI.registarListaSaidas(itensVenda, idVenda, vendaFeita.data!);
+      await _manipularSaidaI.registarListaSaidas(
+          itensVenda, idVenda, vendaFeita.data!);
       for (var cada in itensVenda) {
         cada.idVenda = idVenda;
         await _manipularItemVendaI.registarItemVenda(cada);
@@ -182,10 +185,9 @@ class ManipularVenda implements ManipularVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarListaDividas(
-      Funcionario? funcionario, DateTime data) async {
+  Future<List<Venda>> pegarListaDividas(int idUsuario, DateTime data) async {
     var lista = <Venda>[];
-    var originais = await pegarLista(funcionario, data);
+    var originais = await pegarLista(idUsuario, data);
     for (var cada in originais) {
       if (cada.divida == true) {
         lista.add(cada);
@@ -195,10 +197,9 @@ class ManipularVenda implements ManipularVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarListaEncomendas(
-      Funcionario? funcionario, DateTime data) async {
+  Future<List<Venda>> pegarListaEncomendas(int idUsuario, DateTime data) async {
     var lista = <Venda>[];
-    var originais = await pegarLista(funcionario, data);
+    var originais = await pegarLista(idUsuario, data);
     for (var cada in originais) {
       if (cada.encomenda == true) {
         lista.add(cada);
@@ -208,10 +209,9 @@ class ManipularVenda implements ManipularVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarListaVendas(
-      Funcionario? funcionario, DateTime data) async {
+  Future<List<Venda>> pegarListaVendas(int idUsuario, DateTime data) async {
     var lista = <Venda>[];
-    var originais = await pegarLista(funcionario, data);
+    var originais = await pegarLista(idUsuario, data);
     for (var cada in originais) {
       if (cada.venda == true) {
         lista.add(cada);
@@ -258,22 +258,20 @@ class ManipularVenda implements ManipularVendaI {
   }
 
   @override
-  Future<List<DateTime>> pegarListaDataVendasFuncionario(
-      Funcionario funcionario) async {
-    return (await _provedorVendaI.pegarListaVendasFuncionario(funcionario))
+  Future<List<DateTime>> pegarListaDataVendasFuncionario(int idUsuario) async {
+    return (await _provedorVendaI.pegarListaVendasFuncionario(idUsuario))
         .map((e) => e.data!)
         .toList();
   }
 
   @override
-  Future<List<Venda>> pegarListaTodasDividas(Funcionario? funcionario) async {
-    return await _provedorVendaI.pegarListaTodasDividas(funcionario!);
+  Future<List<Venda>> pegarListaTodasDividas(int idUsuario) async {
+    return await _provedorVendaI.pegarListaTodasDividas(idUsuario);
   }
 
   @override
-  Future<List<Venda>> pegarListaTodasEncomendas(
-      Funcionario? funcionario) async {
-    return await _provedorVendaI.pegarListaTodasEncomendas(funcionario!);
+  Future<List<Venda>> pegarListaTodasEncomendas(int idUsuario) async {
+    return await _provedorVendaI.pegarListaTodasEncomendas(idUsuario);
   }
 
   @override
@@ -333,18 +331,30 @@ class ManipularVenda implements ManipularVendaI {
 
   @override
   Future<List<Pagamento>> pegarListaTodasPagamentoDividasFuncionario(
-      Funcionario funcionario, DateTime data) async {
+      int idUsuario, DateTime data) async {
     return await _provedorVendaI.pegarListaTodasPagamentoDividasFuncionario(
-        funcionario, data);
+        idUsuario, data);
   }
 
   @override
   Future<List<Venda>> pegarListaTodasVendas() async {
     return await _provedorVendaI.pegarListaTodasVendas();
   }
-  
+
   @override
-  Future<bool> actualizarVendaSimples(Venda venda)async {
+  Future<bool> actualizarVendaSimples(Venda venda) async {
     return await _provedorVendaI.actualizarVenda(venda);
+  }
+
+  @override
+  Future<List<Venda>> pegarListaCliente(int idUsuario, DateTime data) async {
+    var lista = <Venda>[];
+    var originais = await _provedorVendaI.todas();
+    for (var cada in originais) {
+      if (cada.idCliente == idUsuario) {
+        lista.add(cada);
+      }
+    }
+    return lista;
   }
 }

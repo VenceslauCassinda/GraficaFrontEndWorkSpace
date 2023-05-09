@@ -38,7 +38,7 @@ class LayoutEntidadeGrosso extends StatelessWidget {
         ),
         Container(
             height: MediaQuery.of(context).size.height * .6,
-            child: LayoutVendas(visaoGeral: true)),
+            child: LayoutVendas(visaoGeral: false)),
       ],
     );
   }

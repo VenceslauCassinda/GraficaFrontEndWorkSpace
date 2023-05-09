@@ -24,6 +24,7 @@ import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/solucoes_uteis/geradores.dart';
+import 'package:grafica_frontend/vista/aplicacao_c.dart';
 
 import '../../../../../../../../../contratos/casos_uso/manipular_pagamento_i.dart';
 import '../../../../../../../../../dominio/casos_uso/manipular_cliente.dart';
@@ -291,7 +292,6 @@ class MesaVendaC extends GetxController {
     dataLevantamento.value ??= data;
     try {
       var cliente = Cliente(
-          idUsuario: -1,
           estado: Estado.ATIVADO,
           nome: nomeCliente.value,
           numero: telefoneCliente.value);
@@ -302,8 +302,8 @@ class MesaVendaC extends GetxController {
           quantidadeVendida: null,
           pagamentos: listaPagamentos,
           estado: Estado.ATIVADO,
-          idFuncionario: funcionario.id,
-          idCliente: cliente.id,
+          idFuncionario: funcionario.id!,
+          idCliente: -1,
           data: data,
           dataLevantamentoCompra: dataLevantamento.value,
           total: aPagar,
@@ -314,7 +314,7 @@ class MesaVendaC extends GetxController {
           listaItensVenda,
           listaPagamentos,
           aPagar,
-          funcionario,
+          funcionario.id!,
           cliente,
           data,
           dataLevantamento.value!,

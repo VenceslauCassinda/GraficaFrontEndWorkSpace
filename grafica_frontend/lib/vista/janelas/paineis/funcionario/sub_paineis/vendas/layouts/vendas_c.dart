@@ -54,6 +54,7 @@ import '../../../../../../../fonte_dados/provedores_net/provedor_net_saida.dart'
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_stock.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../../solucoes_uteis/geradores.dart';
+import '../../../../../../aplicacao_c.dart';
 import '../../../../gerente/layouts/layout_forma_pagamento.dart';
 import 'detalhes_venda.dart';
 
@@ -240,7 +241,7 @@ class VendasC extends GetxController {
     int id = await _manipularVendaI.registarVenda(
         venda.total ?? 0,
         venda.total ?? 0,
-        funcionario!,
+        funcionario!.id!,
         Cliente(
             estado: Estado.ATIVADO, nome: "Cliente Corrente", numero: "999999"),
         data,
@@ -257,7 +258,7 @@ class VendasC extends GetxController {
 
   Future pegarTotalDividas() async {
     var res = await _manipularVendaI.pegarListaTodasPagamentoDividasFuncionario(
-        funcionario!, data);
+        funcionario!.id!, data);
     totalDividaPagas.value = 0;
     for (var cada in res) {
       totalDividaPagas.value += cada.valor ?? 0;
@@ -265,7 +266,7 @@ class VendasC extends GetxController {
   }
 
   Future pegarLista() async {
-    var res = await _manipularVendaI.pegarLista(funcionario, data);
+    var res = await _manipularVendaI.pegarLista(funcionario!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       cada.cliente =
@@ -279,7 +280,7 @@ class VendasC extends GetxController {
   }
 
   Future pegarListaVendas() async {
-    var res = await _manipularVendaI.pegarListaVendas(funcionario, data);
+    var res = await _manipularVendaI.pegarListaVendas(funcionario!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       if (cada.venda == true) {
@@ -292,7 +293,7 @@ class VendasC extends GetxController {
   }
 
   Future pegarListaEncomendas() async {
-    var res = await _manipularVendaI.pegarListaEncomendas(funcionario, data);
+    var res = await _manipularVendaI.pegarListaEncomendas(funcionario!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       cada.cliente =
@@ -303,7 +304,7 @@ class VendasC extends GetxController {
   }
 
   Future pegarListaDividas() async {
-    var res = await _manipularVendaI.pegarListaDividas(funcionario, data);
+    var res = await _manipularVendaI.pegarListaDividas(funcionario!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       cada.cliente =

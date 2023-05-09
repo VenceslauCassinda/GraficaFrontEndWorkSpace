@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:componentes_visuais/dialogo/dialogos.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_cliente_I.dart';
@@ -16,6 +17,7 @@ import 'package:grafica_frontend/dominio/casos_uso/manipular_produto.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_saida.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_usuario.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
+import 'package:grafica_frontend/dominio/entidades/comprovativo.dart';
 import 'package:grafica_frontend/dominio/entidades/estado.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
 import 'package:grafica_frontend/dominio/entidades/item_venda.dart';
@@ -45,6 +47,7 @@ import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_saida
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_stock.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_usuario.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
+import '../../../../../../../../aplicacao_c.dart';
 import '../../layout_forma_pagamento.dart';
 import '../../vendas_c.dart';
 
@@ -68,7 +71,8 @@ class MesaVendaC extends GetxController {
   MesaVendaC(this.data, this.funcionario) {
     _manipularClienteI = ManipularCliente(ProvedorNetCliente());
     _manipularStockI = ManipularStock(ProvedorNetStock());
-    _manipularPagamentoI = ManipularPagamento(ProvedorNetPagamento());
+    _manipularPagamentoI = ManipularPagamento(ProvedorNetPagamento(),
+        provedorComprovativoI: ProvedorNetComprovativo());
     _manipularItemVendaI = ManipularItemVenda(
         ProvedorNetItemVenda(),
         ManipularProduto(ProvedorNetProduto(), _manipularStockI,
@@ -83,6 +87,11 @@ class MesaVendaC extends GetxController {
         _manipularItemVendaI);
     _manipularFuncionarioI = ManipularFuncionario(
         ManipularUsuario(ProvedorNetUsuario()), ProvedorNetFuncionario());
+  }
+
+  @override
+  void onInit() async {
+    super.onInit();
   }
 
   void mostrarFormasPagamento(BuildContext context) {
@@ -117,9 +126,7 @@ class MesaVendaC extends GetxController {
               return LayoutFormaPagamento(
                   accaoAoFinalizar: (valor, opcao, arquivo) async {
                     try {
-                      await ProvedorNetComprovativo().fazerUploadComprovativo(
-                          arquivo.bytes!, arquivo.name);
-                      await adicionarValorPagamento(valor, opcao);
+                      await adicionarValorPagamento(valor, opcao, arquivo);
                     } on Erro catch (e) {
                       mostrarDialogoDeInformacao(e.sms);
                     }
@@ -130,7 +137,8 @@ class MesaVendaC extends GetxController {
         naoFechar: true);
   }
 
-  Future<void> adicionarValorPagamento(String valor, String? opcao) async {
+  Future<void> adicionarValorPagamento(
+      String valor, String? opcao, PlatformFile arquivo) async {
     var soma = listaPagamentos.fold<double>(
         0, (previousValue, element) => element.valor! + previousValue);
 
@@ -147,7 +155,9 @@ class MesaVendaC extends GetxController {
         idFormaPagamento: forma.id,
         formaPagamento: forma,
         estado: Estado.ATIVADO,
-        valor: double.parse(valor)));
+        valor: double.parse(valor),
+        comprovativo:
+            Comprovativo(descricao: "Pagamento de Cliente", arquivo: arquivo)));
     voltar();
   }
 
@@ -244,9 +254,9 @@ class MesaVendaC extends GetxController {
       var dataSelecionada = await showDatePicker(
           context: context,
           initialDate:
-              DateTime(dataActual.year, dataActual.month, dataActual.day + 1),
+              DateTime(dataActual.year, dataActual.month, dataActual.day + 2),
           firstDate:
-              DateTime(dataActual.year, dataActual.month, dataActual.day + 1),
+              DateTime(dataActual.year, dataActual.month, dataActual.day + 2),
           lastDate: DateTime(2100));
       var momento = await showTimePicker(
           context: context, initialTime: TimeOfDay.fromDateTime(dataActual));
@@ -268,14 +278,6 @@ class MesaVendaC extends GetxController {
   }
 
   void vender(VendasC vendasC) async {
-    if (nomeCliente.value.isEmpty) {
-      mostrarDialogoDeInformacao("Insira o nome do Cliente!");
-      return;
-    }
-    if (telefoneCliente.value.isEmpty) {
-      mostrarDialogoDeInformacao("Insira o contacto do Cliente!");
-      return;
-    }
 
     var aPagar = listaItensVenda.fold<double>(
         0, (previousValue, element) => ((element.total ?? 0) + previousValue));
@@ -291,13 +293,8 @@ class MesaVendaC extends GetxController {
       return;
     }
     mostrarCarregandoDialogoDeInformacao("Finalizando a Venda");
-    dataLevantamento.value ??= data;
+    dataLevantamento.value ??= data.add(Duration(days: 1));
     try {
-      var cliente = Cliente(
-          idUsuario: -1,
-          estado: Estado.ATIVADO,
-          nome: nomeCliente.value,
-          numero: telefoneCliente.value);
       var venda = Venda(
           produto: null,
           idProduto: null,
@@ -305,20 +302,22 @@ class MesaVendaC extends GetxController {
           quantidadeVendida: null,
           pagamentos: listaPagamentos,
           estado: Estado.ATIVADO,
-          idFuncionario: funcionario.id,
-          idCliente: cliente.id,
+          idFuncionario: -1,
+          idCliente: (await _manipularClienteI.pegarClienteDeUsuarioDeId(
+                      pegarAplicacaoC().pegarUsuarioActual()!.id!))
+                  ?.id ??
+              -1,
           data: data,
           dataLevantamentoCompra: dataLevantamento.value,
           total: aPagar,
-          cliente: cliente,
           parcela: pago);
 
       var id = await _manipularVendaI.vender(
           listaItensVenda,
           listaPagamentos,
           aPagar,
-          funcionario,
-          cliente,
+          -1,
+          null,
           data,
           dataLevantamento.value!,
           pago,

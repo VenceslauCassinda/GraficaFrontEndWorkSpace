@@ -5,7 +5,7 @@ import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import '../../contratos/provedores/provedor_venda_i.dart';
 import '../../dominio/entidades/funcionario.dart';
 
-class ProvedorVenda implements ProvedorVendaI {
+class ProvedorVenda  {
   late var _dao;
   ProvedorVenda() {
   }

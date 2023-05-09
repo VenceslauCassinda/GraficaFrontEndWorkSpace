@@ -24,10 +24,10 @@ class JanelaLogin extends StatelessWidget {
   late JanelaLoginC _c;
   JanelaLogin() {
     _c = Get.put(JanelaLoginC());
-    Timer.periodic(Duration(seconds: 2), (timer) { 
-      _c.fazerLogin("e", "11111111");
-      timer.cancel();
-    });
+    // Timer.periodic(Duration(seconds: 2), (timer) { 
+    //   _c.fazerLogin("e", "11111111");
+    //   timer.cancel();
+    // });
   }
   @override
   Widget build(BuildContext context) {

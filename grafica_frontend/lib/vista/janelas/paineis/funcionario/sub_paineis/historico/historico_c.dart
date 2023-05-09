@@ -24,6 +24,7 @@ import '../../../../../../fonte_dados/provedores/provedor_preco.dart';
 import '../../../../../../fonte_dados/provedores/provedor_produto.dart';
 import '../../../../../../fonte_dados/provedores/provedor_saida.dart';
 import '../../../../../../fonte_dados/provedores/provedor_stock.dart';
+import '../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../painel_funcionario_c.dart';
 
 class HistoricoC extends GetxController {
@@ -49,7 +50,7 @@ class HistoricoC extends GetxController {
             ManipularPreco(ProvedorPreco())),
         ManipularStock(ProvedorStock()));
     _manipularVendaI = ManipularVenda(
-        ProvedorVenda(),
+        ProvedorNetVenda(),
         ManipularSaida(ProvedorSaida(), _manipularStockI),
         ManipularPagamento(ProvedorPagamento()),
         ManipularCliente(ProvedorCliente()),
@@ -65,7 +66,7 @@ class HistoricoC extends GetxController {
 
   Future pegarLista() async {
     var res =
-        await _manipularVendaI.pegarListaDataVendasFuncionario(funcionario);
+        await _manipularVendaI.pegarListaDataVendasFuncionario(pegarAplicacaoC().pegarUsuarioActual()!.id!);
     for (var cada in res) {
       lista.add(cada);
     }

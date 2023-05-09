@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_usuario_i.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
@@ -83,5 +84,11 @@ class ManipularCliente implements ManipularClienteI {
     novoUsuario.id = id;
     dado.usuario = novoUsuario;
     return dado;
+  }
+  
+  @override
+  Future<Cliente?> pegarClienteDeUsuarioDeId(int id) async{
+    var res = await todos();
+    return res.firstWhereOrNull((element) => element.idUsuario == id);
   }
 }

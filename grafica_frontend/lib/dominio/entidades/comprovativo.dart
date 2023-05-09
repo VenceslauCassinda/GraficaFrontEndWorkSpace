@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:grafica_frontend/dominio/entidades/forma_pagamento.dart';
 
 import 'pagamento_final.dart';
@@ -7,11 +8,13 @@ class Comprovativo {
   int? idPagamento;
   String? link;
   String? descricao;
+  PlatformFile? arquivo;
 
   Comprovativo(
       {this.id,
       this.idPagamento,
       this.link,
+      this.arquivo,
       this.descricao,
       });
   

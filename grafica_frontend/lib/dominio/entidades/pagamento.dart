@@ -1,3 +1,4 @@
+import 'package:grafica_frontend/dominio/entidades/comprovativo.dart';
 import 'package:grafica_frontend/dominio/entidades/forma_pagamento.dart';
 
 import 'pagamento_final.dart';
@@ -11,6 +12,7 @@ class Pagamento {
   int? estado;
   int? idVenda;
   double? valor;
+  Comprovativo? comprovativo;
 
   Pagamento(
       {this.id,
@@ -18,6 +20,7 @@ class Pagamento {
       this.pagamentoFinal,
       this.idParaVista,
       this.idFormaPagamento,
+      this.comprovativo,
       required this.estado,
       this.idVenda,
       required this.valor});

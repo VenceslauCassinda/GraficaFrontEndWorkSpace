@@ -13,12 +13,14 @@ class ItemItemVenda extends StatelessWidget {
     Key? key,
     this.controladores,
     this.c,
+    this.permissao,
     required this.element,
   });
 
   Map<String, TextEditingController>? controladores;
   var c;
   final ItemVenda element;
+  bool? permissao = true;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,7 @@ class ItemItemVenda extends StatelessWidget {
               ),
               Text("Desconto(%): "),
               Visibility(
-                visible: c != null,
+                visible: c != null && permissao == true,
                 child: Container(
                   height: 30,
                   width: 40,

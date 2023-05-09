@@ -1,4 +1,7 @@
 import 'package:get/get.dart';
+import 'package:grafica_frontend/dominio/casos_uso/manipular_cliente.dart';
+import 'package:grafica_frontend/dominio/entidades/cliente.dart';
+import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_cliente.dart';
 
 import '../../../../contratos/casos_uso/manipular_funcionario_i.dart';
 import '../../../../dominio/casos_uso/manipular_fincionario.dart';
@@ -30,6 +33,11 @@ class PainelClienteC extends GetxController {
         await _manipularFuncionarioI.pegarFuncionarioDoUsuarioDeId(
             (pegarAplicacaoC().pegarUsuarioActual())!.id!);
             return funcionarioActual!;
+  }
+  
+  Future<Cliente> inicializarCliente() async {
+    var id = pegarAplicacaoC().pegarUsuarioActual()!.id!;
+    return (await  ManipularCliente(ProvedorNetCliente()).pegarClienteDeUsuarioDeId(id))!;
   }
 
   void terminarSessao() {

@@ -93,13 +93,28 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarLista(
-      Funcionario? funcionario, DateTime data) async {
+  Future<List<Venda>> pegarLista(int idUsuario, DateTime data) async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if ((element.idFuncionario == funcionario?.id) &&
-          comapararDatas(element.data!, data)) {
+      if (element.idFuncionario == -1 || element.idFuncionario == null) {
+        dados.add(element);
+      } else {
+        if ((element.idFuncionario == idUsuario) &&
+            comapararDatas(element.data!, data)) {
+          dados.add(element);
+        }
+      }
+    }
+    return dados;
+  }
+
+  @override
+  Future<List<Venda>> pegarListaTodasDividas(int idUsuario) async {
+    var lista = await todas();
+    var dados = <Venda>[];
+    for (var element in lista) {
+      if ((element.idFuncionario == idUsuario) && (element.divida == true)) {
         dados.add(element);
       }
     }
@@ -107,25 +122,11 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarListaTodasDividas(Funcionario funcionario) async {
+  Future<List<Venda>> pegarListaTodasEncomendas(int idUsuario) async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if ((element.idFuncionario == funcionario.id) &&
-          (element.divida == true)) {
-        dados.add(element);
-      }
-    }
-    return dados;
-  }
-
-  @override
-  Future<List<Venda>> pegarListaTodasEncomendas(Funcionario funcionario) async {
-    var lista = await todas();
-    var dados = <Venda>[];
-    for (var element in lista) {
-      if ((element.idFuncionario == funcionario.id) &&
-          (element.encomenda == true)) {
+      if ((element.idFuncionario == idUsuario) && (element.encomenda == true)) {
         dados.add(element);
       }
     }
@@ -139,7 +140,7 @@ class ProvedorNetVenda implements ProvedorVendaI {
 
   @override
   Future<List<Pagamento>> pegarListaTodasPagamentoDividasFuncionario(
-      Funcionario funcionario, DateTime data) async {
+      int idUsuario, DateTime data) async {
     return <Pagamento>[];
   }
 
@@ -168,13 +169,11 @@ class ProvedorNetVenda implements ProvedorVendaI {
   }
 
   @override
-  Future<List<Venda>> pegarListaVendasFuncionario(
-      Funcionario funcionario) async {
+  Future<List<Venda>> pegarListaVendasFuncionario(int idUsuario) async {
     var lista = await todas();
     var dados = <Venda>[];
     for (var element in lista) {
-      if ((element.venda == true) &&
-          (element.idFuncionario == funcionario.id)) {
+      if ((element.venda == true) && (element.idFuncionario == idUsuario)) {
         dados.add(element);
       }
     }

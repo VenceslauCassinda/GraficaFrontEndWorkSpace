@@ -42,6 +42,7 @@ import '../../../../../../fonte_dados/provedores/provedor_preco.dart';
 import '../../../../../../fonte_dados/provedores/provedor_produto.dart';
 import '../../../../../../fonte_dados/provedores/provedor_saida.dart';
 import '../../../../../../fonte_dados/provedores/provedor_stock.dart';
+import '../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 
 class PainelResumoC extends GetxController {
   late ManipularProdutoI _manipularProdutoI;
@@ -78,7 +79,7 @@ class PainelResumoC extends GetxController {
         ManipularStock(ProvedorStock()));
     _manipularSaidaI = ManipularSaida(ProvedorSaida(), _manipularStockI);
     _manipularVendaI = ManipularVenda(
-        ProvedorVenda(),
+        ProvedorNetVenda(),
         _manipularSaidaI,
         ManipularPagamento(ProvedorPagamento()),
         ManipularCliente(ProvedorCliente()),
@@ -215,7 +216,7 @@ class PainelResumoC extends GetxController {
     var res = [];
     if (funcionario != null) {
       res =
-          await _manipularVendaI.pegarListaDataVendasFuncionario(funcionario!);
+          await _manipularVendaI.pegarListaDataVendasFuncionario(pegarAplicacaoC().pegarUsuarioActual()!.id!);
     } else {
       res = await _manipularVendaI.pegarListaDataVendas();
     }

@@ -1,9 +1,6 @@
-2023/05/05-14:30:27.917 1a60 Reusing MANIFEST C:\Users\VENCES~1\AppData\Local\Temp\flutter_tools.75ce735d\flutter_tools_chrome_device.d898e716\Default\Local Storage\leveldb/MANIFEST-000001
-2023/05/05-14:30:27.921 1a60 Recovering log #3
-2023/05/05-14:30:27.922 1a60 Level-0 table #3: started
-2023/05/05-14:30:27.935 1a60 Level-0 table #3: 214 bytes OK
-2023/05/05-14:30:27.935 1a60 Recovering log #6
-2023/05/05-14:30:27.941 1a60 Reusing old log C:\Users\VENCES~1\AppData\Local\Temp\flutter_tools.75ce735d\flutter_tools_chrome_device.d898e716\Default\Local Storage\leveldb/000006.log 
-2023/05/05-14:30:27.945 1a60 Delete type=0 #3
-2023/05/05-14:30:27.945 1a60 Delete type=2 #5
-2023/05/05-14:30:27.945 1a60 Delete type=2 #7
+2023/05/08-15:46:03.575 1fd0 Reusing MANIFEST C:\Users\VENCES~1\AppData\Local\Temp\flutter_tools.73594ba4\flutter_tools_chrome_device.b829211f\Default\Local Storage\leveldb/MANIFEST-000001
+2023/05/08-15:46:03.576 1fd0 Recovering log #6
+2023/05/08-15:46:03.580 1fd0 Reusing old log C:\Users\VENCES~1\AppData\Local\Temp\flutter_tools.73594ba4\flutter_tools_chrome_device.b829211f\Default\Local Storage\leveldb/000006.log 
+2023/05/08-15:46:03.581 1fd0 Delete type=0 #3
+2023/05/08-15:46:03.581 1fd0 Delete type=2 #5
+2023/05/08-15:46:03.581 1fd0 Delete type=2 #7

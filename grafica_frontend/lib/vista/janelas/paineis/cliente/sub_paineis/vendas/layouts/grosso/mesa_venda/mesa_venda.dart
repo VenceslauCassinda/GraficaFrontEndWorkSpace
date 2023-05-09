@@ -13,6 +13,7 @@ import '../../../../../../../../componentes/item_item_venda.dart';
 import '../../../../../../../../componentes/pesquisa.dart';
 import '../../vendas_c.dart';
 import 'mesa_venda_c.dart';
+import 'dart:html' as html;
 
 class LayoutMesaVenda extends StatelessWidget {
   late VendasC _vendasC;
@@ -145,6 +146,7 @@ class _PainelDireito extends StatelessWidget {
                       .map((element) => ItemItemVenda(
                             controladores: controladores,
                             element: element,
+                            permissao: false,
                             c: _c,
                           ))
                       .toList(),
@@ -172,57 +174,6 @@ class _CabecaclhoVenda extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Text(
-                    "Cliente: ",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                Container(
-                  height: 30,
-                  width: MediaQuery.of(context).size.width * .18,
-                  child: TextField(
-                    style: TextStyle(fontSize: 20),
-                    onChanged: (valor) {
-                      _c.nomeCliente.value = valor;
-                    },
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              width: 20,
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Text("Contacto: ", style: TextStyle(fontSize: 20)),
-                ),
-                Container(
-                  height: 30,
-                  width: MediaQuery.of(context).size.width * .18,
-                  child: TextField(
-                      onChanged: (valor) {
-                        _c.telefoneCliente.value = valor;
-                      },
-                      style: TextStyle(fontSize: 20),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly
-                      ]),
-                ),
-              ],
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 10,
-        ),
         Row(
           children: [
             Obx(
@@ -256,7 +207,7 @@ class _CabecaclhoVenda extends StatelessWidget {
                     _c.mudarData(i, context);
                   },
                   children: [
-                    Text("Hoje"),
+                    Text("Amanhâ"),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(_c.dataLevantamento.value == null
@@ -271,20 +222,29 @@ class _CabecaclhoVenda extends StatelessWidget {
         Obx(() => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: _c.listaPagamentos
-                  .map((element) => Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                              "${formatar(element.valor ?? 0)} KZ - Pago com ${element.formaPagamento?.descricao ?? "[Não Definido]"}"),
-                          IconeItem(
-                              metodoQuandoItemClicado: () {
-                                _c.removerPagamento(element);
-                              },
-                              icone: Icons.delete,
-                              titulo: ""),
-                        ],
-                      ))
+                  .map((element) => InkWell(
+                    onTap: () {
+                      if (element.comprovativo != null) {
+                        if (element.comprovativo!.arquivo != null) {
+                          
+                        }
+                      }
+                    },
+                    child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                "${formatar(element.valor ?? 0)} KZ - Pago com ${element.formaPagamento?.descricao ?? "[Não Definido]"}"),
+                            IconeItem(
+                                metodoQuandoItemClicado: () {
+                                  _c.removerPagamento(element);
+                                },
+                                icone: Icons.delete,
+                                titulo: ""),
+                          ],
+                        ),
+                  ))
                   .toList(),
             )),
         Container(width: 200, child: Divider()),

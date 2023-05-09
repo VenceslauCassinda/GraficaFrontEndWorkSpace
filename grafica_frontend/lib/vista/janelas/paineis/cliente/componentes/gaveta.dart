@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:componentes_visuais/componentes/item_gaveta.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/painel_actual.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/vista/componentes/logo.dart';
@@ -41,8 +42,8 @@ class GavetaNavegacao extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  FutureBuilder<Funcionario>(
-                       future: c.inicializarFuncionario(),
+                  FutureBuilder<Cliente>(
+                       future: c.inicializarCliente(),
                       builder: (c, s) {
                         if (s.data == null) {
                           return CircularProgressIndicator();
@@ -50,7 +51,7 @@ class GavetaNavegacao extends StatelessWidget {
                         return Container(
                           child: InfoGaveta(
                             cor: branca,
-                            titulo: "${s.data!.nomeCompelto}",
+                            titulo: "${s.data!.nome}",
                           ),
                         );
                       }),

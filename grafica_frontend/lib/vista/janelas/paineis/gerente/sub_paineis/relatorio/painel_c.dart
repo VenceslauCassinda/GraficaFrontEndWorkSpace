@@ -63,6 +63,7 @@ import '../../../../../../fonte_dados/provedores/provedor_item_venda.dart';
 import '../../../../../../fonte_dados/provedores/provedor_pagamento.dart';
 import '../../../../../../fonte_dados/provedores/provedor_saida_caixa.dart';
 import '../../../../../../fonte_dados/provedores/provedor_venda.dart';
+import '../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../solucoes_uteis/pdf_api/investimento_pdf.dart';
 import '../../../../../../solucoes_uteis/pdf_api/pdf_api.dart';
 import '../../../../../../solucoes_uteis/pdf_api/entradas_pdf.dart';
@@ -104,7 +105,7 @@ class PainelRelatorioC extends GetxController {
             ManipularPreco(ProvedorPreco())),
         ManipularStock(ProvedorStock()));
     _manipularVendaI = ManipularVenda(
-        ProvedorVenda(),
+        ProvedorNetVenda(),
         ManipularSaida(ProvedorSaida(), _manipularStockI),
         ManipularPagamento(ProvedorPagamento()),
         ManipularCliente(ProvedorCliente()),
@@ -711,7 +712,7 @@ class PainelRelatorioC extends GetxController {
 
             var datas = await _manipularVendaI.pegarListaDataVendas();
             for (var cadaData in datas) {
-              var todos = await _manipularVendaI.pegarLista(null, cadaData);
+              var todos = await _manipularVendaI.pegarLista(pegarAplicacaoC().pegarUsuarioActual()!.id!, cadaData);
               var depoisDoInicio = ((DateTime(
                     cadaData.year,
                     cadaData.month,
@@ -849,7 +850,7 @@ class PainelRelatorioC extends GetxController {
               hoje.month,
               hoje.day,
             ).isAtSameMomentAs(cadaData)) {
-              var todos = await _manipularVendaI.pegarLista(null, cadaData);
+              var todos = await _manipularVendaI.pegarLista(pegarAplicacaoC().pegarUsuarioActual()!.id!, cadaData);
 
               for (var cada in todos) {
                 double vendidoBanco = 0.0;
