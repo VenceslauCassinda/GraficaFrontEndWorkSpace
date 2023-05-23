@@ -289,7 +289,12 @@ class MesaVendaC extends GetxController {
         return;
       }
       mostrarDialogoDeInformacao(
-          "Venda alguma quantidade dos produtos adicionados!");
+          "Coloque alguma quantidade dos produtos adicionados!");
+      return;
+    }
+    if(pago < aPagar/2){
+      mostrarDialogoDeInformacao(
+          "Deve pagar 50% ou mais para finalizar a venda!");
       return;
     }
     mostrarCarregandoDialogoDeInformacao("Finalizando a Venda");
@@ -305,8 +310,7 @@ class MesaVendaC extends GetxController {
           idFuncionario: -1,
           idCliente: (await _manipularClienteI.pegarClienteDeUsuarioDeId(
                       pegarAplicacaoC().pegarUsuarioActual()!.id!))
-                  ?.id ??
-              -1,
+                  ?.id!,
           data: data,
           dataLevantamentoCompra: dataLevantamento.value,
           total: aPagar,
@@ -316,7 +320,7 @@ class MesaVendaC extends GetxController {
           listaItensVenda,
           listaPagamentos,
           aPagar,
-          -1,
+          pegarAplicacaoC().pegarUsuarioActual()!.id!,
           null,
           data,
           dataLevantamento.value!,
@@ -342,4 +346,9 @@ class MesaVendaC extends GetxController {
   }
 
   void mostrarDialogoProdutos(BuildContext context) {}
+
+  Future<Comprovativo?> pegarComprovativoDoPagamentoDeId(int id)async{
+    var c = await _manipularPagamentoI.pegarComprovativoDoPagamentoDeId(id);
+    return c;
+  }
 }

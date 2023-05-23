@@ -78,7 +78,7 @@ class ProvedorNetComprovativo implements ProvedorComprovativoI {
   Future<int> atualizarComprovativo(Comprovativo dado) async {
     int id = -1;
     var res =
-        await h.post(Uri.parse("$URL_ATUALIZAR_CLIENTE/${dado.id}/"), headers: {
+        await h.post(Uri.parse("$URL_ATUALIZAR_COMPROVATIVO/${dado.id}/"), headers: {
       "Accept": "aplication/json",
       "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
     }, body: {

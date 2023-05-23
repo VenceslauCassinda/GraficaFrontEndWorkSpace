@@ -549,6 +549,11 @@ class VendasC extends GetxController {
     return itens;
   }
 
+  Future<Comprovativo?> pegarComprovativoDoPagamentoDeId(int id)async{
+    var c = await _manipularPagamentoI.pegarComprovativoDoPagamentoDeId(id);
+    return c;
+  }
+
   Future<List<Pagamento>> pegarPagamentosVenda(Venda venda) async {
     var itens = <Pagamento>[];
     var todos = await _manipularPagamentoI.pegarLista();

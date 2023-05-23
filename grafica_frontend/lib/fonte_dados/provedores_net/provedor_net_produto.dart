@@ -19,6 +19,7 @@ class ProvedorNetProduto implements ProvedorProdutoI{
       body: {
         "nome": dado.nome??"",
         "estado": "${dado.estado??0}",
+        "tipo": "${dado.tipo??0}",
         "preco_compra": "${dado.precoCompra??0}",
         "recebivel": "${dado.recebivel == true? 1 : 0}",
       }
@@ -57,6 +58,7 @@ class ProvedorNetProduto implements ProvedorProdutoI{
       body: {
         "nome": dado.nome??"",
         "estado": "${dado.estado??0}",
+        "tipo": "${dado.tipo??0}",
         "preco_compra": "${dado.precoCompra??0}",
         "recebivel": "${dado.recebivel == true? 1 : 0}",
       }

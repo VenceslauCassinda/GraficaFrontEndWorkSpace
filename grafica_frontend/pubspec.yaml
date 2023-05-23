@@ -47,6 +47,9 @@ dependencies:
   dio: ^5.1.1
   pdf_render: ^1.3.8
   flutter_cache_manager: ^3.3.0
+  flutter_pdfview: ^1.3.0
+  syncfusion_flutter_pdfviewer: ^19.1.69-beta
+  internet_file: ^1.2.0
   componentes_visuais: 
     path: ../componentes_visuais
   # The following adds the Cupertino Icons font to your application.

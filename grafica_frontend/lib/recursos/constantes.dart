@@ -9,6 +9,7 @@ const backgroundColor = Color(0xFF212332);
 const defaultPadding = 16.0;
 
 const URL_BASE = "http://127.0.0.1:8000/api/";
+const URL_STORAGE = "http://127.0.0.1:8000";
 String TOKEN_USUARIO_ATUAL = "SemToken";
 
 const URL_LOGIN = "${URL_BASE}login";
@@ -79,6 +80,12 @@ const URL_ATUALIZAR_COMPROVATIVO = "${URL_BASE}atualizarComprovativo";
 const URL_TODOS_COMPROVATIVO = "${URL_BASE}comprovativos";
 const URL_REMOVER_COMPROVATIVO = "${URL_BASE}eliminarComprovativo";
 const URL_UPLOAD_COMPROVATIVO = "${URL_BASE}fazerUploadComprovativo";
+
+const URL_ADD_EXEMPLAR = "${URL_BASE}registarExemplar";
+const URL_ATUALIZAR_EXEMPLAR = "${URL_BASE}atualizarExemplar";
+const URL_TODOS_EXEMPLAR = "${URL_BASE}exemplares";
+const URL_REMOVER_EXEMPLAR = "${URL_BASE}eliminarExemplar";
+const URL_UPLOAD_EXEMPLAR = "${URL_BASE}fazerUploadExemplar";
 
 class TipoNegocio {
   static const int GROSSO = 1, RETALHO = 2;

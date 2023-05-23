@@ -3,8 +3,8 @@ import 'package:componentes_visuais/componentes/formatos/formatos.dart';
 import 'package:componentes_visuais/componentes/icone_item.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/formato_dado.dart';
 import '../../../../../../../../../dominio/entidades/funcionario.dart';
 import '../../../../../../../../../dominio/entidades/produto.dart';
@@ -13,7 +13,7 @@ import '../../../../../../../../componentes/item_item_venda.dart';
 import '../../../../../../../../componentes/pesquisa.dart';
 import '../../vendas_c.dart';
 import 'mesa_venda_c.dart';
-import 'dart:html' as html;
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart' as viewer;
 
 class LayoutMesaVenda extends StatelessWidget {
   late VendasC _vendasC;
@@ -223,14 +223,28 @@ class _CabecaclhoVenda extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: _c.listaPagamentos
                   .map((element) => InkWell(
-                    onTap: () {
-                      if (element.comprovativo != null) {
-                        if (element.comprovativo!.arquivo != null) {
-                          
-                        }
-                      }
-                    },
-                    child: Row(
+                        onTap: () async {
+                          if (element.comprovativo?.arquivo != null) {
+                              mostrarDialogoDeLayou(Container(
+                                width: MediaQuery.of(context).size.width * .5,
+                                height: MediaQuery.of(context).size.height * .5,
+                                child: viewer.SfPdfViewer.memory(element.comprovativo!.arquivo!.bytes!),
+                              ));
+                              return;
+                            }
+                              var c = await _c.pegarComprovativoDoPagamentoDeId(element.id!);
+                              if (c == null) {
+                                mostrarDialogoDeInformacao("Sem Comprovativo!");
+                                return;
+                              }
+                              
+                              mostrarDialogoDeLayou(Container(
+                                width: MediaQuery.of(context).size.width * .5,
+                                height: MediaQuery.of(context).size.height * .5,
+                                child: viewer.SfPdfViewer.network("$URL_STORAGE${c.link!}"),
+                              ));
+                        },
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -244,7 +258,7 @@ class _CabecaclhoVenda extends StatelessWidget {
                                 titulo: ""),
                           ],
                         ),
-                  ))
+                      ))
                   .toList(),
             )),
         Container(width: 200, child: Divider()),

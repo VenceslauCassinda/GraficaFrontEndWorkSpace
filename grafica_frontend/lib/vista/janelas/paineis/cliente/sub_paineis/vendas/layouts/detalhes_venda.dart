@@ -1,13 +1,19 @@
+import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
+import 'package:grafica_frontend/recursos/constantes.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../../dominio/entidades/item_venda.dart';
 import '../../../../../../../dominio/entidades/venda.dart';
+import '../../../../../../../solucoes_uteis/console.dart';
 import '../../../../../../../solucoes_uteis/formato_dado.dart';
 import '../../../../../../componentes/item_item_venda.dart';
 import 'vendas_c.dart';
+import 'dart:js' as js;
 
 class LayoutDetalhesVenda extends StatelessWidget {
   LayoutDetalhesVenda({
@@ -51,8 +57,7 @@ class LayoutDetalhesVenda extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("Total: ${venda.total}"),
-                            Text(
-                                "Total Pago: ${venda.parcela} KZ"),
+                            Text("Total Pago: ${venda.parcela} KZ"),
                             Container(width: 200, child: Divider()),
                             Visibility(
                               visible: venda.pagamentos != null,
@@ -72,10 +77,28 @@ class LayoutDetalhesVenda extends StatelessWidget {
                                     return Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: (s.data ?? [])
-                                          .map((element) => Text(
-                                              "${formatar(element.valor ?? 0)} KZ - Pagamento ${element.formaPagamento?.descricao ?? "[Não Definido]"}"))
-                                          .toList(),
+                                      children: (s.data ?? []).map((element) {
+                                        var text = Text(
+                                            "${formatar(element.valor ?? 0)} KZ - Pagamento ${element.formaPagamento?.descricao ?? "[Não Definido]"}");
+                                        return InkWell(
+                                          onTap: ()async {
+                                            if (element.comprovativo?.arquivo != null) {
+                                              mostrarDialogoDeLayou(Container(
+                                                width: MediaQuery.of(context).size.width * .5,
+                                                height: MediaQuery.of(context).size.height * .5,
+                                                child: SfPdfViewer.memory(element.comprovativo!.arquivo!.bytes!),
+                                              ));
+                                              return;
+                                            }
+                                              var c = await vendasC.pegarComprovativoDoPagamentoDeId(element.id!);
+                                              if (c == null) {
+                                                mostrarDialogoDeInformacao("Sem Comprovativo!");
+                                                return;
+                                              }
+                                              js.context.callMethod('open', ["$URL_STORAGE${c.link!}"]);
+                                          },
+                                          child: text);
+                                      }).toList(),
                                     );
                                   }),
                             ),
