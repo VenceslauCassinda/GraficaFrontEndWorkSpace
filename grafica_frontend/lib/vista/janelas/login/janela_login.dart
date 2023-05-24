@@ -26,7 +26,7 @@ class JanelaLogin extends StatelessWidget {
   JanelaLogin() {
     _c = Get.put(JanelaLoginC());
     Timer.periodic(Duration(seconds: 2), (timer) { 
-      _c.fazerLogin("e", "11111111");
+      _c.fazerLogin("q", "11111111");
       timer.cancel();
     });
   }

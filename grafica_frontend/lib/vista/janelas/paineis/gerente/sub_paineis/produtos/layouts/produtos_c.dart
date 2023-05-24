@@ -184,9 +184,9 @@ class ProdutosC extends GetxController {
 
   void mostrarDialogoAdicionarProduto(BuildContext context) {
     mostrarDialogoDeLayou(LayoutProduto(
-      accaoAoFinalizar: (nome, precoCompra) async {
+      accaoAoFinalizar: (nome, precoCompra, tipo) async {
         fecharDialogoCasoAberto();
-        await _adicionarProduto(nome, precoCompra);
+        await _adicionarProduto(nome, precoCompra, tipo);
       },
     ));
   }
@@ -315,7 +315,7 @@ class ProdutosC extends GetxController {
     mostrarDialogoDeLayou(LayoutQuantidade(
         comOpcaoRetirada: true,
         accaoAoFinalizar: (quantidade, opcaoRetiradaSelecionada) async {
-          var f = await  _manipularFuncionarioI.pegarFuncionarioDeId((await pegarAplicacaoC().pegarUsuarioActual())!.id!);
+          var f = await  _manipularFuncionarioI.pegarFuncionarioDoUsuarioDeId((pegarAplicacaoC().pegarUsuarioActual())!.id!);
           try {
             var data = DateTime.now();
             var nova =
@@ -391,9 +391,9 @@ class ProdutosC extends GetxController {
   void mostrarDialogoActualizarProduto(Produto produto) {
     mostrarDialogoDeLayou(LayoutProduto(
       produto: produto,
-      accaoAoFinalizar: (nome, precoCompra) async {
+      accaoAoFinalizar: (nome, precoCompra, tipo) async {
         fecharDialogoCasoAberto();
-        await _actualizarProduto(nome, precoCompra, produto);
+        await _actualizarProduto(nome, precoCompra, produto, tipo);
       },
     ));
   }
@@ -473,10 +473,12 @@ class ProdutosC extends GetxController {
   Future<void> _adicionarProduto(
     String nome,
     String precoCompra,
+    int tipo,
   ) async {
     try {
       var novoProduto = Produto(
           nome: nome,
+          tipo: tipo,
           precoCompra: double.parse(precoCompra),
           estado: Estado.ATIVADO);
       lista.insert(0, novoProduto);
@@ -491,12 +493,13 @@ class ProdutosC extends GetxController {
   }
 
   Future<void> _actualizarProduto(
-      String nome, String precoCompra, Produto produto) async {
+      String nome, String precoCompra, Produto produto, tipo) async {
     try {
       for (var i = 0; i < lista.length; i++) {
         if (lista[i].id == produto.id) {
           produto.nome = nome;
           produto.precoCompra = double.parse(precoCompra);
+          produto.tipo = tipo;
           lista[i] = produto;
           await _manipularProdutoI.actualizarProduto(produto);
           // await _manipularProdutoI.atualizarPrecoProduto(

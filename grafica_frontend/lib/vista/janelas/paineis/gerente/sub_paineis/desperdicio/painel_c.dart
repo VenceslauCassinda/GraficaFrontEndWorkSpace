@@ -164,16 +164,6 @@ class PainelDesperdicioC extends GetxController {
     }
   }
 
-  void mostrarDialogoAdicionarProduto() {
-    mostrarDialogoDeLayou(LayoutProduto(
-      accaoAoFinalizar: (
-        nome,
-        precoCompra,
-      ) async {
-        await _adicionarProduto(nome, precoCompra);
-      },
-    ));
-  }
 
   void _somarQuantidadeProduto(Produto produto, String quantidade) {
     for (var i = 0; i < lista.length; i++) {
@@ -209,14 +199,6 @@ class PainelDesperdicioC extends GetxController {
     }
   }
 
-  void mostrarDialogoActualizarProduto(Produto produto) {
-    mostrarDialogoDeLayou(LayoutProduto(
-      produto: produto,
-      accaoAoFinalizar: (nome, precoCompra) async {
-        await _actualizarProduto(nome, precoCompra, produto);
-      },
-    ));
-  }
 
   void mostrarDialogoEliminarProduto(Produto produto) {
     mostrarDialogoDeLayou(LayoutConfirmacaoAccao(

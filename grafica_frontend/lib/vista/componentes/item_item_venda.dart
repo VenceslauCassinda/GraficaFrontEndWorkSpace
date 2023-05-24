@@ -2,6 +2,7 @@ import 'package:componentes_visuais/componentes/icone_item.dart';
 import 'package:componentes_visuais/componentes/selector_numero.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 
 import '../../dominio/entidades/item_venda.dart';
@@ -97,11 +98,25 @@ class ItemItemVenda extends StatelessWidget {
                 visible: c != null,
                 child: IconeItem(
                   metodoQuandoItemClicado: () {
+                    c!.personalisar(element, context);
+                  },
+                  icone: Icons.edit_note,
+                  titulo: "Personalisar",
+                  cor: primaryColor,
+                ),
+              ),
+              SizedBox(
+                width: 100,
+              ),
+              Visibility(
+                visible: c != null,
+                child: IconeItem(
+                  metodoQuandoItemClicado: () {
                     c!.removerItemVenda(element);
                   },
                   icone: Icons.delete,
                   titulo: "",
-                  cor: primaryColor,
+                  cor: Colors.red,
                 ),
               )
             ],

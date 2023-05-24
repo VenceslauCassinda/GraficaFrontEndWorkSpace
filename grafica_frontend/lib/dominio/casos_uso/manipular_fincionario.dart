@@ -42,6 +42,7 @@ class ManipularFuncionario implements ManipularFuncionarioI {
     }
     var novoUsuario = Usuario.registo(nomeUsuario, dado.palavraPasse);
     novoUsuario.palavraPasse = dado.palavraPasse;
+    novoUsuario.nivelAcesso = dado.nivelAcesso;
     var id = await _manipularUsuarioI.registarUsuario(novoUsuario);
     dado.idUsuario = id;
     var idFuncionario = await _provedorFuncionarioI.adicionarFuncionario(dado);

@@ -83,13 +83,13 @@ class GavetaNavegacao extends StatelessWidget {
                     metodoQuandoItemClicado: () async {
                       c.irParaPainel(PainelActual.PRODUTOS);
                     }),
-                // ItemDaGaveta(
-                //     cor: branca,
-                //     icone: Icons.arrow_circle_down,
-                //     titulo: "Recepções",
-                //     metodoQuandoItemClicado: () async {
-                //       c.irParaPainel(PainelActual.RECEPCOES);
-                //     }),
+                ItemDaGaveta(
+                    cor: branca,
+                    icone: Icons.settings_suggest,
+                    titulo: "Personalização",
+                    metodoQuandoItemClicado: () async {
+                      c.irParaPainel(PainelActual.SERVICOS);
+                    }),
                 ItemDaGaveta(
                     cor: branca,
                     icone: Icons.storefront,

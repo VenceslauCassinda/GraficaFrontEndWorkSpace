@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_cliente_I.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_funcionario_i.dart';
@@ -26,8 +27,10 @@ import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/fonte_dados/provedores/provedor_preco.dart';
+import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/geradores.dart';
+import 'package:websafe_svg/websafe_svg.dart';
 
 import '../../../../../../../../../contratos/casos_uso/manipular_pagamento_i.dart';
 import '../../../../../../../../../dominio/casos_uso/manipular_cliente.dart';
@@ -278,7 +281,6 @@ class MesaVendaC extends GetxController {
   }
 
   void vender(VendasC vendasC) async {
-
     var aPagar = listaItensVenda.fold<double>(
         0, (previousValue, element) => ((element.total ?? 0) + previousValue));
     var pago = listaPagamentos.fold<double>(
@@ -292,7 +294,7 @@ class MesaVendaC extends GetxController {
           "Coloque alguma quantidade dos produtos adicionados!");
       return;
     }
-    if(pago < aPagar/2){
+    if (pago < aPagar / 2) {
       mostrarDialogoDeInformacao(
           "Deve pagar 50% ou mais para finalizar a venda!");
       return;
@@ -309,8 +311,8 @@ class MesaVendaC extends GetxController {
           estado: Estado.ATIVADO,
           idFuncionario: -1,
           idCliente: (await _manipularClienteI.pegarClienteDeUsuarioDeId(
-                      pegarAplicacaoC().pegarUsuarioActual()!.id!))
-                  ?.id!,
+                  pegarAplicacaoC().pegarUsuarioActual()!.id!))
+              ?.id!,
           data: data,
           dataLevantamentoCompra: dataLevantamento.value,
           total: aPagar,
@@ -347,8 +349,31 @@ class MesaVendaC extends GetxController {
 
   void mostrarDialogoProdutos(BuildContext context) {}
 
-  Future<Comprovativo?> pegarComprovativoDoPagamentoDeId(int id)async{
+  Future<Comprovativo?> pegarComprovativoDoPagamentoDeId(int id) async {
     var c = await _manipularPagamentoI.pegarComprovativoDoPagamentoDeId(id);
     return c;
+  }
+
+  personalisar(ItemVenda itemVenda, BuildContext context) {
+    mostrarDialogoDeLayou(
+        Container(
+          // height: MediaQuery.of(pegarAplicacaoC().context).size.height * .08,
+          height: MediaQuery.of(context).size.height * .8,
+          width: MediaQuery.of(context).size.width * .8,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                child: WebsafeSvg.asset("lib/recursos/svg/tshirt.svg",
+                    semanticsLabel: 'Acme Logo', 
+                    height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+                    ),
+              ),
+            ],
+          ),
+        ),
+        layoutCru: true);
   }
 }

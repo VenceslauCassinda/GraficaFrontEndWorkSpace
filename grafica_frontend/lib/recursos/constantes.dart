@@ -87,6 +87,22 @@ const URL_TODOS_EXEMPLAR = "${URL_BASE}exemplares";
 const URL_REMOVER_EXEMPLAR = "${URL_BASE}eliminarExemplar";
 const URL_UPLOAD_EXEMPLAR = "${URL_BASE}fazerUploadExemplar";
 
+
+const URL_ADD_DETALHE_ITEM = "${URL_BASE}registarDetalheItem";
+const URL_ATUALIZAR_DETALHE_ITEM = "${URL_BASE}atualizarDetalheItem";
+const URL_TODOS_DETALHE_ITEM = "${URL_BASE}detalhesItem";
+const URL_REMOVER_DETALHE_ITEM = "${URL_BASE}eliminarDetalheItem";
+
+const URL_ADD_TEMA = "${URL_BASE}registarTema";
+const URL_ATUALIZAR_TEMA = "${URL_BASE}atualizarTema";
+const URL_TODOS_TEMA = "${URL_BASE}temas";
+const URL_REMOVER_TEMA = "${URL_BASE}eliminarTema";
+
+const URL_ADD_SERVICO = "${URL_BASE}registarServico";
+const URL_ATUALIZAR_SERVICO = "${URL_BASE}atualizarServico";
+const URL_TODOS_SERVICO = "${URL_BASE}servicos";
+const URL_REMOVER_SERVICO = "${URL_BASE}eliminarServico";
+
 class TipoNegocio {
   static const int GROSSO = 1, RETALHO = 2;
 }

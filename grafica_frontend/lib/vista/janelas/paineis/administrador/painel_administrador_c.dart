@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:componentes_visuais/componentes/layout_confirmacao_accao.dart';
+import 'package:componentes_visuais/componentes/observadores/observador_butoes.dart';
 import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,8 @@ import '../../../../contratos/casos_uso/manipular_funcionario_i.dart';
 import '../../../../contratos/casos_uso/manipular_usuario_i.dart';
 import '../../../../dominio/casos_uso/manipular_definicoes.dart';
 import '../../../../fonte_dados/provedores_net/provedor_net_usuario.dart';
+import '../../cadastro/janela_cadastro.dart';
+import '../../cadastro/janela_cadastro_c.dart';
 import 'layouts/detalhes.dart';
 
 class PainelAdministradorC extends GetxController {
@@ -223,5 +226,41 @@ class PainelAdministradorC extends GetxController {
       voltar();
       mostrarDialogoDeInformacao("Falha de Internet!");
     }
+  }
+
+  void mostrarDialogoAdicionarFuncionario(BuildContext context) async {
+    late ValidacaoCampos validacaoCampos = ValidacaoCampos();
+    late ObservadorButoes observadorButoes = ObservadorButoes();
+
+    var nome = "".obs, palavraPasse = "".obs, confirmePalavraPasse = "".obs;
+    var manipularUsuario = ManipularUsuario(ProvedorNetUsuario());
+    var lista = await manipularUsuario.pegarLista();
+
+    var janelaCadastroC = JanelaCadastroC();
+    janelaCadastroC.modoRegitroCliente = false;
+    janelaCadastroC.modoRegitroGerente = true;
+
+    mostrarDialogoDeLayou(Container(
+      width: MediaQuery.of(context).size.width * .6,
+      child: LayoutCadastro(
+        c: janelaCadastroC,
+        confirmePalavraPasse: confirmePalavraPasse,
+        nome: nome,
+        observadorButoes: observadorButoes,
+        palavraPasse: palavraPasse,
+        validacaoCampos: validacaoCampos,
+        aoFinalizar: (novoFuncionario) {
+          usuarios.add(Usuario(
+            id: novoFuncionario.idUsuario,
+            nomeUsuario: novoFuncionario.nomeUsuario??"Sem Nome",
+            nivelAcesso: novoFuncionario.nivelAcesso??NivelAcesso.CLIENTE,
+            estado: novoFuncionario.estado??Estado.DESACTIVADO,
+            logado: novoFuncionario.logado??false,
+            imagemPerfil: novoFuncionario.imagemPerfil??"",
+            palavraPasse: novoFuncionario.palavraPasse??""
+          ));
+        },
+      ),
+    ));
   }
 }

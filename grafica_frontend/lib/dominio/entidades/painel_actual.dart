@@ -26,4 +26,5 @@ class PainelActual {
   static int CLIENTES = 22;
   static int INVENTARIO = 23;
   static int DESPERDICIOS = 24;
+  static int SERVICOS = 25;
 }

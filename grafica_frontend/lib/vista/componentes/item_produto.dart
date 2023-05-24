@@ -7,6 +7,7 @@ import 'package:grafica_frontend/solucoes_uteis/formato_dado.dart';
 import 'package:grafica_frontend/solucoes_uteis/responsividade.dart';
 
 import '../../dominio/entidades/produto.dart';
+import '../../dominio/entidades/tipo_produto.dart';
 import '../../recursos/constantes.dart';
 import '../janelas/paineis/gerente/sub_paineis/produtos/layouts/produtos_c.dart';
 
@@ -76,6 +77,10 @@ class ItemProduto extends StatelessWidget {
                       visible: c != null,
                       child: Text(
                           "Preço de Compra: ${formatar(produto.precoCompra ?? 0)}")),
+                  Visibility(
+                      visible: c != null,
+                      child: Text(
+                          "Tipo: ${TipoProduto.paraTexto(produto.tipo??-0)}")),
                 ],
               ),
             ),

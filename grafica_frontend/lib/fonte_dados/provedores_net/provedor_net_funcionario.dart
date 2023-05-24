@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/provedores/provedor_funcionario_i.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
+import 'package:grafica_frontend/fonte_dados/provedores/provedores_usuario.dart';
+import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_usuario.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:http/http.dart' as h;
 
@@ -135,7 +137,10 @@ class ProvedorNetFuncionario implements ProvedorFuncionarioI {
         List todos = dado["todos"];
         for (Map cada in todos) {
           try {
-            lista.add(Funcionario.fromJson(cada));
+            var funcionario = Funcionario.fromJson(cada);
+            var provedorUsuario = ProvedorNetUsuario();
+            funcionario.usuario = await provedorUsuario.pegarUsuario(funcionario.idUsuario!);
+            lista.add(funcionario);
           } on Exception catch (e) {
             throw Erro("Erro na conversão dos dados baixados do servidor!");
           }

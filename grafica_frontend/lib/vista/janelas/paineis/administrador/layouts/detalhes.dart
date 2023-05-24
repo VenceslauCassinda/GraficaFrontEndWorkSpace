@@ -154,6 +154,7 @@ class LayoutDetalhes extends StatelessWidget {
                               "${NivelAcesso.paraTexto(NivelAcesso.FUNCIONARIO)}",
                               "${NivelAcesso.paraTexto(NivelAcesso.GERENTE)}",
                               "${NivelAcesso.paraTexto(NivelAcesso.ADMINISTRADOR)}",
+                              "${NivelAcesso.paraTexto(NivelAcesso.CLIENTE)}",
                             ],
                           );
                         },

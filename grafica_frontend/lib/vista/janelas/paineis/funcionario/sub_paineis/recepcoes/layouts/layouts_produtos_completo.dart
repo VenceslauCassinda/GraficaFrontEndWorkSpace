@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_produto_i.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 
 import '../../../../../../componentes/item_produto.dart';
 import '../../../../../../componentes/pesquisa.dart';

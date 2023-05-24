@@ -108,7 +108,7 @@ class LayoutCadastro extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "CADASTRAR-SE",
+              "NOVO CADASTRO",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             const SizedBox(

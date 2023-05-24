@@ -30,6 +30,7 @@ import 'sub_paineis/funcionarios/painel_direito.dart';
 import 'sub_paineis/resumo/resumo.dart';
 import 'sub_paineis/inventario/painel.dart';
 import 'sub_paineis/produtos/painel_produtos.dart';
+import 'sub_paineis/servicos/painel_servicos.dart';
 
 class PainelGerente extends StatelessWidget {
   @override
@@ -244,6 +245,10 @@ class CorpoGerente extends StatelessWidget {
       }
       if (_c.painelActual.value.indicadorPainel == PainelActual.INVENTARIO) {
         return PainelInventario(c: _c);
+      }if (_c.painelActual.value.indicadorPainel == PainelActual.SERVICOS) {
+        return PainelServicos(accaoAoVoltar: (){
+          
+        },);
       }
       return PainelDireito(c: _c);
     });

@@ -24,6 +24,7 @@ class AplicacaoC extends GetxController {
   static String chaveUsuarioDonoDefinitivo = "usuarioDonoDefinitivo";
   bool sistemaAutenticado = false;
   static Usuario? _usuarioActual;
+  late BuildContext context;
 
   @override
   Future<void> onInit() async {

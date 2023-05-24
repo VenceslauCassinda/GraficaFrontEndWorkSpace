@@ -43,7 +43,8 @@ class PainelDireito extends StatelessWidget {
                 accao: (indice) {
                   _c.navegar(indice);
                 },
-              ))
+              )),
+              
             ],
           ),
         ),
@@ -72,6 +73,19 @@ class PainelDireito extends StatelessWidget {
             ],
           ),
         ),
+        Padding(
+              padding: const EdgeInsets.all(20),
+              child: ModeloButao(
+                corButao: primaryColor,
+                icone: Icons.add,
+                corTitulo: Colors.white,
+                butaoHabilitado: true,
+                tituloButao: "Novo Gerente",
+                metodoChamadoNoClique: () {
+                  _c.mostrarDialogoAdicionarFuncionario(context);
+                },
+              ),
+            ),
       ],
     );
   }

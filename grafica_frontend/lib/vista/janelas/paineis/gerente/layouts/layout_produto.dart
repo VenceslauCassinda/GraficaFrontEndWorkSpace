@@ -1,6 +1,7 @@
 import 'package:componentes_visuais/componentes/butoes.dart';
 import 'package:componentes_visuais/componentes/campo_texto.dart';
 import 'package:componentes_visuais/componentes/label_erros.dart';
+import 'package:componentes_visuais/componentes/menu_drop_down.dart';
 import 'package:componentes_visuais/componentes/observadores/observador_butoes.dart';
 import 'package:componentes_visuais/componentes/observadores/observador_campo_texto.dart';
 import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
@@ -10,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/sub_paineis/produtos/layouts/produtos_c.dart';
 
+import '../../../../../dominio/entidades/tipo_produto.dart';
 import '../../../../../recursos/constantes.dart';
 
 class LayoutProduto extends StatelessWidget {
@@ -17,12 +19,13 @@ class LayoutProduto extends StatelessWidget {
   late ObservadorCampoTexto _observadorCampoTexto2;
   late ObservadorButoes _observadorButoes = ObservadorButoes();
 
-  final Function(String nome, String precoCompra) accaoAoFinalizar;
+  final Function(String nome, String precoCompra, int tipo) accaoAoFinalizar;
 
   late ProdutosC _c;
   Produto? produto;
 
   late String nome, precoCompra;
+  int tipo = 0;
   late BuildContext context;
 
   LayoutProduto({this.produto, required this.accaoAoFinalizar}) {
@@ -34,6 +37,7 @@ class LayoutProduto extends StatelessWidget {
     if (produto != null) {
       nome = "${produto?.nome}";
       precoCompra = "${produto?.precoCompra}";
+      tipo = TipoProduto.paraInteiro(TipoProduto.paraTexto(produto?.tipo??0));
     } else {
       nome = "";
       precoCompra = "";
@@ -118,6 +122,23 @@ class LayoutProduto extends StatelessWidget {
                     sms: "Preço de Compra inválido!",
                   );
           }),
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: MenuDropDown(
+              labelMenuDropDown: TipoProduto.paraTexto(tipo),
+              metodoChamadoNaInsersao: (dado) {
+                tipo = TipoProduto.paraInteiro(dado);
+              },
+              listaItens: [
+                TipoProduto.paraTexto(0),
+                TipoProduto.paraTexto(1),
+                TipoProduto.paraTexto(2),
+                TipoProduto.paraTexto(3),
+                TipoProduto.paraTexto(4),
+                TipoProduto.paraTexto(5),
+              ],
+            ),
+          ),
           const SizedBox(
             height: 10,
           ),
@@ -146,7 +167,7 @@ class LayoutProduto extends StatelessWidget {
                         .butaoFinalizarCadastroInstituicao.value,
                     tituloButao: produto == null ? "Finalizar" : "Actualizar",
                     metodoChamadoNoClique: () {
-                      accaoAoFinalizar(nome, precoCompra);
+                      accaoAoFinalizar(nome, precoCompra, tipo);
                     },
                   ),
                 );

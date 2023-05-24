@@ -236,6 +236,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_svg",
+      "rootUri": "file:///C:/Users/Venceslau/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_svg-0.22.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///C:/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -398,8 +404,14 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "path_drawing",
+      "rootUri": "file:///C:/Users/Venceslau/AppData/Local/Pub/Cache/hosted/pub.dev/path_drawing-0.5.1+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "path_parsing",
-      "rootUri": "file:///C:/Users/Venceslau/AppData/Local/Pub/Cache/hosted/pub.dev/path_parsing-1.0.1",
+      "rootUri": "file:///C:/Users/Venceslau/AppData/Local/Pub/Cache/hosted/pub.dev/path_parsing-0.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -734,6 +746,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "websafe_svg",
+      "rootUri": "file:///C:/Users/Venceslau/AppData/Local/Pub/Cache/hosted/pub.dev/websafe_svg-2.0.0+2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "win32",
       "rootUri": "file:///C:/Users/Venceslau/AppData/Local/Pub/Cache/hosted/pub.dev/win32-2.6.1",
       "packageUri": "lib/",
@@ -764,7 +782,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-05-21T10:14:17.678425Z",
+  "generated": "2023-05-24T17:30:47.864888Z",
   "generator": "pub",
   "generatorVersion": "2.19.2"
 }

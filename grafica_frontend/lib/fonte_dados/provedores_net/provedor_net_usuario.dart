@@ -56,7 +56,7 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
     var res = await h.post(Uri.parse(URL_CADASTRO_USUARIO), headers: {
       "Accept": "aplication/json"
     }, body: {
-      "name": usuario.nomeUsuario ?? "",
+      "name": (usuario.nomeUsuario ?? "").toLowerCase(),
       "estado": "1",
       "nivel_acesso": "${usuario.nivelAcesso ?? 0}",
       "logado": "${usuario.logado == true ? 1 : 2}",
@@ -69,7 +69,7 @@ class ProvedorNetUsuario implements ProvedorUsuarioI {
         break;
       case 422:
         var dado = jsonDecode(res.body);
-        throw Erro("Erro de Servidor!\n${dado["message"]}");
+        throw Erro("Erro de Servidor!\n${dado["message"]} ou Dado informado já Exxiste!");
       case 404:
         throw Erro("Rota Web Não Encontrada!");
       case 500:

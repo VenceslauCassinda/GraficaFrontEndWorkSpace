@@ -5,6 +5,7 @@ import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_cliente.dart';
+import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_cliente.dart';
 import 'package:grafica_frontend/vista/componentes/item_usuario.dart';
 import 'package:grafica_frontend/vista/janelas/cadastro/janela_cadastro.dart';
@@ -37,6 +38,7 @@ import '../../../aplicacao_c.dart';
 import '../../../componentes/item_funcionario.dart';
 import '../../cadastro/janela_cadastro_c.dart';
 import '../funcionario/sub_paineis/dividas_encomendas_gerais/painel_c.dart';
+import 'sub_paineis/servicos/painel_c.dart';
 
 class PainelGerenteC extends GetxController {
   var painelActual =
@@ -156,6 +158,8 @@ class PainelGerenteC extends GetxController {
     }
     if (PainelActual.INVENTARIO == painelActual.value.indicadorPainel) {
       Get.delete<PainelInventarioC>();
+    }if (PainelActual.SERVICOS == painelActual.value.indicadorPainel) {
+      Get.delete<ServicosC>();
     }
 
     ScreenSize tela = Get.find();
@@ -168,7 +172,15 @@ class PainelGerenteC extends GetxController {
     listaCopia.clear();
     lista.clear();
     for (var cada in (await _manipularFuncionarioI.pegarLista())) {
-      lista.add(cada);
+      if (cada.nivelAcesso != null) {
+        if (cada.nivelAcesso != NivelAcesso.GERENTE) {
+          lista.add(cada);
+        }
+      }else{
+        if (cada.usuario?.nivelAcesso != null && cada.usuario?.nivelAcesso != NivelAcesso.GERENTE) {
+          lista.add(cada);
+        }
+      }
     }
     listaCopia.addAll(lista);
   }

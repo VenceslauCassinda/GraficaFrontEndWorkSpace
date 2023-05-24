@@ -22,7 +22,7 @@ class TipoProduto {
     if (id == BLOCO_FATURA) {
       return "Bloco de Factura";
     }
-    return "Simples";
+    return "Padrão";
   }
 
   static int paraInteiro(String id) {

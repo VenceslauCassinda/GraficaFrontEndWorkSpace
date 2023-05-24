@@ -77,11 +77,13 @@ class ManipularCliente implements ManipularClienteI {
     var novoUsuario = Usuario.registo(nomeUsuario, dado.palavraPasse);
     novoUsuario.nivelAcesso = NivelAcesso.CLIENTE;
     novoUsuario.palavraPasse = dado.palavraPasse;
-    var idCliente = await registarCliente(dado);
     var id = await manipularUsuarioI!.registarUsuario(novoUsuario);
     dado.idUsuario = id;
-    dado.id = idCliente;
     novoUsuario.id = id;
+    mostrar(id);
+    mostrar(novoUsuario.id);
+    var idCliente = await registarCliente(dado);
+    dado.id = idCliente;
     dado.usuario = novoUsuario;
     return dado;
   }
