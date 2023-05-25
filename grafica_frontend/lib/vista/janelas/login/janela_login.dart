@@ -25,10 +25,10 @@ class JanelaLogin extends StatelessWidget {
   late JanelaLoginC _c;
   JanelaLogin() {
     _c = Get.put(JanelaLoginC());
-    Timer.periodic(Duration(seconds: 2), (timer) { 
-      _c.fazerLogin("q", "11111111");
-      timer.cancel();
-    });
+    // Timer.periodic(Duration(seconds: 2), (timer) { 
+    //   _c.fazerLogin("q", "11111111");
+    //   timer.cancel();
+    // });
   }
   @override
   Widget build(BuildContext context) {
@@ -151,6 +151,7 @@ class LayoutLogin extends StatelessWidget {
               height: 10,
             ),
             CampoTexto(
+              quantidadeMinimaLinhas: 1,
               campoOculto: true,
               context: context,
               campoBordado: false,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:componentes_visuais/componentes/campo_texto.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +20,11 @@ import 'package:grafica_frontend/dominio/casos_uso/manipular_saida.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_usuario.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/comprovativo.dart';
+import 'package:grafica_frontend/dominio/entidades/cores.dart';
 import 'package:grafica_frontend/dominio/entidades/estado.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
 import 'package:grafica_frontend/dominio/entidades/item_venda.dart';
+import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
@@ -355,6 +358,8 @@ class MesaVendaC extends GetxController {
   }
 
   personalisar(ItemVenda itemVenda, BuildContext context) {
+    var corTshirt = Cores.paraColor(itemVenda.produto!.nome!);;
+    var corCampoTexto = corTshirt ==Colors.white ? Colors.black : Colors.white;
     mostrarDialogoDeLayou(
         Container(
           // height: MediaQuery.of(pegarAplicacaoC().context).size.height * .08,
@@ -365,12 +370,94 @@ class MesaVendaC extends GetxController {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                child: WebsafeSvg.asset("lib/recursos/svg/tshirt.svg",
-                    semanticsLabel: 'Acme Logo', 
-                    height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-                    ),
+                color: corTshirt == Colors.white ? Colors.black : null,
+                  height: MediaQuery.of(context).size.height * .65,
+                  width: MediaQuery.of(context).size.height * .65,
+                  child: Stack(
+                    children: [
+                      WebsafeSvg.asset(
+                        "lib/recursos/svg/tshirt_front.svg",
+                        semanticsLabel: 'Acme Logo',
+                        height: MediaQuery.of(context).size.height * .65,
+                        width: MediaQuery.of(context).size.height * .65,
+                        color: corTshirt,
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.height * .3,
+                          child: TextFormField(
+                            minLines: 9,
+                            maxLines: 9,
+                            style: TextStyle(color: corCampoTexto),
+                            decoration: InputDecoration(
+                              hintText: "Insira aqui os dizeres!",
+                              hintStyle: TextStyle(color: corCampoTexto),
+                              focusColor: corCampoTexto,
+                              fillColor: corCampoTexto,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: corCampoTexto),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: corCampoTexto),
+                              ),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: corCampoTexto),
+                                  borderRadius: BorderRadius.all(
+                                Radius.circular(20),
+                              )),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
+              SizedBox(
+                width: 100,
               ),
+              Container(
+                color: corTshirt == Colors.white ? Colors.black : null,
+                  height: MediaQuery.of(context).size.height * .65,
+                  width: MediaQuery.of(context).size.height * .65,
+                  child: Stack(
+                    children: [
+                      WebsafeSvg.asset(
+                        "lib/recursos/svg/tshirt_back.svg",
+                        semanticsLabel: 'Acme Logo',
+                        height: MediaQuery.of(context).size.height * .65,
+                        width: MediaQuery.of(context).size.height * .65,
+                        color: corTshirt,
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.height * .3,
+                          child: TextFormField(
+                            minLines: 9,
+                            maxLines: 9,
+                            style: TextStyle(color: corCampoTexto),
+                            decoration: InputDecoration(
+                              hintText: "Insira aqui os dizeres!",
+                              hintStyle: TextStyle(color: corCampoTexto),
+                              focusColor: corCampoTexto,
+                              fillColor: corCampoTexto,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: corCampoTexto),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: corCampoTexto),
+                              ),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: corCampoTexto),
+                                  borderRadius: BorderRadius.all(
+                                Radius.circular(20),
+                              )),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
             ],
           ),
         ),

@@ -16,9 +16,11 @@ class CampoTexto extends StatelessWidget {
   bool? autoFoco;
   Function? accaoAoTocarNoCampo;
   Function? accaoAoTerminarInsercao;
+  int? quantidadeMinimaLinhas;
   CampoTexto(
       {this.icone,
       this.campoNaoEditavel,
+      this.quantidadeMinimaLinhas,
       required this.context,
       this.accaoAoTocarNoCampo,
       this.accaoAoTerminarInsercao,
@@ -41,6 +43,8 @@ class CampoTexto extends StatelessWidget {
           : BoxDecoration(),
       child: Center(
         child: TextFormField(
+          minLines: quantidadeMinimaLinhas,
+          maxLines: quantidadeMinimaLinhas,
           onFieldSubmitted: (valor) {
             if (accaoAoTerminarInsercao != null) {
               accaoAoTerminarInsercao!();
