@@ -1,7 +1,9 @@
+import 'detalhe_item.dart';
 import 'produto.dart';
 
 class ItemVenda {
   Produto? produto;
+  DetalheItem? detalheItem;
   int? id;
   int? estado;
   int? idProduto;

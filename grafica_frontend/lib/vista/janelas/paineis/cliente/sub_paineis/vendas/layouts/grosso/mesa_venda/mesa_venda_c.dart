@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:componentes_visuais/componentes/butoes.dart';
 import 'package:componentes_visuais/componentes/campo_texto.dart';
+import 'package:componentes_visuais/componentes/menu_drop_down.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,7 @@ import 'package:grafica_frontend/dominio/casos_uso/manipular_usuario.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/comprovativo.dart';
 import 'package:grafica_frontend/dominio/entidades/cores.dart';
+import 'package:grafica_frontend/dominio/entidades/detalhe_item.dart';
 import 'package:grafica_frontend/dominio/entidades/estado.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
 import 'package:grafica_frontend/dominio/entidades/item_venda.dart';
@@ -30,6 +33,7 @@ import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/fonte_dados/provedores/provedor_preco.dart';
+import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_tema.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/geradores.dart';
@@ -42,6 +46,7 @@ import '../../../../../../../../../dominio/casos_uso/manipular_venda.dart';
 import '../../../../../../../../../dominio/entidades/forma_pagamento.dart';
 import '../../../../../../../../../dominio/entidades/preco.dart';
 import '../../../../../../../../../dominio/entidades/stock.dart';
+import '../../../../../../../../../dominio/entidades/tema.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_comprovativo.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_funcionario.dart';
@@ -54,6 +59,8 @@ import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_stock
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_usuario.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../../../aplicacao_c.dart';
+import '../../../../../componentes/campo_texto_detalhe.dart';
+import '../../layout_detalhe_tshirt.dart';
 import '../../layout_forma_pagamento.dart';
 import '../../vendas_c.dart';
 
@@ -359,108 +366,19 @@ class MesaVendaC extends GetxController {
 
   personalisar(ItemVenda itemVenda, BuildContext context) {
     var corTshirt = Cores.paraColor(itemVenda.produto!.nome!);;
-    var corCampoTexto = corTshirt ==Colors.white ? Colors.black : Colors.white;
+    var corCampoTexto = corTshirt ==Colors.white ? Colors.black.obs : Colors.white.obs;
+
     mostrarDialogoDeLayou(
-        Container(
-          // height: MediaQuery.of(pegarAplicacaoC().context).size.height * .08,
-          height: MediaQuery.of(context).size.height * .8,
-          width: MediaQuery.of(context).size.width * .8,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                color: corTshirt == Colors.white ? Colors.black : null,
-                  height: MediaQuery.of(context).size.height * .65,
-                  width: MediaQuery.of(context).size.height * .65,
-                  child: Stack(
-                    children: [
-                      WebsafeSvg.asset(
-                        "lib/recursos/svg/tshirt_front.svg",
-                        semanticsLabel: 'Acme Logo',
-                        height: MediaQuery.of(context).size.height * .65,
-                        width: MediaQuery.of(context).size.height * .65,
-                        color: corTshirt,
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.height * .3,
-                          child: TextFormField(
-                            minLines: 9,
-                            maxLines: 9,
-                            style: TextStyle(color: corCampoTexto),
-                            decoration: InputDecoration(
-                              hintText: "Insira aqui os dizeres!",
-                              hintStyle: TextStyle(color: corCampoTexto),
-                              focusColor: corCampoTexto,
-                              fillColor: corCampoTexto,
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: corCampoTexto),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: corCampoTexto),
-                              ),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: corCampoTexto),
-                                  borderRadius: BorderRadius.all(
-                                Radius.circular(20),
-                              )),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-              SizedBox(
-                width: 100,
-              ),
-              Container(
-                color: corTshirt == Colors.white ? Colors.black : null,
-                  height: MediaQuery.of(context).size.height * .65,
-                  width: MediaQuery.of(context).size.height * .65,
-                  child: Stack(
-                    children: [
-                      WebsafeSvg.asset(
-                        "lib/recursos/svg/tshirt_back.svg",
-                        semanticsLabel: 'Acme Logo',
-                        height: MediaQuery.of(context).size.height * .65,
-                        width: MediaQuery.of(context).size.height * .65,
-                        color: corTshirt,
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.height * .3,
-                          child: TextFormField(
-                            minLines: 9,
-                            maxLines: 9,
-                            style: TextStyle(color: corCampoTexto),
-                            decoration: InputDecoration(
-                              hintText: "Insira aqui os dizeres!",
-                              hintStyle: TextStyle(color: corCampoTexto),
-                              focusColor: corCampoTexto,
-                              fillColor: corCampoTexto,
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: corCampoTexto),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: corCampoTexto),
-                              ),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: corCampoTexto),
-                                  borderRadius: BorderRadius.all(
-                                Radius.circular(20),
-                              )),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-            ],
-          ),
-        ),
+        LayoutDetalheTshirt(corCampoTexto: corCampoTexto, corProduto: corTshirt,itemVenda: itemVenda, c: this,),
         layoutCru: true);
   }
+
+  void salvarDetalhe(ItemVenda itemVenda) {
+    for (var i = 0; i < listaItensVenda.length; i++) {
+      if(listaItensVenda[i].id == itemVenda.id){
+        listaItensVenda[i] == itemVenda;
+      }
+    }
+  }
 }
+
