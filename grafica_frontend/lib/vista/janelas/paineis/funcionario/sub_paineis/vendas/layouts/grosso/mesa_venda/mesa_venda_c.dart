@@ -35,6 +35,7 @@ import '../../../../../../../../../dominio/entidades/preco.dart';
 import '../../../../../../../../../dominio/entidades/stock.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_comprovativo.dart';
+import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_detalhe_item.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_funcionario.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_item_venda.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_pagamento.dart';
@@ -72,7 +73,7 @@ class MesaVendaC extends GetxController {
         ProvedorNetItemVenda(),
         ManipularProduto(ProvedorNetProduto(), _manipularStockI,
             ManipularPreco(ProvedorNetPreco())),
-        ManipularStock(ProvedorNetStock()));
+        ManipularStock(ProvedorNetStock()), ProvedorNetDetalheItem());
     _manipularVendaI = ManipularVenda(
         ProvedorNetVenda(),
         ManipularSaida(ProvedorNetSaida(), _manipularStockI),

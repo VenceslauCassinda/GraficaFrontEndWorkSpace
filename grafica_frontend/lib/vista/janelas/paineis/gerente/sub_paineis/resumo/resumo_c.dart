@@ -42,6 +42,7 @@ import '../../../../../../fonte_dados/provedores/provedor_preco.dart';
 import '../../../../../../fonte_dados/provedores/provedor_produto.dart';
 import '../../../../../../fonte_dados/provedores/provedor_saida.dart';
 import '../../../../../../fonte_dados/provedores/provedor_stock.dart';
+import '../../../../../../fonte_dados/provedores_net/provedor_net_detalhe_item.dart';
 import '../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 
 class PainelResumoC extends GetxController {
@@ -76,7 +77,7 @@ class PainelResumoC extends GetxController {
     _manipularItemVendaI = ManipularItemVenda(
         ProvedorItemVenda(),
         ManipularProduto(ProvedorProduto(), _manipularStockI, _manipularPrecoI),
-        ManipularStock(ProvedorStock()));
+        ManipularStock(ProvedorStock()), ProvedorNetDetalheItem());
     _manipularSaidaI = ManipularSaida(ProvedorSaida(), _manipularStockI);
     _manipularVendaI = ManipularVenda(
         ProvedorNetVenda(),

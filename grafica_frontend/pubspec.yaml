@@ -33,11 +33,10 @@ dependencies:
   http: ^0.13.5
   path_provider: ^2.0.0
   path: ^1.8.2
-  intl: ^0.17.0
+  intl: ^0.18.0
   get: ^4.6.1
   url_launcher: ^6.0.20
   font_awesome_flutter: ^9.2.0
-  google_fonts: ^2.3.1
   flutter_screenutil: ^5.3.1
   pdf: ^3.1.0
   open_file: ^3.2.1

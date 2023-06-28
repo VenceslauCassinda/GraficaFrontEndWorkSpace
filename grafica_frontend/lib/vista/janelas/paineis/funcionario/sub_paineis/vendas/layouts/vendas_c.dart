@@ -45,6 +45,7 @@ import '../../../../../../../fonte_dados/provedores/provedor_divida.dart';
 import '../../../../../../../fonte_dados/provedores/provedor_receccao.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_comprovativo.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
+import '../../../../../../../fonte_dados/provedores_net/provedor_net_detalhe_item.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_entrada.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_item_venda.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_pagamento.dart';
@@ -92,7 +93,7 @@ class VendasC extends GetxController {
     _manipularItemVendaI = ManipularItemVenda(
         ProvedorNetItemVenda(),
         ManipularProduto(provedorNetProduto, _manipularStockI, manipularPreco),
-        _manipularStockI);
+        _manipularStockI, ProvedorNetDetalheItem());
     _manipularVendaI = ManipularVenda(
         ProvedorNetVenda(),
         maniSaida,

@@ -21,8 +21,9 @@ class LayoutCampo extends StatelessWidget {
   String? valor;
   final String titulo;
   late BuildContext context;
+  String? dicaParaCampo;
 
-  LayoutCampo({required this.accaoAoFinalizar, required this.titulo, valor}) {
+  LayoutCampo({required this.accaoAoFinalizar, required this.titulo, valor, this.dicaParaCampo}) {
     _observadorCampoTexto = ObservadorCampoTexto();
     _observadorButoes = ObservadorButoes();
   }
@@ -48,7 +49,7 @@ class LayoutCampo extends StatelessWidget {
               campoBordado: false,
               icone: const Icon(Icons.lock),
               tipoCampoTexto: TipoCampoTexto.nome,
-              dicaParaCampo: "dado",
+              dicaParaCampo: dicaParaCampo ?? "dado",
               metodoChamadoNaInsersao: (String novo) {
                 valor = novo;
                 _observadorCampoTexto.observarCampo(novo, TipoCampoTexto.nome);

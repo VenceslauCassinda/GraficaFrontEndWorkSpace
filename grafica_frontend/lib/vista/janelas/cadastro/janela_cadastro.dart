@@ -1,4 +1,5 @@
 import 'package:componentes_visuais/componentes/campo_texto.dart';
+import 'package:componentes_visuais/componentes/campo_texto2.dart';
 import 'package:componentes_visuais/componentes/butoes.dart';
 import 'package:componentes_visuais/componentes/label_erros.dart';
 import 'package:componentes_visuais/componentes/observadores/observador_butoes.dart';
@@ -143,7 +144,7 @@ class LayoutCadastro extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            CampoTexto(
+            CampoTexto2(
               context: context,
               campoBordado: false,
               icone: Icon(Icons.lock),
@@ -175,7 +176,7 @@ class LayoutCadastro extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            CampoTexto(
+            CampoTexto2(
               context: context,
               campoBordado: false,
               icone: const Icon(Icons.lock),

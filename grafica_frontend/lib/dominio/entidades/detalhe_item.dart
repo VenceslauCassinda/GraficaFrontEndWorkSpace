@@ -1,44 +1,48 @@
-import 'produto.dart';
+
+import 'package:file_picker/file_picker.dart';
+
 
 class DetalheItem {
   int? id;
-  int? idItem;
-  int? idExemplar;
   String? idVista;
-  String? frente;
-  String? tras;
-  String? tema;
-  String? corLetras;
+  int? idItem;
+  int? tipo;
+  String? detalhe;
+  String? dizeres;
+  String? link;
+  String? nomeCor;
+  PlatformFile? arquivo;
   
   DetalheItem(
       {this.id,
       required this.idItem,
-      this.idExemplar,
-      this.corLetras,
+      this.link,
       this.idVista,
-      required this.frente,
-      required this.tras,
-      required this.tema});
+      this.tipo,
+      this.nomeCor,
+      this.detalhe,
+      this.dizeres,
+      this.arquivo,
+      });
 
   DetalheItem.fromJson(Map json) {
-    idItem = json['id_produto'];
-    idExemplar = json['id_pedido'];
-    tras = json['tras'];
-    tema = json['tema'];
-    corLetras = json['cor_letras'];
-    frente = json['frente'];
+    idItem = json['id_item'];
+    detalhe = json['detalhe'];
+    dizeres = json['dizeres'];
+    link = json['link'];
+    nomeCor = json['nome_cor'];
+    tipo = json['tipo'];
     id = json['id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id_produto'] = this.idItem;
-    data['id_pedido'] = this.idExemplar;
-    data['tras'] = this.tras;
-    data['cor_letras'] = this.corLetras;
-    data['tema'] = this.tema;
-    data['frente'] = this.frente;
-    data['id'] = this.id;
+    data['id_item'] = this.idItem;
+    data['detalhe'] = this.detalhe;
+    data['dizeres'] = this.dizeres;
+    data['link'] = this.link;
+    data['nome_cor'] = this.nomeCor;
+    data['tipo'] = this.tipo;
     return data;
   }
 }

@@ -74,6 +74,7 @@ class ProdutosC extends GetxController {
   late ManipularEntidadeI _manipularEntidadeI;
   late ManipularEntradaI _manipularEntradaI;
   late ManipularPrecoI _manipularPrecoI;
+  var baixando = false.obs;
   String filtro = "";
   ProdutosC() {
     _manipularPrecoI = ManipularPreco(ProvedorNetPreco());
@@ -166,6 +167,7 @@ class ProdutosC extends GetxController {
   Future<void> navegar(int tab) async {
     indiceTabActual.value = tab;
     // Timer.periodic(Duration(seconds: 1), (t) async {
+      baixando.value = true;
     if (tab == 0) {
       await pegarTodos();
     }
@@ -178,6 +180,7 @@ class ProdutosC extends GetxController {
     if (tab == 3) {
       await pegarElimindados();
     }
+    baixando.value = false;
     //   t.cancel();
     // });
   }
@@ -289,6 +292,7 @@ class ProdutosC extends GetxController {
     mostrarDialogoDeLayou(LayoutQuantidade(
         comOpcaoRetirada: false,
         accaoAoFinalizar: (quantidade, o) async {
+          mostrarCarregandoDialogoDeInformacao("");
           try {
             var motivo = Entrada.MOTIVO_AJUSTE_STOCK;
             var quantidade2 = quantidade + ((await pegarStock(produto))?.quantidade ?? 0);

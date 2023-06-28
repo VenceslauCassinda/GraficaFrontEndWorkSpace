@@ -33,6 +33,7 @@ import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/fonte_dados/provedores/provedor_preco.dart';
+import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_detalhe_item.dart';
 import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_tema.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
@@ -90,7 +91,7 @@ class MesaVendaC extends GetxController {
         ProvedorNetItemVenda(),
         ManipularProduto(ProvedorNetProduto(), _manipularStockI,
             ManipularPreco(ProvedorNetPreco())),
-        ManipularStock(ProvedorNetStock()));
+        ManipularStock(ProvedorNetStock()), ProvedorNetDetalheItem());
     _manipularVendaI = ManipularVenda(
         ProvedorNetVenda(),
         ManipularSaida(ProvedorNetSaida(), _manipularStockI),
@@ -134,8 +135,6 @@ class MesaVendaC extends GetxController {
                 );
               }
               var lista = snapshot.data!.map((e) => e.descricao!).toList();
-              lista.removeWhere(
-                  (element) => element.contains("TRANSFERÊNCIA") == false);
               return LayoutFormaPagamento(
                   accaoAoFinalizar: (valor, opcao, arquivo) async {
                     try {
@@ -311,7 +310,7 @@ class MesaVendaC extends GetxController {
     }
     mostrarCarregandoDialogoDeInformacao("Finalizando a Venda");
     dataLevantamento.value ??= data.add(Duration(days: 1));
-    try {
+    // try {
       var venda = Venda(
           produto: null,
           idProduto: null,
@@ -344,9 +343,9 @@ class MesaVendaC extends GetxController {
       vendasC.totalCaixa.value += pago;
       voltar();
       // vendasC.navegar(vendasC.indiceTabActual);
-    } on Erro catch (e) {
-      mostrarDialogoDeInformacao(e.sms);
-    }
+    // } on Erro catch (e) {
+    //   mostrarDialogoDeInformacao(e.sms);
+    // }
   }
 
   Future<Stock?> pegarStockDoProdutoDeId(int id) async {
@@ -373,10 +372,11 @@ class MesaVendaC extends GetxController {
         layoutCru: true);
   }
 
-  void salvarDetalhe(ItemVenda itemVenda) {
+  void salvarDetalhe(ItemVenda itemVenda, List<DetalheItem> lista) {
     for (var i = 0; i < listaItensVenda.length; i++) {
       if(listaItensVenda[i].id == itemVenda.id){
         listaItensVenda[i] == itemVenda;
+        listaItensVenda[i].detalhes = lista;
       }
     }
   }

@@ -1,9 +1,11 @@
+import 'package:get/get.dart';
+
 import 'detalhe_item.dart';
 import 'produto.dart';
 
 class ItemVenda {
   Produto? produto;
-  DetalheItem? detalheItem;
+  List<DetalheItem> detalhes = [];
   int? id;
   int? estado;
   int? idProduto;

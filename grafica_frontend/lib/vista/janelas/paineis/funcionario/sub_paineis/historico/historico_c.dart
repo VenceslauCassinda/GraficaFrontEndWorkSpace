@@ -24,6 +24,7 @@ import '../../../../../../fonte_dados/provedores/provedor_preco.dart';
 import '../../../../../../fonte_dados/provedores/provedor_produto.dart';
 import '../../../../../../fonte_dados/provedores/provedor_saida.dart';
 import '../../../../../../fonte_dados/provedores/provedor_stock.dart';
+import '../../../../../../fonte_dados/provedores_net/provedor_net_detalhe_item.dart';
 import '../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../painel_funcionario_c.dart';
 
@@ -48,7 +49,7 @@ class HistoricoC extends GetxController {
         ProvedorItemVenda(),
         ManipularProduto(ProvedorProduto(), _manipularStockI,
             ManipularPreco(ProvedorPreco())),
-        ManipularStock(ProvedorStock()));
+        ManipularStock(ProvedorStock()), ProvedorNetDetalheItem());
     _manipularVendaI = ManipularVenda(
         ProvedorNetVenda(),
         ManipularSaida(ProvedorSaida(), _manipularStockI),

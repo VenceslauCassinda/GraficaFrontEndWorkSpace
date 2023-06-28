@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:responsive_layout_builder/responsive_layout_builder.dart';
 import 'package:grafica_frontend/solucoes_uteis/responsividade.dart';
@@ -25,10 +24,10 @@ class JanelaLogin extends StatelessWidget {
   late JanelaLoginC _c;
   JanelaLogin() {
     _c = Get.put(JanelaLoginC());
-    Timer.periodic(Duration(seconds: 2), (timer) { 
-      _c.fazerLogin("q", "11111111");
-      timer.cancel();
-    });
+    // Timer.periodic(Duration(seconds: 2), (timer) { 
+    //   _c.fazerLogin("q", "11111111");
+    //   timer.cancel();
+    // });
   }
   @override
   Widget build(BuildContext context) {

@@ -1,17 +1,19 @@
 import 'package:grafica_frontend/contratos/casos_uso/manipular_item_venda_i.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_produto_i.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_stock_i.dart';
+import 'package:grafica_frontend/contratos/provedores/provedor_detalhe_item.dart';
 import 'package:grafica_frontend/contratos/provedores/provedor_item_venda_i.dart';
 import 'package:grafica_frontend/dominio/entidades/item_venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
 
 class ManipularItemVenda implements ManipularItemVendaI {
   final ProvedorItemVendaI _provedorItemVendaI;
+  final ProvedorDetalheItemI _provedorDetalheItemI;
   final ManipularProdutoI _manipularProdutoI;
   final ManipularStockI _manipularStockI;
 
   ManipularItemVenda(
-      this._provedorItemVendaI, this._manipularProdutoI, this._manipularStockI);
+      this._provedorItemVendaI, this._manipularProdutoI, this._manipularStockI, this._provedorDetalheItemI);
   @override
   Future<bool> actualizaItemVenda(ItemVenda dado) async {
     return await _provedorItemVendaI.actualizaItemVenda(dado);
@@ -24,7 +26,12 @@ class ManipularItemVenda implements ManipularItemVendaI {
 
   @override
   Future<int> registarItemVenda(ItemVenda dado) async {
-    return await _provedorItemVendaI.registarItemVenda(dado);
+    var i = await _provedorItemVendaI.registarItemVenda(dado);
+    for (var cada in dado.detalhes) {
+      cada.idItem = i;
+      await _provedorDetalheItemI.registarDetalheItem(cada);
+    }
+    return i;
   }
 
   @override

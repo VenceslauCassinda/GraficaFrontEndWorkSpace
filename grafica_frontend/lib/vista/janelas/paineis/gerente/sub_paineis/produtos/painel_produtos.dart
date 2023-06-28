@@ -65,9 +65,19 @@ class PainelProdutos extends StatelessWidget {
             ],
           ),
         ),
+        Obx(
+           () {
+            return Visibility(
+              visible: _c.baixando.value,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: LinearProgressIndicator(),
+              ));
+          }
+        ),
         Expanded(
           child: Obx(() {
-            if (_c.lista.isEmpty) {
+            if (_c.lista.isEmpty && _c.baixando.value == false) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,

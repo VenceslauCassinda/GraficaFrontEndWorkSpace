@@ -71,7 +71,7 @@ class LayoutMesaVenda extends StatelessWidget {
                         Container(
                             height: MediaQuery.of(context).size.height * .7,
                             width: MediaQuery.of(context).size.width * .4,
-                            child: Produtos(_c, controladores)),
+                            child: Produtos(_c, controladores, accaoAoVoltar: (){voltar();},)),
                         layoutCru: true);
                   },
                 ),
@@ -225,24 +225,27 @@ class _CabecaclhoVenda extends StatelessWidget {
                   .map((element) => InkWell(
                         onTap: () async {
                           if (element.comprovativo?.arquivo != null) {
-                              mostrarDialogoDeLayou(Container(
-                                width: MediaQuery.of(context).size.width * .5,
-                                height: MediaQuery.of(context).size.height * .5,
-                                child: viewer.SfPdfViewer.memory(element.comprovativo!.arquivo!.bytes!),
-                              ));
-                              return;
-                            }
-                              var c = await _c.pegarComprovativoDoPagamentoDeId(element.id!);
-                              if (c == null) {
-                                mostrarDialogoDeInformacao("Sem Comprovativo!");
-                                return;
-                              }
-                              
-                              mostrarDialogoDeLayou(Container(
-                                width: MediaQuery.of(context).size.width * .5,
-                                height: MediaQuery.of(context).size.height * .5,
-                                child: viewer.SfPdfViewer.network("$URL_STORAGE${c.link!}"),
-                              ));
+                            mostrarDialogoDeLayou(Container(
+                              width: MediaQuery.of(context).size.width * .5,
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: viewer.SfPdfViewer.memory(
+                                  element.comprovativo!.arquivo!.bytes!),
+                            ));
+                            return;
+                          }
+                          var c = await _c
+                              .pegarComprovativoDoPagamentoDeId(element.id!);
+                          if (c == null) {
+                            mostrarDialogoDeInformacao("Sem Comprovativo!");
+                            return;
+                          }
+
+                          mostrarDialogoDeLayou(Container(
+                            width: MediaQuery.of(context).size.width * .5,
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: viewer.SfPdfViewer.network(
+                                "$URL_STORAGE${c.link!}"),
+                          ));
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -271,10 +274,23 @@ class Produtos extends StatelessWidget {
   late VendasC _vendasC;
   late MesaVendaC _c;
   RxList<Produto> lista = RxList<Produto>([]);
+  List<Produto> listaCopia = [];
   final Map<String, TextEditingController> controladores;
-  Produtos(this._c, this.controladores) {
+  var baixando = false.obs;
+  Function? accaoAoVoltar;
+
+  Produtos(this._c, this.controladores, {this.accaoAoVoltar}) {
     _vendasC = Get.find();
+    init();
   }
+  init() async {
+    baixando.value = true;
+    var dados = await _vendasC.pegarListaProdutos();
+    lista.addAll(dados);
+    listaCopia = dados;
+    baixando.value = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -284,106 +300,135 @@ class Produtos extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
             child: LayoutPesquisa(
+              accaoAoVoltar: () {
+                if (accaoAoVoltar != null) {
+                  accaoAoVoltar!();
+                }
+              },
               accaoNaInsercaoNoCampoTexto: (dado) {
-                // _vendasC.aoPesquisarProduto(dado);
+                mostrar(dado);
+                lista.clear();
+                if (dado.isNotEmpty) {
+                  for (var cada in listaCopia) {
+                    if ((cada.nome ?? "")
+                        .toLowerCase()
+                        .contains(dado.toLowerCase())) {
+                      lista.add(cada);
+                    }
+                  }
+                } else {
+                  lista.addAll(listaCopia);
+                }
               },
             ),
           ),
-          FutureBuilder<List<Produto>>(
-              future: _vendasC.pegarListaProdutos(),
-              builder: (c, s) {
-                if (s.data == null) {
-                  return Container(
-                    child: LinearProgressIndicator(),
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                  );
-                }
-                lista = RxList(s.data!);
-                return Container(
-                  height: MediaQuery.of(context).size.height * .5,
-                  width: MediaQuery.of(context).size.width * .4,
-                  margin: EdgeInsets.only(top: 20),
-                  child: ListView.builder(
-                      itemCount: lista.length,
-                      itemBuilder: (c, i) {
-                        var produto = lista[i];
-                        return InkWell(
-                          onTap: () async {
-                            var teste = _c.listaItensVenda.firstWhereOrNull(
-                                (element) => element.idProduto == produto.id);
-                            if (teste != null) {
-                              mostrarDialogoDeInformacao(
-                                  "Este produto já foi adicionado!",
-                                  naoFechar: true);
-                              return;
-                            }
-                            mostrarCarregandoDialogoDeInformacao(
-                                "Verificando Stock e Preços...",
-                                naoFecharJanela: true);
-                            produto.stock =
-                                await _c.pegarStockDoProdutoDeId(produto.id!);
-                            var precos =
-                                (await _c.pegarPrecoDoProdutoDeId(produto.id!));
-                            voltar();
-                            if (precos.isEmpty) {
-                              mostrarDialogoDeInformacao(
-                                  "Produto ${produto.nome ?? "Sem Nome"} sem Preço de Venda");
-                              return;
-                            } else {
-                              produto.precoGeral = precos[0].preco!;
-                            }
-                            if (produto.stock != null) {
-                              if (produto.stock!.quantidade! > 0) {
-                                if (produto.precoGeral >= 0) {
-                                  _c.adicionarProdutoAmesa(produto);
-                                  controladores["${produto.id}1"] =
-                                      TextEditingController(text: "0");
-                                  controladores["${produto.id}2"] =
-                                      TextEditingController(text: "0");
-                                } else {
-                                  mostrarDialogoDeInformacao(
-                                      "Produto sem preço!");
-                                }
+          Obx(() {
+            return Visibility(
+                visible: baixando.value,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                  child: const LinearProgressIndicator(),
+                ));
+          }),
+          Obx(() {
+            return Visibility(
+                visible: lista.isEmpty,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                  child: const Text("Sem Itens!"),
+                ));
+          }),
+          Container(
+            height: MediaQuery.of(context).size.height * .5,
+            width: MediaQuery.of(context).size.width * .4,
+            margin: EdgeInsets.only(top: 20),
+            child: Obx(() {
+              return Visibility(
+                visible: lista.isNotEmpty,
+                child: ListView.builder(
+                    itemCount: lista.length,
+                    itemBuilder: (c, i) {
+                      var produto = lista[i];
+                      return InkWell(
+                        onTap: () async {
+                          var teste = _c.listaItensVenda.firstWhereOrNull(
+                              (element) => element.idProduto == produto.id);
+                          if (teste != null) {
+                            mostrarDialogoDeInformacao(
+                                "Este produto já foi adicionado!",
+                                naoFechar: true);
+                            return;
+                          }
+                          mostrarCarregandoDialogoDeInformacao(
+                              "Verificando Stock e Preços...",
+                              naoFecharJanela: true);
+                          produto.stock =
+                              await _c.pegarStockDoProdutoDeId(produto.id!);
+                          var precos =
+                              (await _c.pegarPrecoDoProdutoDeId(produto.id!));
+                          voltar();
+                          if (precos.isEmpty) {
+                            mostrarDialogoDeInformacao(
+                                "Produto ${produto.nome ?? "Sem Nome"} sem Preço de Venda");
+                            return;
+                          } else {
+                            produto.precoGeral = precos[0].preco!;
+                          }
+                          if (produto.stock != null) {
+                            if (produto.stock!.quantidade! > 0) {
+                              if (produto.precoGeral >= 0) {
+                                _c.adicionarProdutoAmesa(produto);
+                                controladores["${produto.id}1"] =
+                                    TextEditingController(text: "0");
+                                controladores["${produto.id}2"] =
+                                    TextEditingController(text: "0");
                               } else {
                                 mostrarDialogoDeInformacao(
-                                    "Produto com quantidade insuficiente em Stock!");
+                                    "Produto sem preço!");
                               }
                             } else {
-                              mostrarDialogoDeInformacao("Produto sem Stock!");
+                              mostrarDialogoDeInformacao(
+                                  "Produto com quantidade insuficiente em Stock!");
                             }
-                          },
-                          child: Card(
-                            elevation: 5,
-                            child: Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Text(lista[i].nome ?? "Sem Nome"),
-                            ),
+                          } else {
+                            mostrarDialogoDeInformacao("Produto sem Stock!");
+                          }
+                        },
+                        child: Card(
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Text(lista[i].nome ?? "Sem Nome"),
                           ),
-                        );
-                      }),
-                  // child: LayoutProdutos(
-                  //   lista: lista,
-                  //   permissao: false,
-                  //   accaoAoClicarCadaProduto: (produto) {
-                  //     if (produto.stock!.quantidade! > 0) {
-                  //       if (produto.precoGeral >= 0) {
-                  //         _c.adicionarProdutoAmesa(produto);
-                  //         controladores["${produto.id}1"] =
-                  //             TextEditingController(text: "0");
-                  //         controladores["${produto.id}2"] =
-                  //             TextEditingController(text: "0");
-                  //       } else {
-                  //         mostrarDialogoDeInformacao(
-                  //             "Produto sem preço!");
-                  //       }
-                  //     } else {
-                  //       mostrarDialogoDeInformacao(
-                  //           "Produto com quantidade insuficiente em Stock!");
-                  //     }
-                  //   },
-                  // )
-                );
-              })
+                        ),
+                      );
+                    }),
+              );
+            }),
+            // child: LayoutProdutos(
+            //   lista: lista,
+            //   permissao: false,
+            //   accaoAoClicarCadaProduto: (produto) {
+            //     if (produto.stock!.quantidade! > 0) {
+            //       if (produto.precoGeral >= 0) {
+            //         _c.adicionarProdutoAmesa(produto);
+            //         controladores["${produto.id}1"] =
+            //             TextEditingController(text: "0");
+            //         controladores["${produto.id}2"] =
+            //             TextEditingController(text: "0");
+            //       } else {
+            //         mostrarDialogoDeInformacao(
+            //             "Produto sem preço!");
+            //       }
+            //     } else {
+            //       mostrarDialogoDeInformacao(
+            //           "Produto com quantidade insuficiente em Stock!");
+            //     }
+            //   },
+            // )
+          )
         ],
       ),
     );

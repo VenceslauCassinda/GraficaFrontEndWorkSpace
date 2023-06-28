@@ -128,7 +128,7 @@ class ProvedorNetComprovativo implements ProvedorComprovativoI {
         for (Map cada in todos) {
           try {
             lista.add(Comprovativo.fromJson(cada));
-          } on Exception catch (e) {
+          } on Exception {
             throw Erro("Erro na conversão dos dados baixados do servidor!");
           }
         }

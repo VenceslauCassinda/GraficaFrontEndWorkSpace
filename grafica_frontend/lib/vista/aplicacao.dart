@@ -26,7 +26,7 @@ class Aplicacao extends StatelessWidget {
         supportedLocales: [Locale('pt', 'BR')],
         theme: ThemeData(
             primaryColor: const Color.fromRGBO(86, 0, 78, 1),
-            accentColor: const Color.fromRGBO(86, 0, 78, 1),
+            // accentColor: const Color.fromRGBO(86, 0, 78, 1),
             colorScheme: ThemeData()
                 .colorScheme
                 .copyWith(secondary: const Color.fromRGBO(86, 0, 78, 1))),

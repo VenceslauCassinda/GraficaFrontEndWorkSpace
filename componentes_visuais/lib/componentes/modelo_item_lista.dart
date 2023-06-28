@@ -7,6 +7,7 @@ class ModeloItemLista extends StatelessWidget {
   bool? itemComMenu = false;
   String? tituloItem;
   String? subTituloItem;
+  String? subTituloItem2;
   String? labelSubTituloItem;
   Function? metodoChamadoAoClicarItem;
   Function? metodoChamadoAoClicarLongoItem;
@@ -23,6 +24,7 @@ class ModeloItemLista extends StatelessWidget {
       this.itemComentado,
       this.corItem,
       this.subTituloItem,
+      this.subTituloItem2,
       this.itemRemovivel,
       this.metodoChamadoAoClicarItem,
       this.metodoChamadoAoRemoverItem,
@@ -85,6 +87,10 @@ class ModeloItemLista extends StatelessWidget {
                   Visibility(
                     visible: subTituloItem != null,
                     child: Text("$labelSubTituloItem $subTituloItem"),
+                    replacement: Container(),
+                  ),Visibility(
+                    visible: subTituloItem2 != null,
+                    child: Text("$subTituloItem2"),
                     replacement: Container(),
                   ),
                 ],

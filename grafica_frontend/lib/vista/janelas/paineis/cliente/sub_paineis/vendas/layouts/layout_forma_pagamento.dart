@@ -37,6 +37,8 @@ class LayoutFormaPagamento extends StatelessWidget {
   }) {
     if (listaItens.isNotEmpty) {
       opcaoRetiradaSelecionada = listaItens[0];
+    }else{
+      opcaoRetiradaSelecionada = "Nenhuma";
     }
     _observadorCampoTexto = ObservadorCampoTexto();
     _observadorButoes = ObservadorButoes();
@@ -84,17 +86,20 @@ class LayoutFormaPagamento extends StatelessWidget {
               height: 20,
             ),
             Text(
-              titulo,
+              listaItens.isNotEmpty?titulo: "Sem Formas de Pagamento!",
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: MenuDropDown(
-                labelMenuDropDown: opcaoRetiradaSelecionada,
-                metodoChamadoNaInsersao: (dado) {
-                  opcaoRetiradaSelecionada = dado;
-                },
-                listaItens: listaItens,
+            Visibility(
+              visible: listaItens.isNotEmpty,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: MenuDropDown(
+                  labelMenuDropDown: opcaoRetiradaSelecionada,
+                  metodoChamadoNaInsersao: (dado) {
+                    opcaoRetiradaSelecionada = dado;
+                  },
+                  listaItens: listaItens,
+                ),
               ),
             ),
             Row(
@@ -143,6 +148,10 @@ class LayoutFormaPagamento extends StatelessWidget {
                         if (arquivo == null) {
                           mostrarDialogoDeInformacao(
                               "Nenhum ficheiro PDF seleccionado");
+                          return;
+                        }if (listaItens.isEmpty) {
+                          mostrarDialogoDeInformacao(
+                              "Não é possível continuar!\nContacte o SysAdm para adicionar novas formas de Pagamento!");
                           return;
                         }
                         accaoAoFinalizar(

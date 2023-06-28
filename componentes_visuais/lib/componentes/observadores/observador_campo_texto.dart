@@ -8,6 +8,7 @@ class ObservadorCampoTexto extends GetxController {
   var valorPrecoValido = true.obs;
   var valorPalavraPasseValido = true.obs;
   var valorNomeValido = true.obs;
+  var valorGenericoValido = true.obs;
   late ValidacaoCampos _validacaoCampos;
 
   ObservadorCampoTexto() {
@@ -17,6 +18,8 @@ class ObservadorCampoTexto extends GetxController {
   observarCampo(String valor, TipoCampoTexto tipoCampoTexto) {
     if (tipoCampoTexto == TipoCampoTexto.email) {
       valorEmailValido.value = _validacaoCampos.validarEmail(valor);
+    }if (tipoCampoTexto == TipoCampoTexto.generico) {
+      valorGenericoValido.value = false;
     } else if (tipoCampoTexto == TipoCampoTexto.palavra_passe) {
       valorPalavraPasseValido.value =
           _validacaoCampos.validarPalavraPasse(valor);

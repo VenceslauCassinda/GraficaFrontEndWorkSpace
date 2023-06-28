@@ -5,7 +5,7 @@ class CampoTextoDetalhe extends StatelessWidget {
     super.key,
     required this.aoDigitar,
     required this.corCampoTexto,
-    required this.corTshirt, required this.quantidadeLinhas, this.texoPadrao,
+    required this.corTshirt, required this.quantidadeLinhas, this.texoPadrao,this.dicaTexto
   });
 
   final Function(String valor) aoDigitar;
@@ -13,6 +13,7 @@ class CampoTextoDetalhe extends StatelessWidget {
   final Color corTshirt;
   final int quantidadeLinhas;
   String? texoPadrao;
+  String? dicaTexto;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class CampoTextoDetalhe extends StatelessWidget {
       style: TextStyle(color: corCampoTexto),
       textAlign: TextAlign.center,
       decoration: InputDecoration(
-        hintText: "Insira aqui os dizeres!",
+        hintText: dicaTexto ?? "Insira aqui os dizeres!",
         hintStyle: TextStyle(color: corCampoTexto,),
         focusColor: corCampoTexto,
         fillColor: corCampoTexto,
