@@ -16,9 +16,11 @@ import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/saida.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 
 import '../../contratos/casos_uso/manipular_venda_i.dart';
 import '../../contratos/provedores/provedor_venda_i.dart';
+import '../../vista/aplicacao_c.dart';
 
 class ManipularVenda implements ManipularVendaI {
   final ProvedorVendaI _provedorVendaI;
@@ -46,14 +48,14 @@ class ManipularVenda implements ManipularVendaI {
       int idProduto,
       int quantidadeVendida) async {
     int? idCliente;
-    if (cliente != null) {
+    if (cliente != null && cliente.id == null) {
       idCliente = await _manipularClienteI.registarCliente(cliente);
     }
     var novaVenda = Venda(
         estado: Estado.ATIVADO,
         idFuncionario: idUsuario,
         dataLevantamentoCompra: dataLevantamentoCompra,
-        idCliente: idCliente?? (await _manipularClienteI.pegarClienteDeUsuarioDeId(idUsuario))!.id!,
+        idCliente: idCliente??cliente!.id,
         data: data,
         total: total,
         parcela: parcela,
@@ -351,6 +353,9 @@ class ManipularVenda implements ManipularVendaI {
     var lista = <Venda>[];
     var originais = await _provedorVendaI.todas();
     for (var cada in originais) {
+        print(idUsuario);
+        print(cada.idCliente);
+        print("-------");
       if (cada.idCliente == idUsuario) {
         lista.add(cada);
       }

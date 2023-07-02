@@ -58,7 +58,7 @@ class LayoutMesaVenda extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 4,
+                  flex: 2,
                   child: Column(
                     children: [
                       Padding(
@@ -70,101 +70,106 @@ class LayoutMesaVenda extends StatelessWidget {
                           },
                         ),
                       ),
-                      FutureBuilder<List<Produto>>(
-                          future: _vendasC.pegarListaProdutos(),
-                          builder: (c, s) {
-                            if (s.data == null) {
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 0),
+                        child: FutureBuilder<List<Produto>>(
+                            future: _vendasC.pegarListaProdutos(),
+                            builder: (c, s) {
+                              if (s.data == null) {
+                                return Container(
+                                  child: const LinearProgressIndicator(),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 5),
+                                );
+                              }
                               return Container(
-                                child: LinearProgressIndicator(),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 30, vertical: 5),
-                              );
-                            }
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              margin: EdgeInsets.only(top: 20),
-                              child: ListView.builder(
-                                  itemCount: lista.length,
-                                  itemBuilder: (c, i) {
-                                    var produto = lista[i];
-                                    return InkWell(
-                                      onTap: () async {
-                                        mostrarCarregandoDialogoDeInformacao(
-                                            "Verificando Stock e Preços...",
-                                            naoFecharJanela: true);
-                                        produto.stock =
-                                            await _c.pegarStockDoProdutoDeId(
-                                                produto.id!);
-                                        var precos =
-                                            (await _c.pegarPrecoDoProdutoDeId(
-                                                produto.id!));
-                                        voltar();
-                                        if (precos.isEmpty) {
-                                          mostrarDialogoDeInformacao(
-                                              "Produto ${produto.nome ?? "Sem Nome"} sem Preço de Venda");
-                                          return;
-                                        } else {
-                                          produto.precoGeral = precos[0].preco!;
-                                        }
-                                        if (produto.stock != null) {
-                                          if (produto.stock!.quantidade! > 0) {
-                                            if (produto.precoGeral >= 0) {
-                                              _c.adicionarProdutoAmesa(produto);
-                                              controladores["${produto.id}1"] =
-                                                  TextEditingController(
-                                                      text: "0");
-                                              controladores["${produto.id}2"] =
-                                                  TextEditingController(
-                                                      text: "0");
+                                height: MediaQuery.of(context).size.height * .5,
+                                margin: const EdgeInsets.only(top: 20),
+                                child: ListView.builder(
+                                    itemCount: lista.length,
+                                    itemBuilder: (c, i) {
+                                      var produto = lista[i];
+                                      return InkWell(
+                                        onTap: () async {
+                                          mostrarCarregandoDialogoDeInformacao(
+                                              "Verificando Stock e Preços...",
+                                              naoFecharJanela: true);
+                                          produto.stock =
+                                              await _c.pegarStockDoProdutoDeId(
+                                                  produto.id!);
+                                          var precos =
+                                              (await _c.pegarPrecoDoProdutoDeId(
+                                                  produto.id!));
+                                          voltar();
+                                          if (precos.isEmpty) {
+                                            mostrarDialogoDeInformacao(
+                                                "Produto ${produto.nome ?? "Sem Nome"} sem Preço de Venda");
+                                            return;
+                                          } else {
+                                            produto.precoGeral = precos[0].preco!;
+                                          }
+                                          if (produto.stock != null) {
+                                            if (produto.stock!.quantidade! > 0) {
+                                              if (produto.precoGeral >= 0) {
+                                                _c.adicionarProdutoAmesa(produto);
+                                                controladores["${produto.id}1"] =
+                                                    TextEditingController(
+                                                        text: "0");
+                                                controladores["${produto.id}2"] =
+                                                    TextEditingController(
+                                                        text: "0");
+                                              } else {
+                                                mostrarDialogoDeInformacao(
+                                                    "Produto sem preço!");
+                                              }
                                             } else {
                                               mostrarDialogoDeInformacao(
-                                                  "Produto sem preço!");
+                                                  "Produto com quantidade insuficiente em Stock!");
                                             }
                                           } else {
                                             mostrarDialogoDeInformacao(
-                                                "Produto com quantidade insuficiente em Stock!");
+                                                "Produto sem Stock!");
                                           }
-                                        } else {
-                                          mostrarDialogoDeInformacao(
-                                              "Produto sem Stock!");
-                                        }
-                                      },
-                                      child: Card(
-                                        elevation: 5,
-                                        child:
-                                            Padding(
-                                              padding: const EdgeInsets.all(20),
-                                              child: Text(lista[i].nome ?? "Sem Nome"),
-                                            ),
-                                      ),
-                                    );
-                                  }),
-                              // child: LayoutProdutos(
-                              //   lista: lista,
-                              //   permissao: false,
-                              //   accaoAoClicarCadaProduto: (produto) {
-                              //     if (produto.stock!.quantidade! > 0) {
-                              //       if (produto.precoGeral >= 0) {
-                              //         _c.adicionarProdutoAmesa(produto);
-                              //         controladores["${produto.id}1"] =
-                              //             TextEditingController(text: "0");
-                              //         controladores["${produto.id}2"] =
-                              //             TextEditingController(text: "0");
-                              //       } else {
-                              //         mostrarDialogoDeInformacao(
-                              //             "Produto sem preço!");
-                              //       }
-                              //     } else {
-                              //       mostrarDialogoDeInformacao(
-                              //           "Produto com quantidade insuficiente em Stock!");
-                              //     }
-                              //   },
-                              // )
-                            );
-                          })
+                                        },
+                                        child: Card(
+                                          elevation: 5,
+                                          child:
+                                              Padding(
+                                                padding: const EdgeInsets.all(20),
+                                                child: Text(lista[i].nome ?? "Sem Nome"),
+                                              ),
+                                        ),
+                                      );
+                                    }),
+                                // child: LayoutProdutos(
+                                //   lista: lista,
+                                //   permissao: false,
+                                //   accaoAoClicarCadaProduto: (produto) {
+                                //     if (produto.stock!.quantidade! > 0) {
+                                //       if (produto.precoGeral >= 0) {
+                                //         _c.adicionarProdutoAmesa(produto);
+                                //         controladores["${produto.id}1"] =
+                                //             TextEditingController(text: "0");
+                                //         controladores["${produto.id}2"] =
+                                //             TextEditingController(text: "0");
+                                //       } else {
+                                //         mostrarDialogoDeInformacao(
+                                //             "Produto sem preço!");
+                                //       }
+                                //     } else {
+                                //       mostrarDialogoDeInformacao(
+                                //           "Produto com quantidade insuficiente em Stock!");
+                                //     }
+                                //   },
+                                // )
+                              );
+                            }),
+                      )
                     ],
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height*.60,child: VerticalDivider()),
                 Expanded(
                   flex: 6,
                   child: _PainelDireito(c: _c, controladores: controladores),
@@ -225,8 +230,8 @@ class _PainelDireito extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          padding: EdgeInsets.all(20),
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.withOpacity(.2)),
               borderRadius: BorderRadius.circular(7)),
@@ -235,7 +240,7 @@ class _PainelDireito extends StatelessWidget {
         Obx(
           () => Container(
             height: MediaQuery.of(context).size.height * .3,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Scrollbar(
               interactive: true,
               child: SingleChildScrollView(
@@ -247,6 +252,7 @@ class _PainelDireito extends StatelessWidget {
                             controladores: controladores,
                             c: _c,
                             element: element,
+                            permissao: true,
                           ))
                       .toList(),
                 ),
@@ -277,7 +283,7 @@ class _CabecaclhoVenda extends StatelessWidget {
           children: [
             Row(
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Text(
                     "Cliente: ",
@@ -288,7 +294,7 @@ class _CabecaclhoVenda extends StatelessWidget {
                   height: 30,
                   width: MediaQuery.of(context).size.width * .18,
                   child: TextField(
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                     onChanged: (valor) {
                       _c.nomeCliente.value = valor;
                     },
@@ -296,12 +302,12 @@ class _CabecaclhoVenda extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             Row(
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Text("Contacto: ", style: TextStyle(fontSize: 20)),
                 ),
@@ -312,25 +318,14 @@ class _CabecaclhoVenda extends StatelessWidget {
                       onChanged: (valor) {
                         _c.telefoneCliente.value = valor;
                       },
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly
                       ]),
                 ),
               ],
             ),
-          ],
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Row(
-          children: [
-            Obx(
-              () => Text(
-                  "Total a Pagar: ${formatar(_c.listaItensVenda.fold<double>(0, (previousValue, element) => ((element.total ?? 0) + previousValue)))} KZ"),
-            ),
-            Spacer(),
+            const Spacer(),
             ModeloButao(
               corButao: primaryColor,
               corTitulo: Colors.white,
@@ -343,13 +338,20 @@ class _CabecaclhoVenda extends StatelessWidget {
             )
           ],
         ),
-        Container(width: 200, child: Divider()),
+        const SizedBox(
+          height: 10,
+        ),
+        Container(width: 200, child: const Divider()),
+        Obx(
+          () => Text(
+              "Total a Pagar: ${formatar(_c.listaItensVenda.fold<double>(0, (previousValue, element) => ((element.total ?? 0) + previousValue)))} KZ"),
+        ),
         Row(
           children: [
             Obx(() => Text(
                 "Total Pago: ${formatar(_c.listaPagamentos.fold<double>(0, (previousValue, element) => ((element.valor ?? 0) + previousValue)))} KZ")),
-            Spacer(),
-            Text("Data de levantamento: "),
+            const Spacer(),
+            const Text("Data de levantamento: "),
             Obx(() {
               return ToggleButtons(
                   selectedColor: primaryColor,
@@ -357,7 +359,7 @@ class _CabecaclhoVenda extends StatelessWidget {
                     _c.mudarData(i, context);
                   },
                   children: [
-                    Text("Hoje"),
+                    const Text("Hoje"),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(_c.dataLevantamento.value == null
@@ -388,7 +390,7 @@ class _CabecaclhoVenda extends StatelessWidget {
                       ))
                   .toList(),
             )),
-        Container(width: 200, child: Divider()),
+        Container(width: 200, child: const Divider()),
       ],
     );
   }

@@ -38,6 +38,7 @@ import '../../../../../../../dominio/casos_uso/manipular_produto.dart';
 import '../../../../../../../dominio/casos_uso/manipular_receccao.dart';
 import '../../../../../../../dominio/casos_uso/manipular_saida.dart';
 import '../../../../../../../dominio/casos_uso/manipular_venda.dart';
+import '../../../../../../../dominio/entidades/cores.dart';
 import '../../../../../../../dominio/entidades/estado.dart';
 import '../../../../../../../dominio/entidades/forma_pagamento.dart';
 import '../../../../../../../dominio/entidades/item_venda.dart';
@@ -56,8 +57,10 @@ import '../../../../../../../fonte_dados/provedores_net/provedor_net_produto.dar
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_saida.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_stock.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
+import '../../../../../../../solucoes_uteis/console.dart';
 import '../../../../../../../solucoes_uteis/geradores.dart';
 import 'detalhes_venda.dart';
+import 'layout_detalhe_tshirt.dart';
 import 'layout_forma_pagamento.dart';
 
 class VendasC extends GetxController {
@@ -80,6 +83,7 @@ class VendasC extends GetxController {
   late ManipularDividaI _manipularDividaI;
   late ManipularPreco manipularPreco;
   late ManipularCliente manipularCliente;
+  var baixando = false.obs;
 
   VendasC(this.data, this.funcionario) {
     manipularCliente = ManipularCliente(ProvedorNetCliente());
@@ -194,7 +198,6 @@ class VendasC extends GetxController {
       ),
       layoutCru: true,
     );
-    navegar(0);
   }
 
   void mostrarDialogoProdutos(BuildContext context) async {
@@ -260,21 +263,19 @@ class VendasC extends GetxController {
   }
 
   Future pegarLista() async {
+    baixando.value = true;
     var idCliente = (await manipularCliente.pegarClienteDeUsuarioDeId(
                 pegarAplicacaoC().pegarUsuarioActual()!.id!))
             ?.id ??
         -1;
     var res = await _manipularVendaI.pegarListaCliente(idCliente, data);
-    var clientes = await manipularCliente.todos();
     for (var cada in res) {
-      cada.cliente =
-          clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
-      totalCaixa.value += (cada.parcela ?? 0);
     }
 
     listaCopia.clear();
     listaCopia.addAll(lista);
+    baixando.value = false;
   }
 
   Future pegarListaVendas() async {
@@ -314,6 +315,18 @@ class VendasC extends GetxController {
       totalCaixa.value += (cada.parcela ?? 0);
     }
   }
+
+  verDetalhesItemVenda(ItemVenda itemVenda, BuildContext context) {
+    mostrar(itemVenda.produto);
+    mostrar(itemVenda.produto?.nome);
+    var corTshirt = Cores.paraColor(itemVenda.produto!.nome!);
+    var corCampoTexto = corTshirt ==Colors.white ? Colors.black.obs : Colors.white.obs;
+
+    mostrarDialogoDeLayou(
+        LayoutDetalheTshirt(corCampoTexto: corCampoTexto, corProduto: corTshirt,itemVenda: itemVenda, permissao: false,),
+        layoutCru: true);
+  }
+
 
   void mostrarDialogoDetalhesVenda(Venda venda) {
     mostrarDialogoDeLayou(LayoutDetalhesVenda(

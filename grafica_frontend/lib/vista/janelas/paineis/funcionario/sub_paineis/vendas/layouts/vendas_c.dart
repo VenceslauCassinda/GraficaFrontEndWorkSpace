@@ -16,6 +16,7 @@ import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/formato_dado.dart';
 import 'package:grafica_frontend/solucoes_uteis/utils.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/recepcoes/layouts/layouts_produtos_completo.dart';
@@ -270,6 +271,7 @@ class VendasC extends GetxController {
     var res = await _manipularVendaI.pegarLista(funcionario!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
+      mostrar("KKKKKKKKKKKKKk");
       cada.cliente =
           clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);

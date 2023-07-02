@@ -4,6 +4,7 @@ import '../../dominio/entidades/tipo_detalhe.dart';
 
 abstract class ProvedorDetalheItemI {
   Future<List<DetalheItem>> todos();
+  Future<List<DetalheItem>> pegarDetalhesDeItemId(int id);
   Future<DetalheItem?> pegarDetalheItemDeId(int id);
   Future<bool> actualizaDetalheItem(DetalheItem dado);
   Future<int> registarDetalheItem(DetalheItem dado);
@@ -14,4 +15,5 @@ abstract class ProvedorDetalheItemI {
   Future<int> removerTipoDetalhe(int idDado);
   Future<List<TipoDetalhe>> pegarListaTipoDetalhe();
   Future<TipoDetalhe?> pegarTipoDetalheDeId(int id);
+  Future<List<TipoDetalhe>> pegarTipoDetalhesDeTipoProduto(int tipoProduto);
 }

@@ -144,7 +144,7 @@ class PainelVendas extends StatelessWidget {
             corButao: primaryColor,
             corTitulo: Colors.white,
             butaoHabilitado: true,
-            tituloButao: "Adicionar Venda",
+            tituloButao: "Nova Encomenda",
             metodoChamadoNoClique: () {
               _c.mostrarDialogoNovaVenda(context);
             },

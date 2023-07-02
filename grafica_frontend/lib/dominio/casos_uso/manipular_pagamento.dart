@@ -71,4 +71,16 @@ class ManipularPagamento implements ManipularPagamentoI {
     var lista = await provedorComprovativoI!.pegarListaComprovativo();
     return lista.firstWhereOrNull((element) => element.idPagamento == id);
   }
+  
+  @override
+  Future<List<FormaPagamento>> pegarListaFormasPagamentoCliente() async{
+    var dados = await pegarListaFormasPagamento();
+    List<FormaPagamento> lista = [];
+    for (var cada in dados) {
+      if ((cada.descricao??"").toLowerCase().contains("transf")) {
+        lista.add(cada);
+      }
+    }
+    return lista;
+  }
 }

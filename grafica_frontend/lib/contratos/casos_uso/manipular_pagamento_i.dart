@@ -14,4 +14,5 @@ abstract class ManipularPagamentoI {
   Future<int> removerFormaDeId(int idForma);
   Future<Comprovativo?> pegarComprovativoDoPagamentoDeId(int id);
   Future<List<FormaPagamento>> pegarListaFormasPagamento();
+  Future<List<FormaPagamento>> pegarListaFormasPagamentoCliente();
 }

@@ -146,7 +146,7 @@ class _PainelDireito extends StatelessWidget {
                       .map((element) => ItemItemVenda(
                             controladores: controladores,
                             element: element,
-                            permissao: false,
+                            permissao: true,
                             c: _c,
                           ))
                       .toList(),

@@ -31,7 +31,7 @@ class DetalheItem {
     dizeres = json['dizeres'];
     link = json['link'];
     nomeCor = json['nome_cor'];
-    tipo = json['tipo'];
+    tipo = json['id_tipo'];
     id = json['id'];
   }
 
@@ -42,7 +42,7 @@ class DetalheItem {
     data['dizeres'] = this.dizeres;
     data['link'] = this.link;
     data['nome_cor'] = this.nomeCor;
-    data['tipo'] = this.tipo;
+    data['id_tipo'] = this.tipo;
     return data;
   }
 }

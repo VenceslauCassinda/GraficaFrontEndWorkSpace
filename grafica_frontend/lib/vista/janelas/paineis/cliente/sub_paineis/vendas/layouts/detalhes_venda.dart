@@ -2,8 +2,10 @@ import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
+import 'package:grafica_frontend/vista/aplicacao_c.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,12 +31,12 @@ class LayoutDetalhesVenda extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * .6,
-      margin: EdgeInsets.all(30),
+      margin: const EdgeInsets.all(30),
       child: SingleChildScrollView(
         child: Column(
           children: [
             const Text(
-              "Detalhes da Venda",
+              "Detalhes da Encomenda",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             Container(
@@ -58,7 +60,7 @@ class LayoutDetalhesVenda extends StatelessWidget {
                           children: [
                             Text("Total: ${venda.total}"),
                             Text("Total Pago: ${venda.parcela} KZ"),
-                            Container(width: 200, child: Divider()),
+                            Container(width: 200, child: const Divider()),
                             Visibility(
                               visible: venda.pagamentos != null,
                               replacement: Column(
@@ -72,7 +74,7 @@ class LayoutDetalhesVenda extends StatelessWidget {
                                   future: vendasC.pegarPagamentosVenda(venda),
                                   builder: (c, s) {
                                     if (s.data == null) {
-                                      return CircularProgressIndicator();
+                                      return const CircularProgressIndicator();
                                     }
                                     return Column(
                                       crossAxisAlignment:
@@ -102,12 +104,12 @@ class LayoutDetalhesVenda extends StatelessWidget {
                                     );
                                   }),
                             ),
-                            Container(width: 200, child: Divider()),
+                            Container(width: 200, child: const Divider()),
                             Visibility(
                               visible: venda.divida == true,
                               child: Text(
                                   "Por pagar: ${formatar((venda.total ?? 0) - (venda.parcela ?? 0))} KZ"),
-                              replacement: Row(
+                              replacement: const Row(
                                 children: [
                                   Text("Paga"),
                                   Icon(
@@ -120,19 +122,22 @@ class LayoutDetalhesVenda extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              width: 200,
-                              child: Text(
-                                  "Cliente: ${venda.cliente?.nome ?? "Sem nome"}")),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                              "Telefone: ${venda.cliente?.numero ?? "Sem Número"}"),
-                        ],
+                      Visibility(
+                        visible: pegarAplicacaoC().pegarUsuarioActual()!.nivelAcesso != NivelAcesso.CLIENTE,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                width: 200,
+                                child: Text(
+                                    "Cliente: ${venda.cliente?.nome ?? "Sem nome"}")),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                                "Telefone: ${venda.cliente?.numero ?? "Sem Número"}"),
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -147,6 +152,7 @@ class LayoutDetalhesVenda extends StatelessWidget {
                 children: venda.itensVenda!
                     .map((element) => ItemItemVenda(
                           element: element,
+                          permissao: true,
                         ))
                     .toList(),
               ),
@@ -154,7 +160,7 @@ class LayoutDetalhesVenda extends StatelessWidget {
                   future: vendasC.pegarItensVenda(venda),
                   builder: (c, s) {
                     if (s.data == null) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     }
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -162,6 +168,10 @@ class LayoutDetalhesVenda extends StatelessWidget {
                       children: (s.data ?? [])
                           .map((element) => ItemItemVenda(
                                 element: element,
+                                aoVerPersonalizacoes: (){
+                                  vendasC.verDetalhesItemVenda(element, context);
+                                },
+                                permissao: false,
                               ))
                           .toList(),
                     );

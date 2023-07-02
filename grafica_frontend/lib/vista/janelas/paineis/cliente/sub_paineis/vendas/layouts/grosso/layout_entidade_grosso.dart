@@ -1,5 +1,6 @@
 import 'package:componentes_visuais/componentes/formatos/formatos.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../../../../../../recursos/constantes.dart';
 import '../../../../../../../componentes/tab_bar.dart';
 import '../vendas.dart';
@@ -24,9 +25,9 @@ class LayoutEntidadeGrosso extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           child: Row(
             children: [
-              Text(
+              const Text(
                 "Encomendas",
-                style: const TextStyle(color: primaryColor, fontSize: 20),
+                style: TextStyle(color: primaryColor, fontSize: 20),
               ),
               const Spacer(),
               Text(
@@ -36,9 +37,19 @@ class LayoutEntidadeGrosso extends StatelessWidget {
             ],
           ),
         ),
-        Container(
-            height: MediaQuery.of(context).size.height * .6,
-            child: LayoutVendas(visaoGeral: false)),
+        Obx(() {
+            return Visibility(
+              visible: _c.baixando.value == false,
+              replacement: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: LinearProgressIndicator(),
+              ),
+              child: Container(
+                  height: MediaQuery.of(context).size.height * .6,
+                  child: LayoutVendas(visaoGeral: false)),
+            );
+          }
+        ),
       ],
     );
   }

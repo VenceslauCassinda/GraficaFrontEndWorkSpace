@@ -1,6 +1,4 @@
 import 'package:componentes_visuais/componentes/butoes.dart';
-import 'package:componentes_visuais/componentes/campo_texto.dart';
-import 'package:componentes_visuais/componentes/label_erros.dart';
 import 'package:componentes_visuais/componentes/menu_drop_down.dart';
 import 'package:componentes_visuais/componentes/observadores/observador_butoes.dart';
 import 'package:componentes_visuais/componentes/observadores/observador_campo_texto.dart';
@@ -10,16 +8,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
-import 'package:grafica_frontend/dominio/entidades/saida.dart';
-
 import '../../../../../../../dominio/entidades/cores.dart';
 import '../../../../../../../dominio/entidades/tipo_detalhe.dart';
-import '../../../../../../../dominio/entidades/tipo_produto.dart';
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_detalhe_item.dart';
-import '../../../../../../../recursos/constantes.dart';
 import '../../../componentes/campo_texto_detalhe.dart';
 
-class LayoutCadaDetalhe extends StatelessWidget {
+class LayoutSeleccionarDetalhe extends StatelessWidget {
   late ObservadorCampoTexto _observadorCampoTexto;
   late ObservadorButoes _observadorButoes = ObservadorButoes();
 
@@ -30,15 +24,17 @@ class LayoutCadaDetalhe extends StatelessWidget {
   String? nomeDetalhe;
   String? dizeres;
   String? cor;
+  Produto? produto;
   final String titulo;
   late BuildContext context;
   var labelArquivo = "Incluir Imagem".obs;
   var tipoDetalhe = 0.obs;
   PlatformFile? arquivo;
 
-  LayoutCadaDetalhe({
+  LayoutSeleccionarDetalhe({super.key, 
     required this.accaoAoFinalizar,
     required this.titulo,
+    required this.produto,
     nomeDetalhe,
   }) {
     _observadorCampoTexto = ObservadorCampoTexto();
@@ -63,13 +59,13 @@ class LayoutCadaDetalhe extends StatelessWidget {
                   height: 20,
                 ),
                 FutureBuilder<List<TipoDetalhe>>(
-                    future: ProvedorNetDetalheItem().pegarListaTipoDetalhe(),
+                    future: ProvedorNetDetalheItem().pegarTipoDetalhesDeTipoProduto(produto?.tipo??0),
                     builder: (context, snapshot) {
                       if (snapshot.data == null) {
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                       }
                       if (snapshot.data!.isEmpty) {
-                        return Center(child: Text("Sem dados"));
+                        return const Center(child: Text("Sem dados adicionados!"));
                       }
 
                       tipoDetalhe.value = snapshot.data!
@@ -84,9 +80,9 @@ class LayoutCadaDetalhe extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                "Tipo de Detalhe: ",
-                                style: const TextStyle(
+                              const Text(
+                                "Detalhe: ",
+                                style: TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),
                               MenuDropDown(
@@ -113,12 +109,12 @@ class LayoutCadaDetalhe extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text("Selecionar: "),
+                                  const Text("Selecionar: "),
                                   MenuDropDown(
                                     labelMenuDropDown:
                                         Cores.paraListaCoresEmTexto()[0],
                                     metodoChamadoNaInsersao: (dado) {
-                                      nomeDetalhe = dado;
+                                      cor = dado;
                                     },
                                     listaItens: Cores.paraListaCoresEmTexto(),
                                   ),
@@ -174,7 +170,7 @@ class LayoutCadaDetalhe extends StatelessWidget {
                                       onTap: () {
                                         selecionarArquivo();
                                       },
-                                      child: Icon(Icons.upload_file, size: 20),
+                                      child: const Icon(Icons.upload_file, size: 20),
                                     ),
                                   ],
                                 ),
@@ -226,6 +222,9 @@ class LayoutCadaDetalhe extends StatelessWidget {
                         mostrarDialogoDeInformacao("Insira os Dizerers!");
                         return;
                       }
+                    }
+                    if (tipoDetalhe.value == TipoDetalhe.COR) {
+                      cor ??= Cores.paraListaCoresEmTexto()[0];
                     }
                     accaoAoFinalizar(dizeres, cor, nomeDetalhe,tipoDetalhe.value, arquivo);
                   },

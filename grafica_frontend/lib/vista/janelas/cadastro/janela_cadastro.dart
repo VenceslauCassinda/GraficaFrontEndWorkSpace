@@ -2,12 +2,14 @@ import 'package:componentes_visuais/componentes/campo_texto.dart';
 import 'package:componentes_visuais/componentes/campo_texto2.dart';
 import 'package:componentes_visuais/componentes/butoes.dart';
 import 'package:componentes_visuais/componentes/label_erros.dart';
+import 'package:componentes_visuais/componentes/menu_drop_down.dart';
 import 'package:componentes_visuais/componentes/observadores/observador_butoes.dart';
 import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
+import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/responsividade.dart';
 
@@ -98,6 +100,7 @@ class LayoutCadastro extends StatelessWidget {
   final RxString confirmePalavraPasse;
   final ValidacaoCampos _validacaoCampos;
   final JanelaCadastroC _c;
+  int tipo = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +144,29 @@ class LayoutCadastro extends StatelessWidget {
                       sms: "Este Nome ainda é inválido!",
                     );
             }),
+            Visibility(
+              visible: _c.modoRegitroGerente == true && _c.modoRegitroCliente == false,
+              child: SizedBox(
+                height: 20,
+              ),
+            ),
+            Visibility(
+              visible: _c.modoRegitroGerente == false && _c.modoRegitroCliente == false,
+              child: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: MenuDropDown(
+                labelMenuDropDown: NivelAcesso.paraTexto(0),
+                metodoChamadoNaInsersao: (dado) {
+                  tipo = NivelAcesso.paraInteiro(dado);
+                },
+                listaItens: [
+                  NivelAcesso.paraTexto(0),
+                  NivelAcesso.paraTexto(4),
+                  NivelAcesso.paraTexto(5),
+                ],
+              ),
+                      ),
+            ),
             SizedBox(
               height: 20,
             ),
@@ -220,7 +246,7 @@ class LayoutCadastro extends StatelessWidget {
                   metodoChamadoNoClique: () async {
                     await _c.orientarRealizacaoCadastro(
                         nome.value, palavraPasse.value,
-                        aoFinalizar: aoFinalizar);
+                        aoFinalizar: aoFinalizar, nivelAcesso: tipo);
                   },
                 ),
               );

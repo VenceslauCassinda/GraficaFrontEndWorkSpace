@@ -39,7 +39,7 @@ class JanelaCadastroC extends GetxController {
   Future<void> prepararAmbineteMediacao() async {}
 
   Future<void> orientarRealizacaoCadastro(String nome, String palavraPasse,
-      {Function(Funcionario novoFuncionario)? aoFinalizar}) async {
+      {Function(Funcionario novoFuncionario)? aoFinalizar, int? nivelAcesso}) async {
     if (ValidacaoCampos.camposVazio([nome, palavraPasse]) == true) {
       mostrarDialogoDeInformacao("Preencha todos os campos!");
       return;
@@ -64,7 +64,7 @@ class JanelaCadastroC extends GetxController {
       if (modoRegitroCliente == false) {
         if (modoRegitroGerente == false) {
           var novo = await _manipularFuncionarioI.adicionarFuncionario(
-              Funcionario(nomeCompelto: nome, palavraPasse: palavraPasse));
+              Funcionario(nomeCompelto: nome, palavraPasse: palavraPasse, nivelAcesso:nivelAcesso));
           voltar();
           mostrarDialogoDeInformacao("""
       Cadastro realizado!\n

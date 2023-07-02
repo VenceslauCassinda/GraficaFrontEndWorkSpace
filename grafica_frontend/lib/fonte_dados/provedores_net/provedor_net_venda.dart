@@ -66,8 +66,8 @@ class ProvedorNetVenda implements ProvedorVendaI {
       "estado": "${venda.estado ?? 0}",
     });
 
-    mostrar(res.statusCode);
-    mostrar(res.body);
+    // mostrar(res.statusCode);
+    // mostrar(res.body);
     switch (res.statusCode) {
       case 200:
         var dado = jsonDecode(res.body);

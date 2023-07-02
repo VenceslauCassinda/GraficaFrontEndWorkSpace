@@ -283,7 +283,6 @@ class ProdutosC extends GetxController {
     AplicacaoC aplicacaoC = Get.find();
     var funcionario = await _manipularFuncionarioI
         .pegarFuncionarioDoUsuarioDeId((aplicacaoC.pegarUsuarioActual())!.id!);
-    mostrar(precoLote);
     await _manipularRececcaoI.receberProduto(produto, quantidadePorLotes,
         quantidadeLotes, precoLote, custo, funcionario, motivo, pagavel);
   }

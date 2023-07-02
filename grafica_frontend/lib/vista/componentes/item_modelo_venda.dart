@@ -2,7 +2,9 @@ import 'package:componentes_visuais/componentes/formatos/formatos.dart';
 import 'package:componentes_visuais/componentes/icone_item.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:grafica_frontend/solucoes_uteis/formato_dado.dart';
+import 'package:grafica_frontend/vista/aplicacao_c.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/vendas/layouts/vendas_c.dart';
 
 import '../../dominio/entidades/item_venda.dart';
@@ -90,19 +92,22 @@ class ItemModeloVenda extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            width: 200,
-                            child: Text(
-                                "Cliente: ${venda.cliente?.nome ?? "Sem nome"}")),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                            "Telefone: ${venda.cliente?.numero ?? "Sem Número"}"),
-                      ],
+                    Visibility(
+                      visible: pegarAplicacaoC().pegarUsuarioActual()?.nivelAcesso != NivelAcesso.CLIENTE,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              width: 200,
+                              child: Text(
+                                  "Cliente: ${venda.cliente?.nome ?? "Sem nome"}")),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Text(
+                              "Telefone: ${venda.cliente?.numero ?? "Sem Número"}"),
+                        ],
+                      ),
                     ),
                     Visibility(
                       visible: venda.encomenda == true && permissao == true,

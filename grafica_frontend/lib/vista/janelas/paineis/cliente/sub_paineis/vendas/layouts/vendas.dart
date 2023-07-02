@@ -15,6 +15,7 @@ class LayoutVendas extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () {
+        
         var itens = _c.lista
             .map((venda) => ItemModeloVenda(
                   permissao: visaoGeral,

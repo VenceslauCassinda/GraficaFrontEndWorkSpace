@@ -1,12 +1,8 @@
 import 'dart:async';
 
-import 'package:componentes_visuais/componentes/butoes.dart';
-import 'package:componentes_visuais/componentes/campo_texto.dart';
-import 'package:componentes_visuais/componentes/menu_drop_down.dart';
 import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_cliente_I.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_funcionario_i.dart';
@@ -20,7 +16,6 @@ import 'package:grafica_frontend/dominio/casos_uso/manipular_preco.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_produto.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_saida.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_usuario.dart';
-import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/comprovativo.dart';
 import 'package:grafica_frontend/dominio/entidades/cores.dart';
 import 'package:grafica_frontend/dominio/entidades/detalhe_item.dart';
@@ -32,13 +27,9 @@ import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
-import 'package:grafica_frontend/fonte_dados/provedores/provedor_preco.dart';
 import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_detalhe_item.dart';
-import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_tema.dart';
-import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/geradores.dart';
-import 'package:websafe_svg/websafe_svg.dart';
 
 import '../../../../../../../../../contratos/casos_uso/manipular_pagamento_i.dart';
 import '../../../../../../../../../dominio/casos_uso/manipular_cliente.dart';
@@ -47,7 +38,6 @@ import '../../../../../../../../../dominio/casos_uso/manipular_venda.dart';
 import '../../../../../../../../../dominio/entidades/forma_pagamento.dart';
 import '../../../../../../../../../dominio/entidades/preco.dart';
 import '../../../../../../../../../dominio/entidades/stock.dart';
-import '../../../../../../../../../dominio/entidades/tema.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_comprovativo.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_cliente.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_funcionario.dart';
@@ -60,14 +50,12 @@ import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_stock
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_usuario.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../../../aplicacao_c.dart';
-import '../../../../../componentes/campo_texto_detalhe.dart';
 import '../../layout_detalhe_tshirt.dart';
 import '../../layout_forma_pagamento.dart';
 import '../../vendas_c.dart';
 
 class MesaVendaC extends GetxController {
   RxList<Pagamento> listaPagamentos = <Pagamento>[].obs;
-  RxList<ItemVenda> listaItensVenda = <ItemVenda>[].obs;
   RxList<bool> hojeOuData = RxList([true, false]);
   Rx<DateTime?> dataLevantamento = Rx(null);
 
@@ -81,6 +69,7 @@ class MesaVendaC extends GetxController {
   final DateTime data;
   var nomeCliente = "".obs;
   var telefoneCliente = "".obs;
+  RxList<ItemVenda> listaItensVenda = <ItemVenda>[].obs;
 
   MesaVendaC(this.data, this.funcionario) {
     _manipularClienteI = ManipularCliente(ProvedorNetCliente());
@@ -123,7 +112,7 @@ class MesaVendaC extends GetxController {
     }
     mostrarDialogoDeLayou(
         FutureBuilder<List<FormaPagamento>>(
-            future: _manipularPagamentoI.pegarListaFormasPagamento(),
+            future: pegarAplicacaoC().pegarUsuarioActual()!.nivelAcesso! == NivelAcesso.CLIENTE ? _manipularPagamentoI.pegarListaFormasPagamentoCliente(): _manipularPagamentoI.pegarListaFormasPagamento(),
             builder: (context, snapshot) {
               if (snapshot.data == null) {
                 return const CircularProgressIndicator();
@@ -310,6 +299,9 @@ class MesaVendaC extends GetxController {
     }
     mostrarCarregandoDialogoDeInformacao("Finalizando a Venda");
     dataLevantamento.value ??= data.add(Duration(days: 1));
+    var cliente = (await _manipularClienteI.pegarClienteDeUsuarioDeId(
+                  pegarAplicacaoC().pegarUsuarioActual()!.id!));
+                  // mostrar2(cliente!.toJson());
     // try {
       var venda = Venda(
           produto: null,
@@ -319,9 +311,7 @@ class MesaVendaC extends GetxController {
           pagamentos: listaPagamentos,
           estado: Estado.ATIVADO,
           idFuncionario: -1,
-          idCliente: (await _manipularClienteI.pegarClienteDeUsuarioDeId(
-                  pegarAplicacaoC().pegarUsuarioActual()!.id!))
-              ?.id!,
+          idCliente: cliente!.id!,
           data: data,
           dataLevantamentoCompra: dataLevantamento.value,
           total: aPagar,
@@ -331,8 +321,8 @@ class MesaVendaC extends GetxController {
           listaItensVenda,
           listaPagamentos,
           aPagar,
-          pegarAplicacaoC().pegarUsuarioActual()!.id!,
-          null,
+          -1,
+          cliente,
           data,
           dataLevantamento.value!,
           pago,
@@ -368,13 +358,14 @@ class MesaVendaC extends GetxController {
     var corCampoTexto = corTshirt ==Colors.white ? Colors.black.obs : Colors.white.obs;
 
     mostrarDialogoDeLayou(
-        LayoutDetalheTshirt(corCampoTexto: corCampoTexto, corProduto: corTshirt,itemVenda: itemVenda, c: this,),
+        LayoutDetalheTshirt(corCampoTexto: corCampoTexto, corProduto: corTshirt,itemVenda: itemVenda, c: this,permissao: true,),
         layoutCru: true);
   }
-
+  
+  
   void salvarDetalhe(ItemVenda itemVenda, List<DetalheItem> lista) {
     for (var i = 0; i < listaItensVenda.length; i++) {
-      if(listaItensVenda[i].id == itemVenda.id){
+      if(listaItensVenda[i].idVista == itemVenda.idVista){
         listaItensVenda[i] == itemVenda;
         listaItensVenda[i].detalhes = lista;
       }

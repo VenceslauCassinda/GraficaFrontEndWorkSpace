@@ -42,7 +42,7 @@ class ItemFuncionario extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: IconeItem(
-              titulo: "Vendas",
+              titulo: "Encomendas",
               icone: Icons.sell,
               metodoQuandoItemClicado: () {
                 aoClicar();

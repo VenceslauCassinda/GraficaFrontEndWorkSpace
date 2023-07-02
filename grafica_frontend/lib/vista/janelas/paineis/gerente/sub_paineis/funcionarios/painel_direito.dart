@@ -34,14 +34,14 @@ class PainelDireito extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           child: Row(
             children: [
-              Text(
+              const Text(
                 "FUNCIONÁRIOS",
                 style: TextStyle(color: primaryColor),
               ),
               Spacer(),
               Expanded(
                   child: ModeloTabBar(
-                listaItens: ["Todos", "Activos", "Desactivos"],
+                listaItens: const ["Todos", "Activos", "Desactivos"],
                 indiceTabInicial: 0,
                 accao: (indice) {
                   _c.navegar(indice);

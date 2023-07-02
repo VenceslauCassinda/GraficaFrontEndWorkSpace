@@ -5,6 +5,7 @@ class TipoProduto {
   static int CHAVENA = 3;
   static int CARIMBO = 4;
   static int BLOCO_FATURA = 5;
+  static int LOGOTIPO = 6;
 
   static String paraTexto(int id) {
     if (id == TSHIRT) {
@@ -21,6 +22,8 @@ class TipoProduto {
     }
     if (id == BLOCO_FATURA) {
       return "Bloco de Factura";
+    }if (id == LOGOTIPO) {
+      return "Logotipo";
     }
     return "Padrão";
   }
@@ -40,6 +43,8 @@ class TipoProduto {
     }
     if (id == "Bloco de Factura") {
       return BLOCO_FATURA;
+    }if (id == "Logotipo") {
+      return LOGOTIPO;
     }
     return SIMPLES;
   }

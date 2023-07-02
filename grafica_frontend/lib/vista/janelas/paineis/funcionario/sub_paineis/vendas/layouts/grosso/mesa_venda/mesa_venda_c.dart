@@ -30,6 +30,8 @@ import '../../../../../../../../../contratos/casos_uso/manipular_pagamento_i.dar
 import '../../../../../../../../../dominio/casos_uso/manipular_cliente.dart';
 import '../../../../../../../../../dominio/casos_uso/manipular_pagamento.dart';
 import '../../../../../../../../../dominio/casos_uso/manipular_venda.dart';
+import '../../../../../../../../../dominio/entidades/cores.dart';
+import '../../../../../../../../../dominio/entidades/detalhe_item.dart';
 import '../../../../../../../../../dominio/entidades/forma_pagamento.dart';
 import '../../../../../../../../../dominio/entidades/preco.dart';
 import '../../../../../../../../../dominio/entidades/stock.dart';
@@ -45,6 +47,7 @@ import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_saida
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_stock.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_usuario.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
+import '../../../../../../cliente/sub_paineis/vendas/layouts/layout_detalhe_tshirt.dart';
 import '../../../../../../gerente/layouts/layout_forma_pagamento.dart';
 import '../../vendas_c.dart';
 
@@ -83,6 +86,27 @@ class MesaVendaC extends GetxController {
         _manipularItemVendaI);
     _manipularFuncionarioI = ManipularFuncionario(
         ManipularUsuario(ProvedorNetUsuario()), ProvedorNetFuncionario());
+  }
+
+  personalisar(ItemVenda itemVenda, BuildContext context) {
+    var corTshirt = Cores.paraColor(itemVenda.produto!.nome!);;
+    var corCampoTexto = corTshirt ==Colors.white ? Colors.black.obs : Colors.white.obs;
+
+    mostrarDialogoDeLayou(
+        LayoutDetalheTshirt(corCampoTexto: corCampoTexto, corProduto: corTshirt,itemVenda: itemVenda,permissao: true,aoSalvarDetalhe: (itemVenda, lista) {
+          salvarDetalhe(itemVenda, lista);
+          voltar();
+        },),
+        layoutCru: true,);
+  }
+
+  void salvarDetalhe(ItemVenda itemVenda, List<DetalheItem> lista) {
+    for (var i = 0; i < listaItensVenda.length; i++) {
+      if(listaItensVenda[i].idVista == itemVenda.idVista){
+        listaItensVenda[i] == itemVenda;
+        listaItensVenda[i].detalhes = lista;
+      }
+    }
   }
 
   void mostrarFormasPagamento(BuildContext context) {
@@ -303,7 +327,7 @@ class MesaVendaC extends GetxController {
           quantidadeVendida: null,
           pagamentos: listaPagamentos,
           estado: Estado.ATIVADO,
-          idFuncionario: funcionario.id!,
+          idFuncionario: pegarAplicacaoC().pegarUsuarioActual()!.id!,
           idCliente: -1,
           data: data,
           dataLevantamentoCompra: dataLevantamento.value,
@@ -315,7 +339,7 @@ class MesaVendaC extends GetxController {
           listaItensVenda,
           listaPagamentos,
           aPagar,
-          funcionario.id!,
+          pegarAplicacaoC().pegarUsuarioActual()!.id!,
           cliente,
           data,
           dataLevantamento.value!,

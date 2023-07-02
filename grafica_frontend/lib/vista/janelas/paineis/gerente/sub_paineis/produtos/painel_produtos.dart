@@ -55,7 +55,7 @@ class PainelProdutos extends StatelessWidget {
               const Spacer(),
               Expanded(
                   child: ModeloTabBar(
-                listaItens: ["Todos", "Activos", "Desactivos", "Eliminados"],
+                listaItens: const ["Todos", "Activos", "Desactivos", "Eliminados"],
                 indiceTabInicial: 1,
                 accao: (indice) {
                   _c.lista.clear();
@@ -69,8 +69,8 @@ class PainelProdutos extends StatelessWidget {
            () {
             return Visibility(
               visible: _c.baixando.value,
-              child: Padding(
-                padding: const EdgeInsets.all(20),
+              child: const Padding(
+                padding: EdgeInsets.all(20),
                 child: LinearProgressIndicator(),
               ));
           }
@@ -78,12 +78,12 @@ class PainelProdutos extends StatelessWidget {
         Expanded(
           child: Obx(() {
             if (_c.lista.isEmpty && _c.baixando.value == false) {
-              return Column(
+              return const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const Center(child: Text("Sem Dados!")),
+                  Center(child: Text("Sem Dados!")),
                 ],
               );
             }

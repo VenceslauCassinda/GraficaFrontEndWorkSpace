@@ -62,7 +62,7 @@ class LayoutProduto extends StatelessWidget {
             textoPadrao: nome,
             context: context,
             campoBordado: false,
-            icone: Icon(Icons.text_fields),
+            icone: const Icon(Icons.text_fields),
             dicaParaCampo: "Nome do Produto",
             metodoChamadoNaInsersao: (String valor) {
               nome = valor;
@@ -136,6 +136,7 @@ class LayoutProduto extends StatelessWidget {
                 TipoProduto.paraTexto(3),
                 TipoProduto.paraTexto(4),
                 TipoProduto.paraTexto(5),
+                TipoProduto.paraTexto(6),
               ],
             ),
           ),

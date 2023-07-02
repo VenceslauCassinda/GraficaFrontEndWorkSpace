@@ -15,6 +15,7 @@ class ItemItemVenda extends StatelessWidget {
     this.controladores,
     this.c,
     this.permissao,
+    this.aoVerPersonalizacoes,
     required this.element,
   });
 
@@ -22,6 +23,7 @@ class ItemItemVenda extends StatelessWidget {
   var c;
   final ItemVenda element;
   bool? permissao = true;
+  Function? aoVerPersonalizacoes;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +97,17 @@ class ItemItemVenda extends StatelessWidget {
               ),
               Spacer(),
               Visibility(
-                visible: c != null,
+                visible: permissao == true,
+                replacement: IconeItem(
+                  metodoQuandoItemClicado: () {
+                    if (aoVerPersonalizacoes != null) {
+                      aoVerPersonalizacoes!();
+                    }
+                  },
+                  icone: Icons.list,
+                  titulo: "Detalhes",
+                  cor: primaryColor,
+                ),
                 child: IconeItem(
                   metodoQuandoItemClicado: () {
                     c!.personalisar(element, context);
@@ -105,8 +117,11 @@ class ItemItemVenda extends StatelessWidget {
                   cor: primaryColor,
                 ),
               ),
-              SizedBox(
-                width: 100,
+              Visibility(
+                visible: permissao == true,
+                child: SizedBox(
+                  width: 100,
+                ),
               ),
               Visibility(
                 visible: c != null,

@@ -13,12 +13,11 @@ import '../erros.dart';
 import 'package:http_parser/http_parser.dart';
 
 class ProvedorNetDetalheItem implements ProvedorDetalheItemI {
-
-  Future<String> fazerUploadExemplar(List<int> bytesDoArquivo, String extensao) async {
+  Future<String> fazerUpload(List<int> bytesDoArquivo, String extensao) async {
     var requisicao =
         h.MultipartRequest("post", Uri.parse(URL_UPLOAD_EXEMPLAR));
       String nomeArquivo =
-          "Exemplar-${pegarAplicacaoC().pegarUsuarioActual()!.nomeUsuario}-${formatarData(DateTime.now(),).replaceAll(" ", "_")}";
+          "Exempla-${pegarAplicacaoC().pegarUsuarioActual()!.nomeUsuario}-${formatarData(DateTime.now(),).replaceAll(" ", "_")}";
       requisicao.files.add(await h.MultipartFile.fromBytes("file", bytesDoArquivo,
           contentType: MediaType(
             "aplication",
@@ -33,6 +32,7 @@ class ProvedorNetDetalheItem implements ProvedorDetalheItemI {
     var mapa = jsonDecode(await res.stream.bytesToString());
     return mapa["url"];
   }
+
   @override
   Future<bool> actualizaDetalheItem(DetalheItem dado) async {
     var res = await h.post(Uri.parse("$URL_ATUALIZAR_DETALHE_ITEM/${dado.id}/"), 
@@ -43,7 +43,7 @@ class ProvedorNetDetalheItem implements ProvedorDetalheItemI {
       body: {
         "id_item": "${dado.idItem??-1}",
         "link": dado.link??"",
-        "tipo": "${dado.tipo??0}",
+        "id_tipo": "${dado.tipo??0}",
         "nome_cor": dado.nomeCor??"",
         "dizeres": dado.dizeres??"",
         "detalhe": dado.detalhe??"",
@@ -76,15 +76,15 @@ class ProvedorNetDetalheItem implements ProvedorDetalheItemI {
   Future<DetalheItem?> pegarDetalheItemDeId(int id) async {
     return (await todos()).firstWhereOrNull((element) => element.id == id);
   }
+  
 
   @override
   Future<int> registarDetalheItem(DetalheItem dado)  async {
     int id = -1;
-    var url = "";
+    var url = "SemURL";
     if(dado.arquivo != null){
-      url = await fazerUploadExemplar(dado.arquivo!.bytes!, dado.arquivo!.name);
+      url = await fazerUpload(dado.arquivo!.bytes!, dado.arquivo!.name);
     }
-    mostrar(url);
     var res = await h.post(Uri.parse("$URL_ADD_DETALHE_ITEM/"), 
       headers: {
         "Accept": "aplication/json",
@@ -92,15 +92,15 @@ class ProvedorNetDetalheItem implements ProvedorDetalheItemI {
       }, 
       body: {
         "id_item": "${dado.idItem??-1}",
-        "link": "dsfkn",
-        "tipo": "${dado.tipo??0}",
+        "link": url,
+        "id_tipo": "${dado.tipo??0}",
         "nome_cor": "${dado.nomeCor}",
         "dizeres": "${dado.dizeres}",
         "detalhe": "${dado.detalhe}",
       }
     );
-    mostrar(res.body);
-    mostrar(res.statusCode);
+    // mostrar(res.body);
+    // mostrar(res.statusCode);
     switch (res.statusCode) {
       case 200: 
         var dado = jsonDecode(res.body);
@@ -353,6 +353,28 @@ class ProvedorNetDetalheItem implements ProvedorDetalheItemI {
         throw Erro("Falha de Servidor!");
     }
     return idDado;
+  }
+  
+  @override
+  Future<List<DetalheItem>> pegarDetalhesDeItemId(int id) async{
+    var lista = <DetalheItem>[];
+    for (var cada in await todos()) {
+      if (cada.idItem == id) {
+        lista.add(cada);
+      }
+    }
+    return lista;
+  }
+  
+  @override
+  Future<List<TipoDetalhe>> pegarTipoDetalhesDeTipoProduto(int tipoProduto) async{
+    var lista = <TipoDetalhe>[];
+    for (var cada in await pegarListaTipoDetalhe()) {
+      if (cada.tipoProduto == tipoProduto) {
+        lista.add(cada);
+      }
+    }
+    return lista;
   }
   
 }
