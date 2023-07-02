@@ -1,5 +1,6 @@
 import 'package:componentes_visuais/componentes/formatos/formatos.dart';
 import 'package:componentes_visuais/componentes/icone_item.dart';
+import 'package:componentes_visuais/dialogo/dialogos.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
@@ -15,6 +16,7 @@ class ItemModeloVenda extends StatelessWidget {
   ItemModeloVenda({
     Key? key,
     required this.c,
+    this.aoMudarArea,
     required this.permissao,
     required this.venda,
   }) : super(key: key);
@@ -22,6 +24,8 @@ class ItemModeloVenda extends StatelessWidget {
   final c;
   final Venda venda;
   late bool permissao;
+  var gestorEstado = true.obs;
+  Function(Venda venda)? aoMudarArea;
 
   @override
   Widget build(BuildContext context) {
@@ -58,20 +62,12 @@ class ItemModeloVenda extends StatelessWidget {
                             child: Obx(
                               () {
                                 c.lista.isEmpty;
-                                return Text(
-                                    "Total Pago: ${venda.parcela} KZ");
+                                return Text("Total Pago: ${venda.parcela} KZ");
                               },
                             ),
                           ),
                           Visibility(
                             visible: venda.divida == true,
-                            child: Obx(
-                              () {
-                                c.lista.isEmpty;
-                                return Text(
-                                    "Por pagar: ${formatar(venda.total! - venda.parcela!)} KZ");
-                              },
-                            ),
                             replacement: Row(
                               children: [
                                 Text("Paga"),
@@ -80,6 +76,13 @@ class ItemModeloVenda extends StatelessWidget {
                                   color: Colors.green,
                                 ),
                               ],
+                            ),
+                            child: Obx(
+                              () {
+                                c.lista.isEmpty;
+                                return Text(
+                                    "Por pagar: ${formatar(venda.total! - venda.parcela!)} KZ");
+                              },
                             ),
                           ),
                           Visibility(
@@ -93,7 +96,9 @@ class ItemModeloVenda extends StatelessWidget {
                       ),
                     ),
                     Visibility(
-                      visible: pegarAplicacaoC().pegarUsuarioActual()?.nivelAcesso != NivelAcesso.CLIENTE,
+                      visible:
+                          pegarAplicacaoC().pegarUsuarioActual()?.nivelAcesso !=
+                              NivelAcesso.CLIENTE,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -140,12 +145,78 @@ class ItemModeloVenda extends StatelessWidget {
               ],
             ),
             Spacer(),
-            IconeItem(
-                metodoQuandoItemClicado: () {
-                  c.mostrarDialogoDetalhesVenda(venda);
-                },
-                icone: Icons.list,
-                titulo: "Detalhes")
+            SizedBox(
+              height: 110,
+              width: 230,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Divider(),
+                  Obx(() {
+                    gestorEstado.value;
+                    return Container(
+                      width: double.infinity,
+                      color: Venda.paraColor(venda.estado ?? 0),
+                      child: Text("Área: ${Venda.paraTexto(venda.estado ?? 0)}"),
+                    );
+                  }),
+                  Divider(),
+                  Spacer(),
+                  Row(
+                    children: [
+                      IconeItem(
+                          metodoQuandoItemClicado: () {
+                            c.mostrarDialogoDetalhesVenda(venda);
+                          },
+                          icone: Icons.list,
+                          titulo: "Detalhes"),
+                      Spacer(),
+                      IconeItem(
+                          metodoQuandoItemClicado: () {
+                            var estados = [0, 1, 2];
+                            estados.removeWhere(
+                                (element) => element == venda.estado);
+                            mostrarDialogoDeLayou(
+                                WillPopScope(
+                                  onWillPop: () async {
+                                    return true;
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text("SELECIONAR ÁREA"),
+                                      Column(
+                                        children: estados
+                                            .map((e) => InkWell(
+                                                  child: SizedBox(width: 200 ,child: Card(elevation: 5,child: Padding(
+                                                    padding: const EdgeInsets.all(10),
+                                                    child: Text(Venda.paraTexto(e)),
+                                                  ),)),
+                                                  onTap: () {
+                                                    venda.estado = e;
+                                                    // aoMudarArea!(venda);
+                                                        voltar();
+                                                    gestorEstado.value =
+                                                        !gestorEstado.value;
+                                                  },
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                layoutCru: true);
+                          },
+                          icone: Icons.send_to_mobile,
+                          titulo: "Envia para"),
+                    ],
+                  ),
+                  Divider(),
+                ],
+              ),
+            ),
           ],
         ),
       ),

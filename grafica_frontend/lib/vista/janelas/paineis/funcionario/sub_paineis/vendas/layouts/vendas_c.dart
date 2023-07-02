@@ -11,6 +11,7 @@ import 'package:grafica_frontend/contratos/casos_uso/manipular_stock_i.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
+import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:grafica_frontend/dominio/entidades/painel_actual.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/dominio/entidades/venda.dart';
@@ -271,7 +272,6 @@ class VendasC extends GetxController {
     var res = await _manipularVendaI.pegarLista(funcionario!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
-      mostrar("KKKKKKKKKKKKKk");
       cada.cliente =
           clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
       lista.add(cada);
@@ -371,11 +371,11 @@ class VendasC extends GetxController {
             future: _manipularPagamentoI.pegarListaFormasPagamento(),
             builder: (context, snapshot) {
               if (snapshot.data == null) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
               if (snapshot.data!.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                return const Padding(
+                  padding: EdgeInsets.only(bottom: 20),
                   child: Text("Nenhuma Forma de Pagamento!"),
                 );
               }
@@ -463,8 +463,8 @@ class VendasC extends GetxController {
     }
     mostrarDialogoDeLayou(Column(
       children: [
-        Text("Seleccione a Quantidade"),
-        SizedBox(
+        const Text("Seleccione a Quantidade"),
+        const SizedBox(
           height: 20,
         ),
         Column(
@@ -529,9 +529,9 @@ class VendasC extends GetxController {
     var hoje = DateTime.now();
     var dataSelecionada = await showDatePicker(
         context: context,
-        initialDate: hoje.subtract(Duration(days: 1)),
-        firstDate: hoje.subtract(Duration(days: 365 * 3)),
-        lastDate: hoje.subtract(Duration(days: 1)));
+        initialDate: hoje.subtract(const Duration(days: 1)),
+        firstDate: hoje.subtract(const Duration(days: 365 * 3)),
+        lastDate: hoje.subtract(const Duration(days: 1)));
     if (dataSelecionada == null) {
       return;
     }

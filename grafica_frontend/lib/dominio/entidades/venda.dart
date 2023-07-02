@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' as g;
+import 'package:grafica_frontend/dominio/entidades/cores.dart';
 import 'package:grafica_frontend/dominio/entidades/item_venda.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
 import 'package:grafica_frontend/solucoes_uteis/utils.dart';
@@ -30,6 +32,10 @@ class Venda {
   bool get divida => (total != parcela);
   bool get encomenda => comapararDatas(data!, dataLevantamentoCompra!) == false;
   bool get venda => (total == parcela);
+
+  static int RECEBIDO = 0;
+  static int DESENHADO = 1;
+  static int PRODUZIDO = 2;
 
   var linhaPintada = false.obs;
   var linhaDestacada = false.obs;
@@ -72,5 +78,35 @@ class Venda {
     data['created_at'] = this.data;
     data['id'] = this.id;
     return data;
+  }
+
+  static String paraTexto(int nivel) {
+    if (nivel == RECEBIDO) {
+      return "Recepção";
+    }
+    if (nivel == DESENHADO) {
+      return "Design";
+    }
+    return "Produção";
+  }
+  
+  static Color paraColor(int nivel) {
+    if (nivel == RECEBIDO) {
+      return Cores.paraColor("amarela");
+    }
+    if (nivel == DESENHADO) {
+      return Cores.paraColor("verde");
+    }
+    return Cores.paraColor("laranja");
+  }
+
+  static int paraInteiro(String nivel) {
+    if (nivel == "Recepção") {
+      return RECEBIDO;
+    }
+    if (nivel == "Design") {
+      return DESENHADO;
+    }
+    return PRODUZIDO;
   }
   }

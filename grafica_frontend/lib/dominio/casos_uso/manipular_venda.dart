@@ -52,7 +52,7 @@ class ManipularVenda implements ManipularVendaI {
       idCliente = await _manipularClienteI.registarCliente(cliente);
     }
     var novaVenda = Venda(
-        estado: Estado.ATIVADO,
+        estado: Venda.RECEBIDO,
         idFuncionario: idUsuario,
         dataLevantamentoCompra: dataLevantamentoCompra,
         idCliente: idCliente??cliente!.id,
@@ -353,9 +353,6 @@ class ManipularVenda implements ManipularVendaI {
     var lista = <Venda>[];
     var originais = await _provedorVendaI.todas();
     for (var cada in originais) {
-        print(idUsuario);
-        print(cada.idCliente);
-        print("-------");
       if (cada.idCliente == idUsuario) {
         lista.add(cada);
       }
