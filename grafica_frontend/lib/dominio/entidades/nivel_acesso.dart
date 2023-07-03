@@ -8,7 +8,7 @@ class NivelAcesso {
 
   static String paraTexto(int nivel) {
     if (nivel == FUNCIONARIO) {
-      return "Funcionário";
+      return "Recepcionista";
     }
     if (nivel == GERENTE) {
       return "Gerente";
@@ -23,7 +23,7 @@ class NivelAcesso {
   }
 
   static int paraInteiro(String nivel) {
-    if (nivel == "Funcionário") {
+    if (nivel == "Recepcionista") {
       return FUNCIONARIO;
     }
     if (nivel == "Gerente") {

@@ -7,7 +7,7 @@ import 'vendas_c.dart';
 class LayoutVendas extends StatelessWidget {
   late VendasC _c;
   final bool visaoGeral;
-  LayoutVendas({required this.visaoGeral}) {
+  LayoutVendas({super.key, required this.visaoGeral}) {
     _c = Get.find();
   }
 
@@ -15,7 +15,6 @@ class LayoutVendas extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () {
-        
         var itens = _c.lista
             .map((venda) => ItemModeloVenda(
                   permissao: visaoGeral,

@@ -26,6 +26,8 @@ class Cores {
     }
     if (texto.toLowerCase().contains("laranja")) {
       return Colors.orange;
+    }if (texto.toLowerCase().contains("lilas")) {
+      return Colors.purple;
     }
     if (texto.toLowerCase().contains("rosa")) {
       return Colors.pink;

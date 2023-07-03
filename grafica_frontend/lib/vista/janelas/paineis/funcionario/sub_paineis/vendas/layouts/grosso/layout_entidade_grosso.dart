@@ -1,5 +1,6 @@
 import 'package:componentes_visuais/componentes/formatos/formatos.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../../../../../../recursos/constantes.dart';
 import '../../../../../../../componentes/tab_bar.dart';
 import '../vendas.dart';
@@ -31,7 +32,7 @@ class LayoutEntidadeGrosso extends StatelessWidget {
               const Spacer(),
               Expanded(
                   child: ModeloTabBar(
-                listaItens: ["TODAS", "VENDAS", "ENCOMENDAS", "DÍVIDAS"],
+                listaItens: ["TODAS", "RECEPÇÃO", "DESIGN", "PRODUÇÃO"],
                 indiceTabInicial: 0,
                 accao: (indice) {
                   _c.navegar(indice);
@@ -40,9 +41,19 @@ class LayoutEntidadeGrosso extends StatelessWidget {
             ],
           ),
         ),
-        Container(
-          height: MediaQuery.of(context).size.height*.50,
-          child: LayoutVendas(visaoGeral: true)),
+        Obx(
+          () {
+            if(_c.baixando.value == true){
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: LinearProgressIndicator(),
+              );
+            }
+            return SizedBox(
+              height: MediaQuery.of(context).size.height*.50,
+              child: LayoutVendas(visaoGeral: true));
+          }
+        ),
       ],
     );
   }

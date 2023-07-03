@@ -81,7 +81,7 @@ class LayoutDetalhesVenda extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: (s.data ?? []).map((element) {
                                         var text = Text(
-                                            "${formatar(element.valor ?? 0)} KZ - Pagamento ${element.formaPagamento?.descricao ?? "[Não Definido]"}");
+                                            "${formatar(element.valor ?? 0)} KZ - Pagamento ${element.formaPagamento?.forma ?? "[Não Definido]"}");
                                         return InkWell(
                                           onTap: ()async {
                                             if (element.comprovativo?.arquivo != null) {

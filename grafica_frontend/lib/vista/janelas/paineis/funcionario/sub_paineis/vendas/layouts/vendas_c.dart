@@ -58,7 +58,7 @@ import '../../../../../../../fonte_dados/provedores_net/provedor_net_stock.dart'
 import '../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../../solucoes_uteis/geradores.dart';
 import '../../../../../../aplicacao_c.dart';
-import '../../../../gerente/layouts/layout_forma_pagamento.dart';
+import '../../../../gerente/layouts/layout_forma_selecionar_pagamento.dart';
 import 'detalhes_venda.dart';
 
 class VendasC extends GetxController {
@@ -71,6 +71,7 @@ class VendasC extends GetxController {
   late ManipularPagamentoI _manipularPagamentoI;
   int indiceTabActual = 0;
   var totalDividaPagas = 0.0.obs;
+  var totalDividaNaoPagas = 0.0.obs;
   var totalCaixa = 0.0.obs;
   var receccoesPagas = 0.0.obs;
   String criterioPesquisa = "";
@@ -81,6 +82,7 @@ class VendasC extends GetxController {
   late ManipularDividaI _manipularDividaI;
   late ManipularPreco manipularPreco;
   late ManipularCliente manipularCliente;
+  var baixando = false.obs;
 
   VendasC(this.data, this.funcionario) {
     manipularCliente = ManipularCliente(ProvedorNetCliente());
@@ -95,7 +97,8 @@ class VendasC extends GetxController {
     _manipularItemVendaI = ManipularItemVenda(
         ProvedorNetItemVenda(),
         ManipularProduto(provedorNetProduto, _manipularStockI, manipularPreco),
-        _manipularStockI, ProvedorNetDetalheItem());
+        _manipularStockI,
+        ProvedorNetDetalheItem());
     _manipularVendaI = ManipularVenda(
         ProvedorNetVenda(),
         maniSaida,
@@ -159,15 +162,14 @@ class VendasC extends GetxController {
       await pegarLista();
     }
     if (indice == 1) {
-      await pegarListaVendas();
+      await pegarListaEstadoVenda(Venda.RECEBIDO);
     }
     if (indice == 2) {
-      await pegarListaEncomendas();
+      await pegarListaEstadoVenda(Venda.DESENHADO);
     }
     if (indice == 3) {
-      await pegarListaDividas();
+      await pegarListaEstadoVenda(Venda.PRODUZIDO);
     }
-    await pegarTotalDividas();
   }
 
   void reiniciarValores() {
@@ -177,7 +179,13 @@ class VendasC extends GetxController {
     receccoesPagas.value = 0;
   }
 
+  bool compararTexto(String t1, String t2) {
+    return t1.toLowerCase().contains(t2.toLowerCase()) ||
+        t2.toLowerCase().contains(t1.toLowerCase());
+  }
+
   void aoPesquisarVenda(String f) async {
+    baixando.value = true;
     lista.clear();
     if (f.isEmpty) {
       criterioPesquisa = "";
@@ -185,20 +193,38 @@ class VendasC extends GetxController {
       return;
     }
     for (var cada in listaCopia) {
-      var produto =
-          await _manipularProdutoI.pegarProdutoDeId(cada.idProduto ?? -1);
-      if ((produto?.nome ?? "")
-          .toString()
-          .toLowerCase()
-          .contains(f.toLowerCase())) {
-        cada.vendaDestacada = true;
+      var clientes = await manipularCliente.todos();
+      var existeCliente = clientes
+          .firstWhereOrNull((element) => compararTexto(element.nome ?? "", f));
+      var itens = await _manipularItemVendaI.todos();
+      itens.removeWhere((element) => element.idVenda != cada.id);
+      var existeProduto = false;
+      for (var item in itens) {
+        var produto = await _manipularProdutoI.pegarProdutoDeId(item.idProduto ?? -1);
+        if (compararTexto(produto?.nome ?? "", f)) {
+          existeProduto = true;
+          break;
+        }
       }
-      lista.add(cada);
+
+      var existeDataL = compararTexto(
+          cada.dataLevantamentoCompra?.toIso8601String() ?? "", f);
+      var total = compararTexto(cada.total.toString(), f);
+      var parcela = compararTexto(cada.parcela.toString(), f);
+
+      if (existeCliente != null ||
+          existeProduto == true ||
+          existeDataL  == true ||
+          total  == true ||
+          parcela  == true) {
+        lista.add(cada);
+      }
     }
+    baixando.value = false;
     criterioPesquisa = f;
   }
 
-  void mostrarDialogoNovaVenda(BuildContext context){
+  void mostrarDialogoNovaVenda(BuildContext context) {
     mostrarDialogoDeLayou(
       LayoutMesaVenda(data, funcionario!),
       layoutCru: true,
@@ -269,34 +295,47 @@ class VendasC extends GetxController {
   }
 
   Future pegarLista() async {
+    baixando.value = true;
     var res = await _manipularVendaI.pegarLista(funcionario!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       cada.cliente =
           clientes.firstWhereOrNull((element) => element.id == cada.idCliente);
-      lista.add(cada);
-      totalCaixa.value += (cada.parcela ?? 0);
+      if (pegarAplicacaoC().pegarUsuarioActual()!.nivelAcesso ==
+          NivelAcesso.DESIGNER) {
+        if (cada.estado == Venda.DESENHADO) {
+          lista.add(cada);
+          totalCaixa.value += (cada.parcela ?? 0);
+          totalDividaNaoPagas.value += (cada.total ?? 0) - (cada.parcela ?? 0);
+        }
+      } else {
+        lista.add(cada);
+        totalCaixa.value += (cada.parcela ?? 0);
+        totalDividaNaoPagas.value += (cada.total ?? 0) - (cada.parcela ?? 0);
+      }
     }
 
     listaCopia.clear();
     listaCopia.addAll(lista);
+    baixando.value = false;
   }
 
-  Future pegarListaVendas() async {
-    var res = await _manipularVendaI.pegarListaVendas(funcionario!.id!, data);
+  Future pegarListaEstadoVenda(int tipo) async {
     var clientes = await manipularCliente.todos();
-    for (var cada in res) {
-      if (cada.venda == true) {
+    for (var cada in listaCopia) {
+      if (cada.estado == tipo) {
         cada.cliente = clientes
             .firstWhereOrNull((element) => element.id == cada.idCliente);
         lista.add(cada);
         totalCaixa.value += (cada.parcela ?? 0);
+        totalDividaNaoPagas.value += (cada.total ?? 0) - (cada.parcela ?? 0);
       }
     }
   }
 
   Future pegarListaEncomendas() async {
-    var res = await _manipularVendaI.pegarListaEncomendas(funcionario!.id!, data);
+    var res =
+        await _manipularVendaI.pegarListaEncomendas(funcionario!.id!, data);
     var clientes = await manipularCliente.todos();
     for (var cada in res) {
       cada.cliente =
@@ -346,9 +385,9 @@ class VendasC extends GetxController {
     voltar();
     if (indiceTabActual == 2) {
       lista.removeWhere((element) => element.id == venda.id);
-    }else{
+    } else {
       for (var i = 0; i < lista.length; i++) {
-        if(lista[i].id == venda.id){
+        if (lista[i].id == venda.id) {
           lista[i] = venda;
         }
       }
@@ -380,7 +419,7 @@ class VendasC extends GetxController {
                 );
               }
               var lista = snapshot.data!.map((e) => e.descricao!).toList();
-              return LayoutFormaPagamento(
+              return LayoutSelecionarFormaPagamento(
                   accaoAoFinalizar: (valor, opcao) async {
                     await adicionarValorPagamento(venda, valor, opcao,
                         comPagamentoFinal: comPagamentoFinal);
@@ -572,5 +611,9 @@ class VendasC extends GetxController {
       }
     }
     return itens;
+  }
+
+  void actualizarVendaSimples(Venda venda) async {
+    await _manipularVendaI.actualizarVendaSimples(venda);
   }
 }

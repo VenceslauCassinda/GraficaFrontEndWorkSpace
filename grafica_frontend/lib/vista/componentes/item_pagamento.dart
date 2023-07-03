@@ -1,6 +1,7 @@
 import 'package:componentes_visuais/componentes/icone_item.dart';
 import 'package:flutter/material.dart';
 import 'package:grafica_frontend/dominio/entidades/forma_pagamento.dart';
+import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/saida.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/sub_paineis/pagamentos/pagamentos_c.dart';
 
@@ -28,7 +29,9 @@ class ItemPagamento extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                    "Forma de Pagamento: ${formaPagamento.descricao ?? "Inválida"}"),
+                    "Forma de Pagamento: ${formaPagamento.forma ?? "Inválida"}"),
+                Text(
+                    "Tipo: ${Pagamento.paraTexto(formaPagamento.tipo??0)}"),
               ],
             ),
             Spacer(),

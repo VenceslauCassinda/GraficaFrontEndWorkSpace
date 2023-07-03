@@ -58,7 +58,7 @@ class AplicacaoC extends GetxController {
       return;
     }
     definirUsuarioActual(usuario);
-    mostrar(NivelAcesso.paraTexto(usuario.nivelAcesso??0));
+    mostrar(NivelAcesso.paraTexto(usuario.nivelAcesso ?? 0));
     if (usuario.nivelAcesso == NivelAcesso.ADMINISTRADOR) {
       irParaPainelAdministrador();
       return;
@@ -67,7 +67,9 @@ class AplicacaoC extends GetxController {
       irParaPainelGerente();
       return;
     }
-    if (usuario.nivelAcesso == NivelAcesso.FUNCIONARIO) {
+    if (usuario.nivelAcesso == NivelAcesso.FUNCIONARIO ||
+        usuario.nivelAcesso == NivelAcesso.DESIGNER ||
+        usuario.nivelAcesso == NivelAcesso.SUPERVISOR) {
       var c = Get.put(PainelFuncionarioC());
       await c.inicializarFuncionario();
       irParaPainelFuncionario();
@@ -84,7 +86,6 @@ class AplicacaoC extends GetxController {
     definirUsuarioActual(null);
     irParaJanelaLogin();
   }
-
 
   static void irParaJanelaCadastro(BuildContext context) async {
     // ManipularDefinicoes def = Get.find();
@@ -134,7 +135,7 @@ class AplicacaoC extends GetxController {
   static void irParaPainelFuncionario() {
     Get.off(() => PainelFuncionario());
   }
-  
+
   static void irParaPainelCliente() {
     Get.off(() => PainelCliente());
   }

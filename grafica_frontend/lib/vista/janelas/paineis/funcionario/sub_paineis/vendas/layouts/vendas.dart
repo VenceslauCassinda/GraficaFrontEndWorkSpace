@@ -19,7 +19,9 @@ class LayoutVendas extends StatelessWidget {
             .map((venda) => ItemModeloVenda(
                   permissao: visaoGeral,
                   c: _c,
-                  venda: venda,
+                  venda: venda,aoMudarArea: (venda) {
+                    _c.actualizarVendaSimples(venda);
+                  },
                 ))
             .toList();
         if (itens.isEmpty) {

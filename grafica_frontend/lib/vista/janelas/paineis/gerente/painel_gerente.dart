@@ -247,7 +247,7 @@ class CorpoGerente extends StatelessWidget {
         return PainelInventario(c: _c);
       }if (_c.painelActual.value.indicadorPainel == PainelActual.SERVICOS) {
         return PainelServicos(accaoAoVoltar: (){
-          
+          _c.irParaPainel(PainelActual.FUNCIONARIOS);
         },);
       }
       return PainelDireito(c: _c);

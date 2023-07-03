@@ -52,7 +52,7 @@ class ManipularVenda implements ManipularVendaI {
       idCliente = await _manipularClienteI.registarCliente(cliente);
     }
     var novaVenda = Venda(
-        estado: Venda.RECEBIDO,
+        estado: Venda.ESPERA,
         idFuncionario: idUsuario,
         dataLevantamentoCompra: dataLevantamentoCompra,
         idCliente: idCliente??cliente!.id,

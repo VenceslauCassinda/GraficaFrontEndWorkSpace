@@ -80,7 +80,7 @@ class PainelPagamentos extends StatelessWidget {
           ),
         ),
         Container(
-          // width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width * .15,
           margin: EdgeInsets.all(20),
           child: ModeloButao(
             corButao: primaryColor,

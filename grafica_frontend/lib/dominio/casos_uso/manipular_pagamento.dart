@@ -7,6 +7,7 @@ import 'package:grafica_frontend/dominio/entidades/forma_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/pagamento_final.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 
 class ManipularPagamento implements ManipularPagamentoI {
   final ProvedorPagamentoI _provedorPagamentoI;
@@ -77,7 +78,7 @@ class ManipularPagamento implements ManipularPagamentoI {
     var dados = await pegarListaFormasPagamento();
     List<FormaPagamento> lista = [];
     for (var cada in dados) {
-      if ((cada.descricao??"").toLowerCase().contains("transf")) {
+      if ((cada.tipo??0) == Pagamento.A_PRAZO) {
         lista.add(cada);
       }
     }

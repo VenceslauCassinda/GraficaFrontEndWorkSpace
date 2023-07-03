@@ -4,17 +4,19 @@ import 'package:get/get.dart';
 import 'package:grafica_frontend/contratos/casos_uso/manipular_pagamento_i.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/forma_pagamento.dart';
+import 'package:grafica_frontend/dominio/entidades/pagamento.dart';
 import 'package:grafica_frontend/fonte_dados/erros.dart';
 import 'package:grafica_frontend/fonte_dados/provedores/provedor_pagamento.dart';
 import 'package:grafica_frontend/fonte_dados/provedores_net/provedor_net_comprovativo.dart';
 import 'package:grafica_frontend/recursos/constantes.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_campo.dart';
-import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_forma_pagamento.dart';
+import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_forma_selecionar_pagamento.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/painel_gerente_c.dart';
 
 import '../../../../../../dominio/entidades/estado.dart';
 import '../../../../../../fonte_dados/provedores_net/provedor_net_pagamento.dart';
+import '../../layouts/layout_forma_nova_pagamento.dart';
 
 class PagamentosC extends GetxController {
   RxList<FormaPagamento> lista = RxList<FormaPagamento>();
@@ -34,10 +36,10 @@ class PagamentosC extends GetxController {
   }
 
   void mostrarDialogoAdicionarFormaPagamento() {
-    mostrarDialogoDeLayou(LayoutCampo(
-        accaoAoFinalizar: (valor) async {
+    mostrarDialogoDeLayou(LayoutNovaFormaPagamento(
+        accaoAoFinalizar: (valor, opcao) async {
           var nova = FormaPagamento(
-              estado: Estado.ATIVADO, tipo: "0", descricao: valor);
+              estado: Estado.ATIVADO, tipo: Pagamento.paraInteiro(opcao??""), forma: valor, descricao: opcao);
 
           try {
             lista.add(nova);
@@ -47,7 +49,7 @@ class PagamentosC extends GetxController {
             mostrarDialogoDeInformacao(e.sms);
           }
         },
-        titulo: "Insira a nova forma de Pagamento"));
+        titulo: "Insira a nova forma de Pagamento",));
   }
 
   Future<void> pegarDados() async {

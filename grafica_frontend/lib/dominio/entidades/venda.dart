@@ -33,9 +33,11 @@ class Venda {
   bool get encomenda => comapararDatas(data!, dataLevantamentoCompra!) == false;
   bool get venda => (total == parcela);
 
-  static int RECEBIDO = 0;
-  static int DESENHADO = 1;
-  static int PRODUZIDO = 2;
+  static int ESPERA = 0;
+  static int RECEBIDO = 1;
+  static int DESENHADO = 2;
+  static int PRODUZIDO = 3;
+  static int FINALIZADO = 4;
 
   var linhaPintada = false.obs;
   var linhaDestacada = false.obs;
@@ -56,7 +58,7 @@ class Venda {
       required this.total,
       required this.parcela});
 
-      Venda.fromJson(Map json) {
+  Venda.fromJson(Map json) {
     idFuncionario = json['id_funcionario'];
     idCliente = json['id_cliente'];
     total = json['total'];
@@ -68,45 +70,94 @@ class Venda {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id_funcionario'] = this.idFuncionario;
-    data['id_cliente'] = this.idCliente;
-    data['total'] = this.total;
-    data['parcela'] = this.parcela;
-    data['estado'] = this.estado;
-    data['data_levantamento'] = this.dataLevantamentoCompra;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id_funcionario'] = idFuncionario;
+    data['id_cliente'] = idCliente;
+    data['total'] = total;
+    data['parcela'] = parcela;
+    data['estado'] = estado;
+    data['data_levantamento'] = dataLevantamentoCompra;
     data['created_at'] = this.data;
-    data['id'] = this.id;
+    data['id'] = id;
     return data;
   }
 
   static String paraTexto(int nivel) {
     if (nivel == RECEBIDO) {
-      return "Recepção";
+      return "Atendida";
     }
     if (nivel == DESENHADO) {
       return "Design";
     }
+    if (nivel == ESPERA) {
+      return "Não Atendida";
+    }
+    if (nivel == FINALIZADO) {
+      return "Finalizada";
+    }
     return "Produção";
   }
-  
+
   static Color paraColor(int nivel) {
+    if (nivel == ESPERA) {
+      return Cores.paraColor("lilas");
+    }
     if (nivel == RECEBIDO) {
-      return Cores.paraColor("amarela");
+      return Cores.paraColor("laranja");
     }
     if (nivel == DESENHADO) {
-      return Cores.paraColor("verde");
+      return Cores.paraColor("azul");
+    }if (nivel == PRODUZIDO) {
+      return Cores.paraColor("amarela");
     }
-    return Cores.paraColor("laranja");
+    return Cores.paraColor("verde");
   }
 
-  static int paraInteiro(String nivel) {
-    if (nivel == "Recepção") {
-      return RECEBIDO;
+  static int paraInteiro2(String nivel) {
+    if (nivel == "Não Atendida") {
+      return ESPERA;
     }
     if (nivel == "Design") {
       return DESENHADO;
     }
+    if (nivel == "Atendida") {
+      return RECEBIDO;
+    }
+    if (nivel == "Finalizada") {
+      return FINALIZADO;
+    }
     return PRODUZIDO;
   }
+
+  static String paraTexto2(int nivel) {
+    if (nivel == RECEBIDO) {
+      return "Recepção (Atendida)";
+    }
+    if (nivel == DESENHADO) {
+      return "Design";
+    }
+    if (nivel == ESPERA) {
+      return "Recepção (Não Atendida)";
+    }
+    if (nivel == FINALIZADO) {
+      return "Recepção (Finalizada)";
+    }
+    return "Produção";
   }
+
+  static int paraInteiro(String nivel) {
+    if (nivel == "Recepção (Não Atendida)") {
+      return ESPERA;
+    }
+    if (nivel == "Design") {
+      return DESENHADO;
+    }
+    if (nivel == "Recepção (Atendida)") {
+      return RECEBIDO;
+    }
+    if (nivel == "Recepção (Finalizada)") {
+      return FINALIZADO;
+    }
+    return PRODUZIDO;
+  }
+}

@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_string_interpolations
 
 import 'package:componentes_visuais/componentes/campo_texto.dart';
+import 'package:componentes_visuais/componentes/campo_texto2.dart';
 import 'package:componentes_visuais/componentes/imagem_circulo.dart';
 import 'package:componentes_visuais/componentes/menu_drop_down.dart';
 import 'package:componentes_visuais/componentes/validadores/validadcao_campos.dart';
@@ -90,7 +91,7 @@ class LayoutDetalhes extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: CampoTexto(
+                  child: CampoTexto2(
                     context: context,
                     textoPadrao: _c.usuario.value!.palavraPasse,
                     dicaParaCampo: "Palavra-Passe",
@@ -152,6 +153,8 @@ class LayoutDetalhes extends StatelessWidget {
                             listaItens: [
                               "Seleccionar",
                               "${NivelAcesso.paraTexto(NivelAcesso.FUNCIONARIO)}",
+                              "${NivelAcesso.paraTexto(NivelAcesso.SUPERVISOR)}",
+                              "${NivelAcesso.paraTexto(NivelAcesso.DESIGNER)}",
                               "${NivelAcesso.paraTexto(NivelAcesso.GERENTE)}",
                               "${NivelAcesso.paraTexto(NivelAcesso.ADMINISTRADOR)}",
                               "${NivelAcesso.paraTexto(NivelAcesso.CLIENTE)}",

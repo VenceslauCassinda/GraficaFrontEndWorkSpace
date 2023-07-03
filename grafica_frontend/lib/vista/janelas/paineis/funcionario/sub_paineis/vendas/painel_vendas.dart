@@ -3,10 +3,12 @@ import 'package:componentes_visuais/componentes/formatos/formatos.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
+import 'package:grafica_frontend/dominio/entidades/nivel_acesso.dart';
 import 'package:grafica_frontend/dominio/entidades/painel_actual.dart';
 import 'package:grafica_frontend/solucoes_uteis/console.dart';
 import 'package:grafica_frontend/solucoes_uteis/formato_dado.dart';
 import 'package:grafica_frontend/solucoes_uteis/responsividade.dart';
+import 'package:grafica_frontend/vista/aplicacao_c.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/painel_funcionario_c.dart';
 
 import '../../../../../../../recursos/constantes.dart';
@@ -61,93 +63,48 @@ class PainelVendas extends StatelessWidget {
               accaoAoSair: aoTerminarSessao,
               accaoAoVoltar: accaoAoVoltar),
         ),
-        Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Obx(() {
-                return Text(
-                  "CAIXA: ${formatar(_c.totalCaixa.value)} KZ",
-                  style: const TextStyle(color: primaryColor, fontSize: 15),
-                );
-              }),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Obx(
-                () => Text(
-                  "DÍVIDAS PAGAS: ${formatar(_c.totalDividaPagas.value)} KZ",
-                  style: const TextStyle(color: primaryColor, fontSize: 15),
+        Visibility(
+          visible: pegarAplicacaoC().pegarUsuarioActual()!.nivelAcesso != NivelAcesso.DESIGNER,
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Obx(() {
+                  return Text(
+                    "CAIXA: ${formatar(_c.totalCaixa.value)} KZ",
+                    style: const TextStyle(color: primaryColor, fontSize: 15),
+                  );
+                }),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Obx(
+                  () => Text(
+                    "DÍVIDAS: ${formatar(_c.totalDividaPagas.value)} KZ",
+                    style: const TextStyle(color: primaryColor, fontSize: 15),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "DINHEIRO FÍSICO: ${formatar(_c.lista.fold<double>(0, (antigoV, cadaV) => ((cadaV.pagamentos ?? []).fold<double>(0, (antigoP, cadaP) {
-                      if (cadaP.valor == null) {
-                        return 0;
-                      }
-                      if ((cadaP.formaPagamento?.descricao ?? "")
-                              .toLowerCase()
-                              .contains('CASH'.toLowerCase()) ==
-                          true) {
-                        return (cadaP.valor ?? 0) + antigoP;
-                      }
-                      return antigoP;
-                    }) + antigoV)))} KZ",
-                style: const TextStyle(color: primaryColor, fontSize: 15),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "DINHEIRO DIGITAL: ${formatar(_c.lista.fold<double>(0, (antigoV, cadaV) => ((cadaV.pagamentos ?? []).fold<double>(0, (antigoP, cadaP) {
-                      if (cadaP.valor == null) {
-                        return 0;
-                      }
-                      if ((cadaP.formaPagamento?.descricao ?? "")
-                              .toLowerCase()
-                              .contains('CASH'.toLowerCase()) ==
-                          false) {
-                        mostrar(cadaP.formaPagamento?.descricao);
-                        mostrar(cadaP.valor);
-                        return (cadaP.valor ?? 0) + antigoP;
-                      }
-                      return antigoP;
-                    }) + antigoV)))} KZ",
-                style: const TextStyle(color: primaryColor, fontSize: 15),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
         LayoutEntidadeGrosso(
           c: _c,
           data: data,
         ),
         Visibility(
-          visible: !Responsidade.isMobile(context),
-          replacement: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: PopupAccoes(funcionarioC: funcionarioC, c: _c),
-          ),
-          child: LayoutAccoes(
-              permissao: permissao, funcionarioC: funcionarioC, c: _c),
-        ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: ModeloButao(
-            corButao: primaryColor,
-            corTitulo: Colors.white,
-            butaoHabilitado: true,
-            tituloButao: "Nova Encomenda",
-            metodoChamadoNoClique: () {
-              _c.mostrarDialogoNovaVenda(context);
-            },
+          visible: pegarAplicacaoC().pegarUsuarioActual()!.nivelAcesso == NivelAcesso.FUNCIONARIO,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: ModeloButao(
+              corButao: primaryColor,
+              corTitulo: Colors.white,
+              butaoHabilitado: true,
+              tituloButao: "Nova Encomenda",
+              metodoChamadoNoClique: () {
+                _c.mostrarDialogoNovaVenda(context);
+              },
+            ),
           ),
         )
       ],

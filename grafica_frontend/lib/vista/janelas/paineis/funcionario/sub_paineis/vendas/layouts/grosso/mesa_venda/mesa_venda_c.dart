@@ -48,7 +48,7 @@ import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_stock
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_usuario.dart';
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../cliente/sub_paineis/vendas/layouts/layout_detalhe_tshirt.dart';
-import '../../../../../../gerente/layouts/layout_forma_pagamento.dart';
+import '../../../../../../gerente/layouts/layout_forma_selecionar_pagamento.dart';
 import '../../vendas_c.dart';
 
 class MesaVendaC extends GetxController {
@@ -129,14 +129,15 @@ class MesaVendaC extends GetxController {
               if (snapshot.data == null) {
                 return const CircularProgressIndicator();
               }
+              snapshot.data!.removeWhere((element) => element.tipo != Pagamento.A_VISTA);
               if (snapshot.data!.isEmpty) {
                 return const Padding(
                   padding: EdgeInsets.only(bottom: 20),
                   child: Text("Nenhuma Forma de Pagamento!"),
                 );
               }
-              var lista = snapshot.data!.map((e) => e.descricao!).toList();
-              return LayoutFormaPagamento(
+              var lista = snapshot.data!.map((e) => e.forma!).toList();
+              return LayoutSelecionarFormaPagamento(
                   accaoAoFinalizar: (valor, opcao) async {
                     await adicionarValorPagamento(valor, opcao);
                   },

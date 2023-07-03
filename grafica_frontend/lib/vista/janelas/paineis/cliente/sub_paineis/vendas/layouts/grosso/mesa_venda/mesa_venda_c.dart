@@ -51,7 +51,7 @@ import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_usuar
 import '../../../../../../../../../fonte_dados/provedores_net/provedor_net_venda.dart';
 import '../../../../../../../../aplicacao_c.dart';
 import '../../layout_detalhe_tshirt.dart';
-import '../../layout_forma_pagamento.dart';
+import '../../layout_forma_selecionar_pagamento.dart';
 import '../../vendas_c.dart';
 
 class MesaVendaC extends GetxController {
@@ -120,11 +120,11 @@ class MesaVendaC extends GetxController {
               if (snapshot.data!.isEmpty) {
                 return const Padding(
                   padding: EdgeInsets.only(bottom: 20),
-                  child: Text("Nenhuma Forma de Pagamento!"),
+                  child: Text("Nenhuma Forma de Pagamento À Prazo!"),
                 );
               }
-              var lista = snapshot.data!.map((e) => e.descricao!).toList();
-              return LayoutFormaPagamento(
+              var lista = snapshot.data!.map((e) => e.forma!).toList();
+              return LayoutSelecionarFormaPagamento(
                   accaoAoFinalizar: (valor, opcao, arquivo) async {
                     try {
                       await adicionarValorPagamento(valor, opcao, arquivo);
@@ -302,14 +302,14 @@ class MesaVendaC extends GetxController {
     var cliente = (await _manipularClienteI.pegarClienteDeUsuarioDeId(
                   pegarAplicacaoC().pegarUsuarioActual()!.id!));
                   // mostrar2(cliente!.toJson());
-    // try {
+    try {
       var venda = Venda(
           produto: null,
           idProduto: null,
           itensVenda: listaItensVenda,
           quantidadeVendida: null,
           pagamentos: listaPagamentos,
-          estado: Estado.ATIVADO,
+          estado: Venda.ESPERA,
           idFuncionario: -1,
           idCliente: cliente!.id!,
           data: data,
@@ -333,9 +333,9 @@ class MesaVendaC extends GetxController {
       vendasC.totalCaixa.value += pago;
       voltar();
       // vendasC.navegar(vendasC.indiceTabActual);
-    // } on Erro catch (e) {
-    //   mostrarDialogoDeInformacao(e.sms);
-    // }
+    } on Erro catch (e) {
+      mostrarDialogoDeInformacao(e.sms);
+    }
   }
 
   Future<Stock?> pegarStockDoProdutoDeId(int id) async {

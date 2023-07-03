@@ -18,7 +18,8 @@ class ProvedorNetPagamento implements ProvedorPagamentoI {
       "Accept": "aplication/json",
       "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
     }, body: {
-      "forma": "${forma.tipo}",
+      "forma": "${forma.forma}",
+      "tipo": "${forma.tipo}",
       "descricao": "${forma.descricao}",
     });
 

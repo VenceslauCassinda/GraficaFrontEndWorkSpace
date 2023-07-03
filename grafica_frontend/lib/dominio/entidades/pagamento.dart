@@ -13,6 +13,8 @@ class Pagamento {
   int? idVenda;
   double? valor;
   Comprovativo? comprovativo;
+  static int A_VISTA = 0;
+  static int A_PRAZO = 1;
 
   Pagamento(
       {this.id,
@@ -41,5 +43,19 @@ class Pagamento {
     data['valor'] = this.valor;
     data['id'] = this.id;
     return data;
+  }
+
+  static String paraTexto(int nivel) {
+    if (nivel == A_VISTA) {
+      return "À Vista";
+    }
+    return "À Prazo";
+  }
+
+  static int paraInteiro(String nivel) {
+    if (nivel == "À Vista") {
+      return A_VISTA;
+    }
+    return A_PRAZO;
   }
 }

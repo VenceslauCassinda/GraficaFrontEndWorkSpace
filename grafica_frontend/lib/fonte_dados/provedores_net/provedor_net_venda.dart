@@ -238,8 +238,8 @@ class ProvedorNetVenda implements ProvedorVendaI {
         "Authorization": "Bearer $TOKEN_USUARIO_ATUAL"
       },
     );
-    // mostrar(res.statusCode);
-    // mostrar(res.body);
+    mostrar(res.statusCode);
+    mostrar(res.body);
     switch (res.statusCode) {
       case 200:
         var dado = jsonDecode(res.body);

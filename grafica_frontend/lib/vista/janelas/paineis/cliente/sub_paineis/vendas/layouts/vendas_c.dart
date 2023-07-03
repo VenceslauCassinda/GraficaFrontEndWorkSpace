@@ -61,7 +61,7 @@ import '../../../../../../../solucoes_uteis/console.dart';
 import '../../../../../../../solucoes_uteis/geradores.dart';
 import 'detalhes_venda.dart';
 import 'layout_detalhe_tshirt.dart';
-import 'layout_forma_pagamento.dart';
+import 'layout_forma_selecionar_pagamento.dart';
 
 class VendasC extends GetxController {
   RxList<Venda> lista = RxList<Venda>();
@@ -102,7 +102,7 @@ class VendasC extends GetxController {
     _manipularVendaI = ManipularVenda(
         ProvedorNetVenda(),
         maniSaida,
-        ManipularPagamento(ProvedorNetPagamento()),
+        _manipularPagamentoI,
         manipularCliente,
         _manipularStockI,
         _manipularItemVendaI);
@@ -379,7 +379,7 @@ class VendasC extends GetxController {
     }
     mostrarDialogoDeLayou(
         FutureBuilder<List<FormaPagamento>>(
-            future: _manipularPagamentoI.pegarListaFormasPagamento(),
+            future: _manipularPagamentoI.pegarListaFormasPagamentoCliente(),
             builder: (context, snapshot) {
               if (snapshot.data == null) {
                 return CircularProgressIndicator();
@@ -391,9 +391,7 @@ class VendasC extends GetxController {
                 );
               }
               var lista = snapshot.data!.map((e) => e.descricao!).toList();
-              lista.removeWhere(
-                  (element) => element.contains("TRANSFERÊNCIA") == false);
-              return LayoutFormaPagamento(
+              return LayoutSelecionarFormaPagamento(
                   accaoAoFinalizar: (valor, opcao, arquivo) async {
                     await adicionarValorPagamento(venda, valor, opcao,
                         comPagamentoFinal: comPagamentoFinal, arquivo: arquivo);
@@ -580,5 +578,9 @@ class VendasC extends GetxController {
       }
     }
     return itens;
+  }
+
+  void actualizarVendaSimples(Venda venda) async{
+    await _manipularVendaI.actualizarVendaSimples(venda);
   }
 }

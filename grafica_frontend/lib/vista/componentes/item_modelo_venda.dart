@@ -68,7 +68,7 @@ class ItemModeloVenda extends StatelessWidget {
                           ),
                           Visibility(
                             visible: venda.divida == true,
-                            replacement: Row(
+                            replacement: const Row(
                               children: [
                                 Text("Paga"),
                                 Icon(
@@ -106,23 +106,12 @@ class ItemModeloVenda extends StatelessWidget {
                               width: 200,
                               child: Text(
                                   "Cliente: ${venda.cliente?.nome ?? "Sem nome"}")),
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                           ),
                           Text(
                               "Telefone: ${venda.cliente?.numero ?? "Sem Número"}"),
                         ],
-                      ),
-                    ),
-                    Visibility(
-                      visible: venda.encomenda == true && permissao == true,
-                      child: IconeItem(
-                        metodoQuandoItemClicado: () {
-                          c.mostraDialogoEntregarEncomenda(venda);
-                        },
-                        icone: Icons.swipe_up,
-                        titulo: "Entregar\nEncomenda",
-                        cor: primaryColor,
                       ),
                     ),
                     const SizedBox(
@@ -144,77 +133,125 @@ class ItemModeloVenda extends StatelessWidget {
                 ),
               ],
             ),
-            Spacer(),
-            SizedBox(
-              height: 110,
-              width: 230,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+            const Spacer(),
+            Visibility(
+              visible: pegarAplicacaoC().pegarUsuarioActual()!.nivelAcesso !=
+                  NivelAcesso.CLIENTE,
+              replacement: Column(
                 children: [
-                  Divider(),
-                  Obx(() {
-                    gestorEstado.value;
-                    return Container(
-                      width: double.infinity,
-                      color: Venda.paraColor(venda.estado ?? 0),
-                      child: Text("Área: ${Venda.paraTexto(venda.estado ?? 0)}"),
-                    );
-                  }),
-                  Divider(),
-                  Spacer(),
-                  Row(
-                    children: [
-                      IconeItem(
-                          metodoQuandoItemClicado: () {
-                            c.mostrarDialogoDetalhesVenda(venda);
-                          },
-                          icone: Icons.list,
-                          titulo: "Detalhes"),
-                      Spacer(),
-                      IconeItem(
-                          metodoQuandoItemClicado: () {
-                            var estados = [0, 1, 2];
-                            estados.removeWhere(
-                                (element) => element == venda.estado);
-                            mostrarDialogoDeLayou(
-                                WillPopScope(
-                                  onWillPop: () async {
-                                    return true;
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text("SELECIONAR ÁREA"),
-                                      Column(
-                                        children: estados
-                                            .map((e) => InkWell(
-                                                  child: SizedBox(width: 200 ,child: Card(elevation: 5,child: Padding(
-                                                    padding: const EdgeInsets.all(10),
-                                                    child: Text(Venda.paraTexto(e)),
-                                                  ),)),
-                                                  onTap: () {
-                                                    venda.estado = e;
-                                                    // aoMudarArea!(venda);
-                                                        voltar();
-                                                    gestorEstado.value =
-                                                        !gestorEstado.value;
-                                                  },
-                                                ))
-                                            .toList(),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                layoutCru: true);
-                          },
-                          icone: Icons.send_to_mobile,
-                          titulo: "Envia para"),
-                    ],
+                  Container(
+                    width: 100,
+                    color: Venda.paraColor(venda.estado ?? 0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6),
+                      child:
+                          Text("Estado: ${Venda.paraTexto(venda.estado ?? 0)}"),
+                    ),
                   ),
-                  Divider(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  IconeItem(
+                      metodoQuandoItemClicado: () {
+                        c.mostrarDialogoDetalhesVenda(venda);
+                      },
+                      icone: Icons.list,
+                      titulo: "Detalhes"),
                 ],
+              ),
+              child: SizedBox(
+                height: 110,
+                width: 230,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Divider(),
+                    Obx(() {
+                      gestorEstado.value;
+                      return Container(
+                        width: double.infinity,
+                        color: Venda.paraColor(venda.estado ?? 0),
+                        child: Text(
+                            "Estado: ${Venda.paraTexto(venda.estado ?? 0)}"),
+                      );
+                    }),
+                    const Divider(),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        IconeItem(
+                            metodoQuandoItemClicado: () {
+                              c.mostrarDialogoDetalhesVenda(venda);
+                            },
+                            icone: Icons.list,
+                            titulo: "Detalhes"),
+                        const Spacer(),
+                        Obx(
+                          () {gestorEstado.value;
+                            return Visibility(
+                              visible: venda.estado != Venda.ESPERA,
+                              replacement: IconeItem(
+                                  metodoQuandoItemClicado: () {
+                                    venda.estado = Venda.RECEBIDO;
+                                    aoMudarArea!(venda);
+                                    gestorEstado.value = !gestorEstado.value;
+                                  },
+                                  icone: Icons.recommend,
+                                  titulo: "Atender"),
+                              child: IconeItem(
+                                  metodoQuandoItemClicado: () {
+                                    var estados = [1, 2, 3, 4];
+                                    estados.removeWhere(
+                                        (element) => element == venda.estado);
+                                    mostrarDialogoDeLayou(
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            const Text("SELECIONAR ÁREA"),
+                                            Column(
+                                              children: estados
+                                                  .map((e) => InkWell(
+                                                        child: SizedBox(
+                                                            width: 200,
+                                                            child: Card(
+                                                              elevation: 5,
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(10),
+                                                                child: Text(
+                                                                    Venda.paraTexto2(
+                                                                        e)),
+                                                              ),
+                                                            )),
+                                                        onTap: () {
+                                                          venda.estado = e;
+                                                          aoMudarArea!(venda);
+                                                          voltar();
+                                                          gestorEstado.value =
+                                                              !gestorEstado.value;
+                                                        },
+                                                      ))
+                                                  .toList(),
+                                            ),
+                                          ],
+                                        ),
+                                        layoutCru: true);
+                                  },
+                                  icone: Icons.send_to_mobile,
+                                  titulo: "Envia para"),
+                            );
+                          }
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                  ],
+                ),
               ),
             ),
           ],

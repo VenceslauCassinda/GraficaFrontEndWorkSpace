@@ -252,7 +252,7 @@ class _CabecaclhoVenda extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                "${formatar(element.valor ?? 0)} KZ - Pago com ${element.formaPagamento?.descricao ?? "[Não Definido]"}"),
+                                "${formatar(element.valor ?? 0)} KZ - Pago com ${element.formaPagamento?.forma ?? "[Não Definido]"}"),
                             IconeItem(
                                 metodoQuandoItemClicado: () {
                                   _c.removerPagamento(element);
