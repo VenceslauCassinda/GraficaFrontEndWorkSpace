@@ -110,14 +110,11 @@ class LayoutLogin extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: 80,
+              height: 300,
               child: Image.asset(
                 "lib/recursos/imagens/logo.png",
                 fit: BoxFit.cover,
               ),
-            ),
-            const SizedBox(
-              height: 40,
             ),
             CampoTexto(
               context: context,

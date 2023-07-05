@@ -58,7 +58,13 @@ class PainelVendas extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: LayoutPesquisa(
               accaoNaInsercaoNoCampoTexto: (dado) {
-                _c.aoPesquisarVenda(dado);
+                if (dado.isEmpty) {
+                  _c.pegarLista();
+                }
+              },
+              aoClicarPequisar: (dado) {
+                _c.aoPesquisarVenda(dado, context);
+                
               },
               accaoAoSair: aoTerminarSessao,
               accaoAoVoltar: accaoAoVoltar),

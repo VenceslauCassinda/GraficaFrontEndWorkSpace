@@ -121,6 +121,17 @@ class PainelSaidas extends StatelessWidget {
               child: Text(
                   "Produto: ${(_painelGerenteC.painelActual.value.valor == null ? null : (_painelGerenteC.painelActual.value.valor as Produto))?.nome ?? "Sem nome"}"),
             )),
+        Obx(
+          () {
+            return Visibility(
+              visible: _c.lista.value == true,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: LinearProgressIndicator(),
+              ),
+            );
+          }
+        ),
         LayoutSaidas(
           visaoGeral: visaoGeral,
         ),

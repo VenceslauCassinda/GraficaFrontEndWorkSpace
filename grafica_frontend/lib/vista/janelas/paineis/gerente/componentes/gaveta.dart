@@ -21,9 +21,12 @@ class GavetaNavegacao extends StatelessWidget {
         Expanded(
           flex: 2,
           child: Center(
-            child: Logo(
-              cor: primaryColor,
-              tamanhoTexto: 30.sp,
+            child: Container(
+              height: 200,
+              child: Logo(
+                cor: primaryColor,
+                tamanhoTexto: 30.sp,
+              ),
             ),
           ),
         ),
@@ -55,13 +58,13 @@ class GavetaNavegacao extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                ItemDaGaveta(
-                    cor: branca,
-                    icone: Icons.store,
-                    titulo: "Resumo",
-                    metodoQuandoItemClicado: () async {
-                      c.irParaPainel(PainelActual.VENDAS);
-                    }),
+                // ItemDaGaveta(
+                //     cor: branca,
+                //     icone: Icons.store,
+                //     titulo: "Resumo",
+                //     metodoQuandoItemClicado: () async {
+                //       c.irParaPainel(PainelActual.VENDAS);
+                //     }),
                 ItemDaGaveta(
                     cor: branca,
                     icone: Icons.monetization_on,
@@ -90,13 +93,13 @@ class GavetaNavegacao extends StatelessWidget {
                     metodoQuandoItemClicado: () async {
                       c.irParaPainel(PainelActual.SERVICOS);
                     }),
-                ItemDaGaveta(
-                    cor: branca,
-                    icone: Icons.storefront,
-                    titulo: "Dívidas",
-                    metodoQuandoItemClicado: () async {
-                      c.irParaPainel(PainelActual.DIVIDAS_GERAIS);
-                    }),
+                // ItemDaGaveta(
+                //     cor: branca,
+                //     icone: Icons.storefront,
+                //     titulo: "Dívidas",
+                //     metodoQuandoItemClicado: () async {
+                //       c.irParaPainel(PainelActual.DIVIDAS_GERAIS);
+                //     }),
                 ItemDaGaveta(
                     cor: branca,
                     icone: Icons.people,

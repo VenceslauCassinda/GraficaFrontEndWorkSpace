@@ -12,6 +12,7 @@ import 'package:grafica_frontend/contratos/casos_uso/manipular_stock_i.dart';
 import 'package:grafica_frontend/dominio/casos_uso/manipular_pagamento.dart';
 import 'package:grafica_frontend/dominio/entidades/cliente.dart';
 import 'package:grafica_frontend/dominio/entidades/comprovativo.dart';
+import 'package:grafica_frontend/dominio/entidades/filtros.dart';
 import 'package:grafica_frontend/dominio/entidades/funcionario.dart';
 import 'package:grafica_frontend/dominio/entidades/painel_actual.dart';
 import 'package:grafica_frontend/dominio/entidades/produto.dart';
@@ -23,6 +24,7 @@ import 'package:grafica_frontend/solucoes_uteis/utils.dart';
 import 'package:grafica_frontend/vista/aplicacao_c.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/recepcoes/layouts/layouts_produtos_completo.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/cliente/sub_paineis/vendas/layouts/grosso/mesa_venda/mesa_venda.dart';
+import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/vendas/layouts/vendas_c.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_quantidade.dart';
 import '../../../../../../../contratos/casos_uso/manipular_divida_i.dart';
 import '../../../../../../../contratos/casos_uso/manipular_pagamento_i.dart';
@@ -98,7 +100,8 @@ class VendasC extends GetxController {
     _manipularItemVendaI = ManipularItemVenda(
         ProvedorNetItemVenda(),
         ManipularProduto(provedorNetProduto, _manipularStockI, manipularPreco),
-        _manipularStockI, ProvedorNetDetalheItem());
+        _manipularStockI,
+        ProvedorNetDetalheItem());
     _manipularVendaI = ManipularVenda(
         ProvedorNetVenda(),
         maniSaida,
@@ -170,25 +173,151 @@ class VendasC extends GetxController {
     receccoesPagas.value = 0;
   }
 
-  void aoPesquisarVenda(String f) async {
-    lista.clear();
-    if (f.isEmpty) {
-      criterioPesquisa = "";
-      lista.addAll(listaCopia);
+  void aoPesquisarVenda(String f, BuildContext context) async {
+    var dados = [0, 1, 2, 3, 4, 5, 6];
+    mostrarDialogoDeLayou(
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text("FILTRAR POR"),
+            SingleChildScrollView(
+              child: Column(
+                children: dados
+                    .map((e) => InkWell(
+                          child: SizedBox(
+                              width: 200,
+                              child: Card(
+                                elevation: 5,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Text(Filtros.paraTexto2(e)),
+                                ),
+                              )),
+                          onTap: () async {
+                            voltar();
+                            if (e != Filtros.DATA_L && e != Filtros.DATA_V) {
+                              if (f.isEmpty) {
+                                return;
+                              }
+                              lista.clear();
+                            }
+                            if (Filtros.PRODUTO == e) {
+                              await pesquisarProduto(f);
+                              return;
+                            }
+                            if (Filtros.DATA_L == e) {
+                              await pesquisarData(1, context);
+                              return;
+                            }
+                            if (Filtros.DATA_V == e) {
+                              await pesquisarData(2, context);
+                              return;
+                            }
+                            if (Filtros.CLIENTE == e) {
+                              await pesquisarCliente(f);
+                              return;
+                            }
+                            if (Filtros.PRECO == e) {
+                              await pesquisarPreco(f);
+                              return;
+                            }
+                            if (Filtros.DIVIDA == e) {
+                              await pesquisarDivida(f);
+                              return;
+                            }
+                            if (Filtros.QUANTIDADE == e) {
+                              await pesquisarQuantidade(f);
+                              return;
+                            }
+                          },
+                        ))
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
+        layoutCru: true);
+  }
+
+  Future<void> pesquisarProduto(String f) async {
+    var itens = await _manipularItemVendaI.todos();
+    for (var cada in listaCopia) {
+      for (var item in itens) {
+        var p = await _manipularProdutoI.pegarProdutoDeId(item.idProduto ?? -1);
+        if (p != null && compararTexto(p.nome ?? "", f)) {
+          lista.add(cada);
+        }
+      }
+    }
+  }
+
+  Future<void> pesquisarQuantidade(String f) async {
+    var itens = await _manipularItemVendaI.todos();
+    for (var cada in listaCopia) {
+      for (var item in itens) {
+        if (compararTexto("${item.quantidade ?? ""}", f)) {
+          lista.add(cada);
+        }
+      }
+    }
+  }
+
+  Future<void> pesquisarCliente(String f) async {
+    for (var cada in listaCopia) {
+      var c = await manipularCliente.pegarClienteDeId(cada.idCliente ?? -1);
+      if (c != null && compararTexto(c.nome ?? "", f)) {
+        lista.add(cada);
+      }
+    }
+  }
+
+  Future<void> pesquisarPreco(String f) async {
+    for (var cada in listaCopia) {
+      if (compararTexto("${cada.total ?? 0}", f)) {
+        lista.add(cada);
+      }
+    }
+  }
+
+  Future<void> pesquisarDivida(String f) async {
+    for (var cada in listaCopia) {
+      var d = (cada.total ?? 0) - (cada.parcela ?? 0);
+      if (compararTexto("$d", f)) {
+        lista.add(cada);
+      }
+    }
+  }
+
+  Future<void> pesquisarData(int id, BuildContext context) async {
+    var hoje = DateTime.now();
+    var dataSelecionada = await showDatePicker(
+        context: context,
+        initialDate: DateTime(2020, hoje.month, hoje.day),
+        firstDate: DateTime(hoje.year, hoje.month, hoje.day + 1),
+        lastDate: DateTime(2100));
+    if (dataSelecionada == null) {
       return;
     }
+    lista.clear();
+    late DateTime data;
     for (var cada in listaCopia) {
-      var produto =
-          await _manipularProdutoI.pegarProdutoDeId(cada.idProduto ?? -1);
-      if ((produto?.nome ?? "")
-          .toString()
-          .toLowerCase()
-          .contains(f.toLowerCase())) {
-        cada.vendaDestacada = true;
+      if (id == 1) {
+        if (cada.data == null) {
+          continue;
+        }
+        data = cada.data!;
+      } else {
+        if (cada.dataLevantamentoCompra == null) {
+          continue;
+        }
+        data = cada.dataLevantamentoCompra!;
       }
-      lista.add(cada);
+      var d = "${data.day}/${data.month}/${data.year}";
+      if (comapararDatas(dataSelecionada, data)) {
+        lista.add(cada);
+      }
     }
-    criterioPesquisa = f;
   }
 
   void mostrarDialogoNovaVenda(BuildContext context) {
@@ -264,13 +393,19 @@ class VendasC extends GetxController {
 
   Future pegarLista() async {
     baixando.value = true;
-    var idCliente = (await manipularCliente.pegarClienteDeUsuarioDeId(
-                pegarAplicacaoC().pegarUsuarioActual()!.id!))
-            ?.id ??
-        -1;
-    var res = await _manipularVendaI.pegarListaCliente(idCliente, data);
-    for (var cada in res) {
-      lista.add(cada);
+    if (listaCopia.isEmpty) {
+      var idCliente = (await manipularCliente.pegarClienteDeUsuarioDeId(
+                  pegarAplicacaoC().pegarUsuarioActual()!.id!))
+              ?.id ??
+          -1;
+      var res = await _manipularVendaI.pegarListaCliente(idCliente, data);
+      for (var cada in res) {
+        lista.add(cada);
+      }
+    } else {
+      for (var cada in listaCopia) {
+        lista.add(cada);
+      }
     }
 
     listaCopia.clear();
@@ -320,13 +455,18 @@ class VendasC extends GetxController {
     mostrar(itemVenda.produto);
     mostrar(itemVenda.produto?.nome);
     var corTshirt = Cores.paraColor(itemVenda.produto!.nome!);
-    var corCampoTexto = corTshirt ==Colors.white ? Colors.black.obs : Colors.white.obs;
+    var corCampoTexto =
+        corTshirt == Colors.white ? Colors.black.obs : Colors.white.obs;
 
     mostrarDialogoDeLayou(
-        LayoutDetalheTshirt(corCampoTexto: corCampoTexto, corProduto: corTshirt,itemVenda: itemVenda, permissao: false,),
+        LayoutDetalheTshirt(
+          corCampoTexto: corCampoTexto,
+          corProduto: corTshirt,
+          itemVenda: itemVenda,
+          permissao: false,
+        ),
         layoutCru: true);
   }
-
 
   void mostrarDialogoDetalhesVenda(Venda venda) {
     mostrarDialogoDeLayou(LayoutDetalhesVenda(
@@ -561,7 +701,7 @@ class VendasC extends GetxController {
     return itens;
   }
 
-  Future<Comprovativo?> pegarComprovativoDoPagamentoDeId(int id)async{
+  Future<Comprovativo?> pegarComprovativoDoPagamentoDeId(int id) async {
     var c = await _manipularPagamentoI.pegarComprovativoDoPagamentoDeId(id);
     return c;
   }
@@ -580,7 +720,7 @@ class VendasC extends GetxController {
     return itens;
   }
 
-  void actualizarVendaSimples(Venda venda) async{
+  void actualizarVendaSimples(Venda venda) async {
     await _manipularVendaI.actualizarVendaSimples(venda);
   }
 }

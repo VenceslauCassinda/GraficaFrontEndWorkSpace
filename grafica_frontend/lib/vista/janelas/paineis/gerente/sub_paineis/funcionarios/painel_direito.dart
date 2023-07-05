@@ -1,5 +1,6 @@
 import 'package:componentes_visuais/componentes/butoes.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../../../../recursos/constantes.dart';
 import '../../../../../componentes/tab_bar.dart';
 import 'layouts/funcionarios.dart';
@@ -49,6 +50,17 @@ class PainelDireito extends StatelessWidget {
               ))
             ],
           ),
+        ),
+        Obx(
+          () {
+            return Visibility(
+              visible: _c.baixando.value == true,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: LinearProgressIndicator(),
+              ),
+            );
+          }
         ),
         Expanded(
           child: LayoutFuncionarios(c: _c),

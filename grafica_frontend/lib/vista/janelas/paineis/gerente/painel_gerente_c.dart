@@ -47,6 +47,7 @@ class PainelGerenteC extends GetxController {
   var listaCopia = <Funcionario>[];
   var dadoPesquisado = "".obs;
   late Funcionario funcionarioActual;
+  var baixando = false.obs;
 
   var listaControladores = <Type>[];
 
@@ -171,6 +172,7 @@ class PainelGerenteC extends GetxController {
   Future<void> pegarTodos() async {
     listaCopia.clear();
     lista.clear();
+    baixando.value = true;
     for (var cada in (await _manipularFuncionarioI.pegarLista())) {
       if (cada.nivelAcesso != null) {
         if (cada.nivelAcesso != NivelAcesso.GERENTE) {
@@ -182,6 +184,7 @@ class PainelGerenteC extends GetxController {
         }
       }
     }
+    baixando.value = false;
     listaCopia.addAll(lista);
   }
 

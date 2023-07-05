@@ -26,9 +26,12 @@ class GavetaNavegacao extends StatelessWidget {
         Expanded(
           flex: 2,
           child: Center(
-            child: Logo(
-              cor: primaryColor,
-              tamanhoTexto: 30.sp,
+            child: Container(
+              height: 200,
+              child: Logo(
+                cor: primaryColor,
+                tamanhoTexto: 30.sp,
+              ),
             ),
           ),
         ),
@@ -75,20 +78,6 @@ class GavetaNavegacao extends StatelessWidget {
                   //     metodoQuandoItemClicado: () async {
                   //       c.irParaPainel(PainelActual.SAIDA_CAIXA);
                   //     }),
-                  ItemDaGaveta(
-                      cor: branca,
-                      icone: Icons.storefront,
-                      titulo: "Dívidas",
-                      metodoQuandoItemClicado: () async {
-                        voltar();
-                      }),
-                  ItemDaGaveta(
-                      cor: branca,
-                      icone: Icons.people,
-                      titulo: "Clientes",
-                      metodoQuandoItemClicado: () async {
-                        voltar();
-                      }),
                   // ItemDaGaveta(
                   //     cor: branca,
                   //     icone: Icons.arrow_circle_down,

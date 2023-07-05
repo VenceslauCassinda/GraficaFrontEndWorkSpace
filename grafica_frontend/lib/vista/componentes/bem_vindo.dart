@@ -31,7 +31,7 @@ class LayoutBemVindo extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                height: 100,
+                height: 200,
                 child: Image.asset(
                   "lib/recursos/imagens/logo2.png",
                   fit: BoxFit.cover,

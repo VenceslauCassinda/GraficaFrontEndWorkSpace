@@ -34,6 +34,7 @@ class SaidasC extends GetxController {
 
   var lista = RxList<Saida>();
   var listaCopia = <Saida>[];
+  var baixando = true.obs;
 
   SaidasC({required this.visaoGeral}) {
     _manipularStockI = ManipularStock(ProvedorNetStock());
@@ -68,6 +69,7 @@ class SaidasC extends GetxController {
   }
 
   Future<void> pegarDados() async {
+    baixando.value = true;
     List<Saida> res = [];
     if (visaoGeral == true) {
       res = await _manipularSaidaI.pegarLista();
@@ -80,6 +82,7 @@ class SaidasC extends GetxController {
       lista.add(cada);
     }
 
+    baixando.value = false;
     listaCopia.clear();
     listaCopia.addAll(lista);
   }

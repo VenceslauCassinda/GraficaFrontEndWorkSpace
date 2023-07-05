@@ -25,9 +25,14 @@ class LayoutEntidadeGrosso extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           child: Row(
             children: [
-              const Text(
-                "Encomendas",
-                style: TextStyle(color: primaryColor, fontSize: 20),
+              Obx(
+                () {
+                  var total = _c.lista.length;
+                  return Text(
+                    "Encomendas ($total)",
+                    style: TextStyle(color: primaryColor, fontSize: 20),
+                  );
+                }
               ),
               const Spacer(),
               Text(

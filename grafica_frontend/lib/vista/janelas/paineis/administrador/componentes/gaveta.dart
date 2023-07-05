@@ -19,9 +19,12 @@ class GavetaNavegacao extends StatelessWidget {
         Expanded(
           flex: 2,
           child: Center(
-            child: Logo(
-              cor: primaryColor,
-              tamanhoTexto: 30.sp,
+            child: Container(
+              height: 250,
+              child: Logo(
+                cor: primaryColor,
+                tamanhoTexto: 30.sp,
+              ),
             ),
           ),
         ),

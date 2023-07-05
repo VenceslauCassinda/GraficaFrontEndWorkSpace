@@ -24,6 +24,7 @@ import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/r
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/sub_paineis/vendas/layouts/grosso/mesa_venda/mesa_venda.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/funcionario/painel_funcionario_c.dart';
 import 'package:grafica_frontend/vista/janelas/paineis/gerente/layouts/layout_quantidade.dart';
+import 'package:path/path.dart';
 import '../../../../../../../contratos/casos_uso/manipular_divida_i.dart';
 import '../../../../../../../contratos/casos_uso/manipular_pagamento_i.dart';
 import '../../../../../../../contratos/casos_uso/manipular_venda_i.dart';
@@ -39,6 +40,7 @@ import '../../../../../../../dominio/casos_uso/manipular_receccao.dart';
 import '../../../../../../../dominio/casos_uso/manipular_saida.dart';
 import '../../../../../../../dominio/casos_uso/manipular_venda.dart';
 import '../../../../../../../dominio/entidades/estado.dart';
+import '../../../../../../../dominio/entidades/filtros.dart';
 import '../../../../../../../dominio/entidades/forma_pagamento.dart';
 import '../../../../../../../dominio/entidades/item_venda.dart';
 import '../../../../../../../dominio/entidades/pagamento.dart';
@@ -179,51 +181,6 @@ class VendasC extends GetxController {
     receccoesPagas.value = 0;
   }
 
-  bool compararTexto(String t1, String t2) {
-    return t1.toLowerCase().contains(t2.toLowerCase()) ||
-        t2.toLowerCase().contains(t1.toLowerCase());
-  }
-
-  void aoPesquisarVenda(String f) async {
-    baixando.value = true;
-    lista.clear();
-    if (f.isEmpty) {
-      criterioPesquisa = "";
-      lista.addAll(listaCopia);
-      return;
-    }
-    for (var cada in listaCopia) {
-      var clientes = await manipularCliente.todos();
-      var existeCliente = clientes
-          .firstWhereOrNull((element) => compararTexto(element.nome ?? "", f));
-      var itens = await _manipularItemVendaI.todos();
-      itens.removeWhere((element) => element.idVenda != cada.id);
-      var existeProduto = false;
-      for (var item in itens) {
-        var produto = await _manipularProdutoI.pegarProdutoDeId(item.idProduto ?? -1);
-        if (compararTexto(produto?.nome ?? "", f)) {
-          existeProduto = true;
-          break;
-        }
-      }
-
-      var existeDataL = compararTexto(
-          cada.dataLevantamentoCompra?.toIso8601String() ?? "", f);
-      var total = compararTexto(cada.total.toString(), f);
-      var parcela = compararTexto(cada.parcela.toString(), f);
-
-      if (existeCliente != null ||
-          existeProduto == true ||
-          existeDataL  == true ||
-          total  == true ||
-          parcela  == true) {
-        lista.add(cada);
-      }
-    }
-    baixando.value = false;
-    criterioPesquisa = f;
-  }
-
   void mostrarDialogoNovaVenda(BuildContext context) {
     mostrarDialogoDeLayou(
       LayoutMesaVenda(data, funcionario!),
@@ -321,6 +278,7 @@ class VendasC extends GetxController {
   }
 
   Future pegarListaEstadoVenda(int tipo) async {
+    baixando.value = true;
     var clientes = await manipularCliente.todos();
     for (var cada in listaCopia) {
       if (cada.estado == tipo) {
@@ -331,6 +289,8 @@ class VendasC extends GetxController {
         totalDividaNaoPagas.value += (cada.total ?? 0) - (cada.parcela ?? 0);
       }
     }
+
+    baixando.value = false;
   }
 
   Future pegarListaEncomendas() async {
@@ -616,4 +576,156 @@ class VendasC extends GetxController {
   void actualizarVendaSimples(Venda venda) async {
     await _manipularVendaI.actualizarVendaSimples(venda);
   }
+
+  void aoPesquisarVenda(String f, BuildContext context) async {
+    var dados = [0, 1, 2, 3, 4, 5, 6];
+    mostrarDialogoDeLayou(
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text("FILTRAR POR"),
+            SingleChildScrollView(
+              child: Column(
+                children: dados
+                    .map((e) => InkWell(
+                          child: SizedBox(
+                              width: 200,
+                              child: Card(
+                                elevation: 5,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Text(Filtros.paraTexto2(e)),
+                                ),
+                              )),
+                          onTap: () async {
+                            voltar();
+                            if (e != Filtros.DATA_L && e != Filtros.DATA_V) {
+                              if (f.isEmpty) {
+                                return;
+                              }
+                              lista.clear();
+                            }
+                            if (Filtros.PRODUTO == e) {
+                              await pesquisarProduto(f);
+                              return;
+                            }
+                            if (Filtros.DATA_L == e) {
+                              await pesquisarData(1, context);
+                              return;
+                            }
+                            if (Filtros.DATA_V == e) {
+                              await pesquisarData(2, context);
+                              return;
+                            }
+                            if (Filtros.CLIENTE == e) {
+                              await pesquisarCliente(f);
+                              return;
+                            }
+                            if (Filtros.PRECO == e) {
+                              await pesquisarPreco(f);
+                              return;
+                            }
+                            if (Filtros.DIVIDA == e) {
+                              await pesquisarDivida(f);
+                              return;
+                            }
+                            if (Filtros.QUANTIDADE == e) {
+                              await pesquisarQuantidade(f);
+                              return;
+                            }
+                          },
+                        ))
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
+        layoutCru: true);
+  }
+
+  Future<void> pesquisarProduto(String f) async {
+    var itens = await _manipularItemVendaI.todos();
+    for (var cada in listaCopia) {
+      for (var item in itens) {
+        var p = await _manipularProdutoI.pegarProdutoDeId(item.idProduto ?? -1);
+        if (p != null && compararTexto(p.nome ?? "", f)) {
+          lista.add(cada);
+        }
+      }
+    }
+  }
+
+  Future<void> pesquisarQuantidade(String f) async {
+    var itens = await _manipularItemVendaI.todos();
+    for (var cada in listaCopia) {
+      for (var item in itens) {
+        if (compararTexto("${item.quantidade ?? ""}", f)) {
+          lista.add(cada);
+        }
+      }
+    }
+  }
+
+  Future<void> pesquisarCliente(String f) async {
+    for (var cada in listaCopia) {
+      var c = await manipularCliente.pegarClienteDeId(cada.idCliente ?? -1);
+      if (c != null && compararTexto(c.nome ?? "", f)) {
+        lista.add(cada);
+      }
+    }
+  }
+
+  Future<void> pesquisarPreco(String f) async {
+    for (var cada in listaCopia) {
+      if (compararTexto("${cada.total ?? 0}", f)) {
+        lista.add(cada);
+      }
+    }
+  }
+
+  Future<void> pesquisarDivida(String f) async {
+    for (var cada in listaCopia) {
+      var d = (cada.total ?? 0) - (cada.parcela ?? 0);
+      if (compararTexto("$d", f)) {
+        lista.add(cada);
+      }
+    }
+  }
+
+  Future<void> pesquisarData(int id, BuildContext context) async {
+    var hoje = DateTime.now();
+    var dataSelecionada = await showDatePicker(
+        context: context,
+        initialDate: DateTime(2020, hoje.month, hoje.day),
+        firstDate: DateTime(hoje.year, hoje.month, hoje.day + 1),
+        lastDate: DateTime(2100));
+    if (dataSelecionada == null) {
+      return;
+    }
+    lista.clear();
+    late DateTime data;
+    for (var cada in listaCopia) {
+      if (id == 1) {
+        if (cada.data == null) {
+          continue;
+        }
+        data = cada.data!;
+      } else {
+        if (cada.dataLevantamentoCompra == null) {
+          continue;
+        }
+        data = cada.dataLevantamentoCompra!;
+      }
+      var d = "${data.day}/${data.month}/${data.year}";
+      if (comapararDatas(dataSelecionada, data)) {
+        lista.add(cada);
+      }
+    }
+  }
+}
+
+bool compararTexto(String t1, String t2) {
+  return t1.toLowerCase().contains(t2.toLowerCase()) ||
+      t2.toLowerCase().contains(t1.toLowerCase());
 }

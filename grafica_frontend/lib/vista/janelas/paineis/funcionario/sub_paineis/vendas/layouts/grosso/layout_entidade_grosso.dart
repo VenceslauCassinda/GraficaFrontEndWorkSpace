@@ -25,9 +25,20 @@ class LayoutEntidadeGrosso extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           child: Row(
             children: [
-              Text(
-                "${(data.day == DateTime.now().day && data.month == DateTime.now().month && data.year == DateTime.now().year) ? "HOJE" : "DATA"} - ${formatarMesOuDia(data.day)}/${formatarMesOuDia(data.month)}/${data.year}",
-                style: const TextStyle(color: primaryColor, fontSize: 20),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${(data.day == DateTime.now().day && data.month == DateTime.now().month && data.year == DateTime.now().year) ? "HOJE" : "DATA"} - ${formatarMesOuDia(data.day)}/${formatarMesOuDia(data.month)}/${data.year}",
+                    style: const TextStyle(color: primaryColor, fontSize: 20),
+                  ),
+                  Obx(
+                    () {
+                      return Text("Encomendas (${_c.lista.length})");
+                    }
+                  )
+                ],
               ),
               const Spacer(),
               Expanded(

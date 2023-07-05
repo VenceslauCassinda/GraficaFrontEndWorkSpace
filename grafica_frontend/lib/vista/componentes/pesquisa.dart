@@ -1,15 +1,19 @@
 import 'package:componentes_visuais/componentes/campo_texto.dart';
 import 'package:componentes_visuais/componentes/icone_item.dart';
 import 'package:flutter/material.dart';
+import 'package:grafica_frontend/solucoes_uteis/console.dart';
 
 class LayoutPesquisa extends StatelessWidget {
   final Function(String dado) accaoNaInsercaoNoCampoTexto;
+  Function(String dado)? aoClicarPequisar;
   Function? accaoAoSair;
   Function? accaoAoVoltar;
+  String dado = "";
 
   LayoutPesquisa(
       {Key? key,
       required this.accaoNaInsercaoNoCampoTexto,
+      this.aoClicarPequisar,
       this.accaoAoSair,
       this.accaoAoVoltar})
       : super(key: key) {
@@ -39,14 +43,17 @@ class LayoutPesquisa extends StatelessWidget {
             ),
             child: TextField(
               onChanged: ((value) {
+                dado = value;
                 accaoNaInsercaoNoCampoTexto(value);
               }),
               decoration: InputDecoration(
+                icon: SizedBox(width: 20,),
                   errorStyle: TextStyle(fontSize: 12),
-                  icon: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Icon(Icons.search),
-                  ),
+                  suffixIcon: InkWell(child: Icon(Icons.search), onTap: () {
+                    if(aoClicarPequisar != null){
+                      aoClicarPequisar!(dado);
+                    }
+                  },),
                   focusColor: Colors.black,
                   hintText: "Pesquisar",
                   border: InputBorder.none),

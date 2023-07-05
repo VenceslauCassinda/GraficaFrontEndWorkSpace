@@ -18,7 +18,10 @@ class LayoutFuncionarios extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Padding(
+      () { 
+        
+        
+      return Padding(
         padding: const EdgeInsets.all(20),
         child: ListView.builder(
             itemCount: _c.lista.length,
@@ -28,7 +31,7 @@ class LayoutFuncionarios extends StatelessWidget {
                     _c.escolherDataVerVenda(context, _c.lista[i]);
                   },
                 )),
-      ),
+      );},
     );
   }
 }
